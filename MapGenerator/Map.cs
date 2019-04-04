@@ -27,6 +27,9 @@ namespace MapGenerator
         #region Parameters
         public const int maxElevation = 1000;
         public const int waterElevation = 500;
+
+        public double SmoothnessFactor = 0.5;
+
         #endregion
 
         #region Constructor and Setup
@@ -86,14 +89,53 @@ namespace MapGenerator
             }
 
             // now smooth it out.
+            //for (int x = 0; x < Cells.Length; x++)
+            //{
+            //    for (int y = 0; y < Cells[x].Length; y++)
+            //    {
+            //        Cells[x][y].Elevation = GetAverageForAllSurroundingCells(x, y);
+            //    }
+            //}
+
+            // try to use Perlian noise
+
+            double samplePeriod = Math.Pow(2, SmoothnessFactor); // calculates 2 ^ k
+            float sampleFrequency = 1.0f / (float)samplePeriod;
+
             for (int x = 0; x < Cells.Length; x++)
             {
+                //calculate the horizontal sampling indices
+                float sample_i0 = (float)((int)(x / samplePeriod) * samplePeriod);
+                float sample_i1 = (float)((sample_i0 + samplePeriod) % Cells.Length); //wrap around
+                float horizontal_blend = (x - sample_i0) * sampleFrequency;
+
                 for (int y = 0; y < Cells[x].Length; y++)
                 {
-                    Cells[x][y].Elevation = GetAverageForAllSurroundingCells(x, y);
+                    //calculate the vertical sampling indices
+                    double sample_j0 = (int)(y / samplePeriod) * samplePeriod;
+                    float sample_j1 = (float)((sample_j0 + samplePeriod) % Cells[x].Length); //wrap around
+                    double vertical_blend = (y - sample_j0) * sampleFrequency;
+
+                    //blend the top two corners
+                    double top = Interpolate(Cells[(int)sample_i0][(int)sample_j0].Elevation,
+                       Cells[(int)sample_i1][(int)sample_j0].Elevation, horizontal_blend);
+
+                    //blend the bottom two corners
+                    double bottom = Interpolate(Cells[(int)sample_i0][(int)sample_j1].Elevation,
+                       Cells[(int)sample_i1][(int)sample_j1].Elevation, horizontal_blend);
+
+                    //final blend
+                    Cells[x][y].Elevation = (int)Interpolate(top, bottom, vertical_blend);
                 }
             }
+
         }
+
+        double Interpolate(double x0, double x1, double alpha)
+        {
+            return x0 * (1 - alpha) + alpha * x1;
+        }
+
 
         private int GetAverageForAllSurroundingCells(int x, int y)
         {

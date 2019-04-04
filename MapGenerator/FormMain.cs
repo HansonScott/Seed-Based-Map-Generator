@@ -40,7 +40,7 @@ namespace MapGenerator
             CurrentMap = new Map(seed, pMap.ClientRectangle);
 
             // apply any parameters before generating...
-
+            CurrentMap.SmoothnessFactor = (double)nudSmoothness.Value;
 
             CurrentMap.GenerateMap();
 

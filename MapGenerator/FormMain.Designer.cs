@@ -32,6 +32,9 @@
             this.btnGenerate = new System.Windows.Forms.Button();
             this.lblSeed = new System.Windows.Forms.Label();
             this.tbSeed = new System.Windows.Forms.TextBox();
+            this.lblSmoothness = new System.Windows.Forms.Label();
+            this.nudSmoothness = new System.Windows.Forms.NumericUpDown();
+            ((System.ComponentModel.ISupportInitialize)(this.nudSmoothness)).BeginInit();
             this.SuspendLayout();
             // 
             // pMap
@@ -71,11 +74,30 @@
             this.tbSeed.Size = new System.Drawing.Size(100, 20);
             this.tbSeed.TabIndex = 3;
             // 
+            // lblSmoothness
+            // 
+            this.lblSmoothness.AutoSize = true;
+            this.lblSmoothness.Location = new System.Drawing.Point(12, 119);
+            this.lblSmoothness.Name = "lblSmoothness";
+            this.lblSmoothness.Size = new System.Drawing.Size(68, 13);
+            this.lblSmoothness.TabIndex = 4;
+            this.lblSmoothness.Text = "Smoothness:";
+            // 
+            // nudSmoothness
+            // 
+            this.nudSmoothness.DecimalPlaces = 5;
+            this.nudSmoothness.Location = new System.Drawing.Point(3, 135);
+            this.nudSmoothness.Name = "nudSmoothness";
+            this.nudSmoothness.Size = new System.Drawing.Size(100, 20);
+            this.nudSmoothness.TabIndex = 5;
+            // 
             // FormMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.nudSmoothness);
+            this.Controls.Add(this.lblSmoothness);
             this.Controls.Add(this.tbSeed);
             this.Controls.Add(this.lblSeed);
             this.Controls.Add(this.btnGenerate);
@@ -84,6 +106,7 @@
             this.ShowIcon = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Random Map Generator";
+            ((System.ComponentModel.ISupportInitialize)(this.nudSmoothness)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -95,6 +118,8 @@
         private System.Windows.Forms.Button btnGenerate;
         private System.Windows.Forms.Label lblSeed;
         private System.Windows.Forms.TextBox tbSeed;
+        private System.Windows.Forms.Label lblSmoothness;
+        private System.Windows.Forms.NumericUpDown nudSmoothness;
     }
 }
 
