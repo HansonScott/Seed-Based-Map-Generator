@@ -55,7 +55,7 @@ namespace MapGenerator
             {
                 Random r = new Random();
                 result = r.Next();
-                tbSeed.Text = result.ToString();
+                lblSeed.Text = "Seed: " + result.ToString();
             }
             return result;
         }

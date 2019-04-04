@@ -24,14 +24,16 @@ namespace MapGenerator
             // land vs water
             if (Elevation < ParentMap.WaterElevation)
             {
-                BrushColor = new SolidBrush(Color.Blue);
+                int v = (int)(Elevation * 255 / Map.maxElevation);
+                Color c = Color.FromArgb(v, v, 255);
+                BrushColor = new SolidBrush(c);
             }
             else
             {
                 // green between 100 - 255),
                 // r/g between 0 - 255;
                 // green gradient
-                int v = (int)(Elevation * 200 / Map.maxElevation);
+                int v = (int)(Elevation * 255 / Map.maxElevation);
                 Color c = Color.FromArgb(v, 255, v);
                 BrushColor = new SolidBrush(c);
             }
