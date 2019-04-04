@@ -20,9 +20,20 @@ namespace MapGenerator
 
         private void SetBrushByElevation()
         {
-            int v = (int)(Elevation * 255 / Map.maxElevation);
-            Color c = Color.FromArgb(v, v, v);
-            BrushColor = new SolidBrush(c);
+            // grey gradient
+            //int v = (int)(Elevation * 255 / Map.maxElevation);
+            //Color c = Color.FromArgb(v, v, v);
+            //BrushColor = new SolidBrush(c);
+
+            // land vs water
+            if (Elevation < Map.waterElevation)
+            {
+                BrushColor = new SolidBrush(Color.Blue);
+            }
+            else
+            {
+                BrushColor = new SolidBrush(Color.Tan);
+            }
         }
 
         public Brush BrushColor;

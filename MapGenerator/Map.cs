@@ -26,6 +26,7 @@ namespace MapGenerator
 
         #region Parameters
         public const int maxElevation = 1000;
+        public const int waterElevation = 500;
         #endregion
 
         #region Constructor and Setup
@@ -89,9 +90,26 @@ namespace MapGenerator
             {
                 for (int y = 0; y < Cells[x].Length; y++)
                 {
-                    Cells[x][y].Elevation = eRand.Next(maxElevation);
+                    Cells[x][y].Elevation = GetAverageForAllSurroundingCells(x, y);
                 }
             }
+        }
+
+        private int GetAverageForAllSurroundingCells(int x, int y)
+        {
+            int rangeToAverage = 5;
+            int count = 0;
+            int total = 0;
+            for(int row = (Math.Max(0, x - rangeToAverage)); row < Math.Min(x + rangeToAverage, Cells.Length); row++)
+            {
+                for(int col = (Math.Max(0, y - rangeToAverage)); col < Math.Min(y + rangeToAverage, Cells[row].Length); col++)
+                {
+                    total += Cells[row][col].Elevation;
+                    count++;
+                }
+            }
+
+            return (int)(total / count);
         }
 
         private void SetBackColor()
