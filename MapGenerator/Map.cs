@@ -25,7 +25,7 @@ namespace MapGenerator
         Color backColor;
 
         #region Parameters
-        public const int maxElevation = 1000;
+        public int maxElevation = 1000;
         public int WaterElevation = 500;
 
         public double SmoothnessFactor = 0.5;
@@ -97,8 +97,16 @@ namespace MapGenerator
             //    }
             //}
 
-            // try to use Perlian noise
-            double samplePeriod = Math.Pow(2, SmoothnessFactor); // calculates 2 ^ k
+            // learned that doing it multiple times is much more effective, to round out the edges
+            ApplyPerlianSmoothing(SmoothnessFactor);
+            ApplyPerlianSmoothing((SmoothnessFactor * 0.8));
+            ApplyPerlianSmoothing((SmoothnessFactor * 0.5));
+            ApplyPerlianSmoothing((SmoothnessFactor * 0.3));
+        }
+
+        private void ApplyPerlianSmoothing(double granularity)
+        {
+            double samplePeriod = Math.Pow(2, granularity); // calculates 2 ^ k
             float sampleFrequency = 1.0f / (float)samplePeriod;
 
             for (int x = 0; x < Cells.Length; x++)
@@ -127,7 +135,6 @@ namespace MapGenerator
                     Cells[x][y].Elevation = (int)Interpolate(top, bottom, vertical_blend);
                 }
             }
-
         }
 
         double Interpolate(double x0, double x1, double alpha)

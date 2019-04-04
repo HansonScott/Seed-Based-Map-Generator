@@ -64,7 +64,7 @@
             // lblSeed
             // 
             this.lblSeed.AutoSize = true;
-            this.lblSeed.Location = new System.Drawing.Point(12, 58);
+            this.lblSeed.Location = new System.Drawing.Point(6, 58);
             this.lblSeed.Name = "lblSeed";
             this.lblSeed.Size = new System.Drawing.Size(35, 13);
             this.lblSeed.TabIndex = 2;
@@ -80,7 +80,7 @@
             // lblSmoothness
             // 
             this.lblSmoothness.AutoSize = true;
-            this.lblSmoothness.Location = new System.Drawing.Point(12, 119);
+            this.lblSmoothness.Location = new System.Drawing.Point(6, 119);
             this.lblSmoothness.Name = "lblSmoothness";
             this.lblSmoothness.Size = new System.Drawing.Size(37, 13);
             this.lblSmoothness.TabIndex = 4;
@@ -95,6 +95,16 @@
             0,
             65536});
             this.nudSmoothness.Location = new System.Drawing.Point(3, 135);
+            this.nudSmoothness.Maximum = new decimal(new int[] {
+            8,
+            0,
+            0,
+            0});
+            this.nudSmoothness.Minimum = new decimal(new int[] {
+            3,
+            0,
+            0,
+            0});
             this.nudSmoothness.Name = "nudSmoothness";
             this.nudSmoothness.Size = new System.Drawing.Size(100, 20);
             this.nudSmoothness.TabIndex = 5;
@@ -106,6 +116,11 @@
             // 
             // nudWater
             // 
+            this.nudWater.Increment = new decimal(new int[] {
+            50,
+            0,
+            0,
+            0});
             this.nudWater.Location = new System.Drawing.Point(3, 186);
             this.nudWater.Maximum = new decimal(new int[] {
             1000,
