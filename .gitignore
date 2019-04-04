@@ -1,0 +1,8 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/.vs
+/MapGenerator/.vs/MapGenerator/v15
+/MapGenerator/obj
+/MapGenerator/bin/Debug
