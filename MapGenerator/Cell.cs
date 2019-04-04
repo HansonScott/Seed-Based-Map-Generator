@@ -5,6 +5,7 @@ namespace MapGenerator
 {
     public class Cell
     {
+        Map ParentMap;
         public int X;
         public int Y;
         private int _Elevation;
@@ -20,27 +21,28 @@ namespace MapGenerator
 
         private void SetBrushByElevation()
         {
-            // grey gradient
-            //int v = (int)(Elevation * 255 / Map.maxElevation);
-            //Color c = Color.FromArgb(v, v, v);
-            //BrushColor = new SolidBrush(c);
-
             // land vs water
-            if (Elevation < Map.waterElevation)
+            if (Elevation < ParentMap.WaterElevation)
             {
                 BrushColor = new SolidBrush(Color.Blue);
             }
             else
             {
-                BrushColor = new SolidBrush(Color.Tan);
+                // green between 100 - 255),
+                // r/g between 0 - 255;
+                // green gradient
+                int v = (int)(Elevation * 200 / Map.maxElevation);
+                Color c = Color.FromArgb(v, 255, v);
+                BrushColor = new SolidBrush(c);
             }
         }
 
         public Brush BrushColor;
         public RectangleF ThisRect;
 
-        public Cell(int X, int Y)
+        public Cell(Map ParentMap, int X, int Y)
         {
+            this.ParentMap = ParentMap;
             this.X = X;
             this.Y = Y;
             ThisRect = new RectangleF(X, Y, 1, 1);

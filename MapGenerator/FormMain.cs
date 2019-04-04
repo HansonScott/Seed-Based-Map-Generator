@@ -41,6 +41,7 @@ namespace MapGenerator
 
             // apply any parameters before generating...
             CurrentMap.SmoothnessFactor = (double)nudSmoothness.Value;
+            CurrentMap.WaterElevation = (int)nudWater.Value;
 
             CurrentMap.GenerateMap();
 

@@ -34,7 +34,10 @@
             this.tbSeed = new System.Windows.Forms.TextBox();
             this.lblSmoothness = new System.Windows.Forms.Label();
             this.nudSmoothness = new System.Windows.Forms.NumericUpDown();
+            this.nudWater = new System.Windows.Forms.NumericUpDown();
+            this.lblWater = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.nudSmoothness)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudWater)).BeginInit();
             this.SuspendLayout();
             // 
             // pMap
@@ -79,23 +82,61 @@
             this.lblSmoothness.AutoSize = true;
             this.lblSmoothness.Location = new System.Drawing.Point(12, 119);
             this.lblSmoothness.Name = "lblSmoothness";
-            this.lblSmoothness.Size = new System.Drawing.Size(68, 13);
+            this.lblSmoothness.Size = new System.Drawing.Size(37, 13);
             this.lblSmoothness.TabIndex = 4;
-            this.lblSmoothness.Text = "Smoothness:";
+            this.lblSmoothness.Text = "Zoom:";
             // 
             // nudSmoothness
             // 
-            this.nudSmoothness.DecimalPlaces = 5;
+            this.nudSmoothness.DecimalPlaces = 1;
+            this.nudSmoothness.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            65536});
             this.nudSmoothness.Location = new System.Drawing.Point(3, 135);
             this.nudSmoothness.Name = "nudSmoothness";
             this.nudSmoothness.Size = new System.Drawing.Size(100, 20);
             this.nudSmoothness.TabIndex = 5;
+            this.nudSmoothness.Value = new decimal(new int[] {
+            55,
+            0,
+            0,
+            65536});
+            // 
+            // nudWater
+            // 
+            this.nudWater.Location = new System.Drawing.Point(3, 186);
+            this.nudWater.Maximum = new decimal(new int[] {
+            1000,
+            0,
+            0,
+            0});
+            this.nudWater.Name = "nudWater";
+            this.nudWater.Size = new System.Drawing.Size(100, 20);
+            this.nudWater.TabIndex = 7;
+            this.nudWater.Value = new decimal(new int[] {
+            500,
+            0,
+            0,
+            0});
+            // 
+            // lblWater
+            // 
+            this.lblWater.AutoSize = true;
+            this.lblWater.Location = new System.Drawing.Point(12, 170);
+            this.lblWater.Name = "lblWater";
+            this.lblWater.Size = new System.Drawing.Size(68, 13);
+            this.lblWater.TabIndex = 6;
+            this.lblWater.Text = "Water Level:";
             // 
             // FormMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.nudWater);
+            this.Controls.Add(this.lblWater);
             this.Controls.Add(this.nudSmoothness);
             this.Controls.Add(this.lblSmoothness);
             this.Controls.Add(this.tbSeed);
@@ -107,6 +148,7 @@
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Random Map Generator";
             ((System.ComponentModel.ISupportInitialize)(this.nudSmoothness)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudWater)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -120,6 +162,8 @@
         private System.Windows.Forms.TextBox tbSeed;
         private System.Windows.Forms.Label lblSmoothness;
         private System.Windows.Forms.NumericUpDown nudSmoothness;
+        private System.Windows.Forms.NumericUpDown nudWater;
+        private System.Windows.Forms.Label lblWater;
     }
 }
 

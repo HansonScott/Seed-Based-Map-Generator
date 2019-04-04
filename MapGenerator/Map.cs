@@ -26,7 +26,7 @@ namespace MapGenerator
 
         #region Parameters
         public const int maxElevation = 1000;
-        public const int waterElevation = 500;
+        public int WaterElevation = 500;
 
         public double SmoothnessFactor = 0.5;
 
@@ -50,7 +50,7 @@ namespace MapGenerator
                 Cells[x] = new Cell[size.Height];
                 for(int y = 0; y < Cells[x].Length; y++)
                 {
-                    Cells[x][y] = new Cell(x, y);
+                    Cells[x][y] = new Cell(this, x, y);
                 }
             }
         }
@@ -98,7 +98,6 @@ namespace MapGenerator
             //}
 
             // try to use Perlian noise
-
             double samplePeriod = Math.Pow(2, SmoothnessFactor); // calculates 2 ^ k
             float sampleFrequency = 1.0f / (float)samplePeriod;
 
