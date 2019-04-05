@@ -64,7 +64,7 @@
             // lblSeed
             // 
             this.lblSeed.AutoSize = true;
-            this.lblSeed.Location = new System.Drawing.Point(6, 58);
+            this.lblSeed.Location = new System.Drawing.Point(1, 58);
             this.lblSeed.Name = "lblSeed";
             this.lblSeed.Size = new System.Drawing.Size(35, 13);
             this.lblSeed.TabIndex = 2;
@@ -95,24 +95,14 @@
             0,
             65536});
             this.nudSmoothness.Location = new System.Drawing.Point(3, 135);
-            this.nudSmoothness.Maximum = new decimal(new int[] {
-            8,
-            0,
-            0,
-            0});
-            this.nudSmoothness.Minimum = new decimal(new int[] {
-            3,
-            0,
-            0,
-            0});
             this.nudSmoothness.Name = "nudSmoothness";
             this.nudSmoothness.Size = new System.Drawing.Size(100, 20);
             this.nudSmoothness.TabIndex = 5;
             this.nudSmoothness.Value = new decimal(new int[] {
-            55,
+            40,
             0,
             0,
-            65536});
+            0});
             // 
             // nudWater
             // 

@@ -91,61 +91,47 @@ namespace MapGenerator
                 }
             }
 
-            // learned that doing it multiple times is much more effective, to round out the edges
+            // learned that doing it multiple times is much more effective, to round out the edges using different granularity
             ApplyPseudoPerlinSmoothing(SmoothnessFactor);
-            //ApplyPseudoPerlianSmoothing((SmoothnessFactor * 0.8));
-            ApplyPseudoPerlinSmoothing((SmoothnessFactor * 0.6));
-            ApplyPseudoPerlinSmoothing((SmoothnessFactor * 0.25));
+            ApplyPseudoPerlinSmoothing((SmoothnessFactor * 0.8));
+            ApplyPseudoPerlinSmoothing((SmoothnessFactor * 0.5));
+            ApplyPseudoPerlinSmoothing((SmoothnessFactor * 0.15));
         }
 
         private void ApplyPseudoPerlinSmoothing(double granularity)
         {
-            double sampleSize = Math.Pow(2, granularity); // calculates 2 ^ k
-            float sampleFrequency = 1.0f / (float)sampleSize;
+            //float sampleSize = (float)Math.Pow(2, granularity); // calculates 2 ^ k
+            float sampleSize = (float)granularity;
+            float sampleFrequency = 1.0f / sampleSize;
+            float x0,x1,y0,y1; // sample nodes to hit
+            float h_blend, v_blend;
+            double top, bottom;
 
             for (int x = 0; x < Cells.Length; x++) // for each column
             {
-                // (which other column to look at)
-                // x0 is how far away to look - left side of area
-                // x1 is how far away to look - right side of area
-                // blend is the change between the two
-                float sample_x0 = (float)((int)(x / sampleSize) * sampleSize);
-                float sample_x1 = (float)((sample_x0 + sampleSize) % Cells.Length); //wrap around if we flow over
-                float horizontal_blend = (x - sample_x0) * sampleFrequency;
+                x0 = ((int)(x / sampleSize) * sampleSize);
+                x1 = ((x0 + sampleSize) % Cells.Length); //wrap around if we flow over
+                h_blend = (x - x0) * sampleFrequency;
 
                 for (int y = 0; y < Cells[x].Length; y++) // for each row in the X'th column
                 {
                     //calculate the vertical sampling indices
-                    double sample_y0 = (int)(y / sampleSize) * sampleSize;
-                    float sample_y1 = (float)((sample_y0 + sampleSize) % Cells[x].Length); //wrap around
-                    double vertical_blend = (y - sample_y0) * sampleFrequency;
+                    y0 = ((int)(y / sampleSize) * sampleSize);
+                    y1 = ((y0 + sampleSize) % Cells[x].Length); //wrap around
+                    v_blend = (y - y0) * sampleFrequency;
 
                     //blend the top two corners
-                    double top = Interpolate(Cells[(int)sample_x0][(int)sample_y0].Elevation,
-                       Cells[(int)sample_x1][(int)sample_y0].Elevation, horizontal_blend);
+                    top = Interpolate(Cells[(int)x0][(int)y0].Elevation,
+                       Cells[(int)x1][(int)y0].Elevation, h_blend);
 
                     //blend the bottom two corners
-                    double bottom = Interpolate(Cells[(int)sample_x0][(int)sample_y1].Elevation,
-                       Cells[(int)sample_x1][(int)sample_y1].Elevation, horizontal_blend);
+                    bottom = Interpolate(Cells[(int)x0][(int)y1].Elevation,
+                       Cells[(int)x1][(int)y1].Elevation, h_blend);
 
                     //final blend
-                    Cells[x][y].Elevation = (int)Interpolate(top, bottom, vertical_blend);
+                    Cells[x][y].Elevation = (int)Interpolate(top, bottom, v_blend);
                 }
             }
-        }
-
-        private float Wiggle(float val)
-        {
-            Random r = new Random();
-            int adjust = r.Next(20) - 10;
-
-            float aVal = val * (adjust / 10);
-            return aVal;
-        }
-
-        private void ApplyTruePerlianSmoothing(double granularity)
-        {
-
         }
 
         double Interpolate(double x0, double x1, double alpha)
