@@ -136,7 +136,29 @@ namespace MapGenerator
 
         double Interpolate(double x0, double x1, double alpha)
         {
+            //return InterpolateLinear(x0, x1, alpha);
+            return InterpolatePoly(x0, x1, alpha);
+        }
+        double InterpolateLinear(double x0, double x1, double alpha)
+        {
+            // this looks like a sort of dot product calculation, but certainly linear
             return x0 * (1 - alpha) + alpha * x1;
+        }
+        double InterpolatePoly(double x0, double x1, double t)
+        {
+            // first, figure out how much weight we should give to the movement along the curve from X0 to X1
+            //6t^5-15t^4+10t^3
+            double y = t * t * t * (t * (6 * t - 15) + 10); // NOTE: y is between 0 and 1, given that t is between 0 and 1
+
+            // then apply the weight to the values X0, and X1
+            double diff = x1 - x0;
+
+            double partialDiff = diff * y; // determine how far we shoudl move along the difference.
+            
+            //and lastly, adjust the partial diff for where we started.
+            double adjustedPartialDiff = partialDiff + x0;
+            
+            return adjustedPartialDiff;
         }
         
         private void SetBackColor()
