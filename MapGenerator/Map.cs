@@ -120,6 +120,8 @@ namespace MapGenerator
                     y1 = ((y0 + sampleSize) % Cells[x].Length); //wrap around
                     v_blend = (y - y0) * sampleFrequency;
 
+                    if(h_blend == 0 && v_blend == 0) { Cells[x][y].IsSample = true; }
+                    
                     //blend the top two corners
                     top = Interpolate(Cells[(int)x0][(int)y0].Elevation,
                        Cells[(int)x1][(int)y0].Elevation, h_blend);
