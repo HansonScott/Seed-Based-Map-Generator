@@ -36,6 +36,9 @@ namespace MapGenerator
         public Map(int seed, Rectangle size)
         {
             this.seed = seed;
+
+            // adjust size on the Y axis for the pseudo perlin noise, as it chops up when it gets at the bottom
+            size.Height = (int)(size.Height * 1.1);
             this.size = size;
             BuildCells();
 
@@ -88,48 +91,42 @@ namespace MapGenerator
                 }
             }
 
-            // now smooth it out.
-            //for (int x = 0; x < Cells.Length; x++)
-            //{
-            //    for (int y = 0; y < Cells[x].Length; y++)
-            //    {
-            //        Cells[x][y].Elevation = GetAverageForAllSurroundingCells(x, y);
-            //    }
-            //}
-
             // learned that doing it multiple times is much more effective, to round out the edges
-            ApplyPerlianSmoothing(SmoothnessFactor);
-            ApplyPerlianSmoothing((SmoothnessFactor * 0.8));
-            ApplyPerlianSmoothing((SmoothnessFactor * 0.5));
-            ApplyPerlianSmoothing((SmoothnessFactor * 0.3));
+            ApplyPseudoPerlinSmoothing(SmoothnessFactor);
+            //ApplyPseudoPerlianSmoothing((SmoothnessFactor * 0.8));
+            ApplyPseudoPerlinSmoothing((SmoothnessFactor * 0.6));
+            ApplyPseudoPerlinSmoothing((SmoothnessFactor * 0.25));
         }
 
-        private void ApplyPerlianSmoothing(double granularity)
+        private void ApplyPseudoPerlinSmoothing(double granularity)
         {
-            double samplePeriod = Math.Pow(2, granularity); // calculates 2 ^ k
-            float sampleFrequency = 1.0f / (float)samplePeriod;
+            double sampleSize = Math.Pow(2, granularity); // calculates 2 ^ k
+            float sampleFrequency = 1.0f / (float)sampleSize;
 
-            for (int x = 0; x < Cells.Length; x++)
+            for (int x = 0; x < Cells.Length; x++) // for each column
             {
-                //calculate the horizontal sampling indices
-                float sample_i0 = (float)((int)(x / samplePeriod) * samplePeriod);
-                float sample_i1 = (float)((sample_i0 + samplePeriod) % Cells.Length); //wrap around
-                float horizontal_blend = (x - sample_i0) * sampleFrequency;
+                // (which other column to look at)
+                // x0 is how far away to look - left side of area
+                // x1 is how far away to look - right side of area
+                // blend is the change between the two
+                float sample_x0 = (float)((int)(x / sampleSize) * sampleSize);
+                float sample_x1 = (float)((sample_x0 + sampleSize) % Cells.Length); //wrap around if we flow over
+                float horizontal_blend = (x - sample_x0) * sampleFrequency;
 
-                for (int y = 0; y < Cells[x].Length; y++)
+                for (int y = 0; y < Cells[x].Length; y++) // for each row in the X'th column
                 {
                     //calculate the vertical sampling indices
-                    double sample_j0 = (int)(y / samplePeriod) * samplePeriod;
-                    float sample_j1 = (float)((sample_j0 + samplePeriod) % Cells[x].Length); //wrap around
-                    double vertical_blend = (y - sample_j0) * sampleFrequency;
+                    double sample_y0 = (int)(y / sampleSize) * sampleSize;
+                    float sample_y1 = (float)((sample_y0 + sampleSize) % Cells[x].Length); //wrap around
+                    double vertical_blend = (y - sample_y0) * sampleFrequency;
 
                     //blend the top two corners
-                    double top = Interpolate(Cells[(int)sample_i0][(int)sample_j0].Elevation,
-                       Cells[(int)sample_i1][(int)sample_j0].Elevation, horizontal_blend);
+                    double top = Interpolate(Cells[(int)sample_x0][(int)sample_y0].Elevation,
+                       Cells[(int)sample_x1][(int)sample_y0].Elevation, horizontal_blend);
 
                     //blend the bottom two corners
-                    double bottom = Interpolate(Cells[(int)sample_i0][(int)sample_j1].Elevation,
-                       Cells[(int)sample_i1][(int)sample_j1].Elevation, horizontal_blend);
+                    double bottom = Interpolate(Cells[(int)sample_x0][(int)sample_y1].Elevation,
+                       Cells[(int)sample_x1][(int)sample_y1].Elevation, horizontal_blend);
 
                     //final blend
                     Cells[x][y].Elevation = (int)Interpolate(top, bottom, vertical_blend);
@@ -137,29 +134,25 @@ namespace MapGenerator
             }
         }
 
+        private float Wiggle(float val)
+        {
+            Random r = new Random();
+            int adjust = r.Next(20) - 10;
+
+            float aVal = val * (adjust / 10);
+            return aVal;
+        }
+
+        private void ApplyTruePerlianSmoothing(double granularity)
+        {
+
+        }
+
         double Interpolate(double x0, double x1, double alpha)
         {
             return x0 * (1 - alpha) + alpha * x1;
         }
-
-
-        private int GetAverageForAllSurroundingCells(int x, int y)
-        {
-            int rangeToAverage = 5;
-            int count = 0;
-            int total = 0;
-            for(int row = (Math.Max(0, x - rangeToAverage)); row < Math.Min(x + rangeToAverage, Cells.Length); row++)
-            {
-                for(int col = (Math.Max(0, y - rangeToAverage)); col < Math.Min(y + rangeToAverage, Cells[row].Length); col++)
-                {
-                    total += Cells[row][col].Elevation;
-                    count++;
-                }
-            }
-
-            return (int)(total / count);
-        }
-
+        
         private void SetBackColor()
         {
             Random randColor = RandLvl2[(int)DetailedRandomizer.ColorRand];
