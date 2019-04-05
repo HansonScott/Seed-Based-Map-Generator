@@ -8,6 +8,7 @@ namespace MapGenerator
         Map ParentMap;
         public int X;
         public int Y;
+        public bool IsSample;
         private int _Elevation;
         public int Elevation
         {
@@ -48,6 +49,7 @@ namespace MapGenerator
         }
 
         public Brush BrushColor;
+        public Brush TracerBrushColor = new SolidBrush(Colors.Blue);
         public RectangleF ThisRect;
 
         public Cell(Map ParentMap, int X, int Y)
@@ -60,7 +62,15 @@ namespace MapGenerator
 
         internal void PaintCell(Graphics g)
         {
-            g.FillRectangle(BrushColor, ThisRect);
+            // capture if this is a sample pixel, and overwrite the dynamic color for a tracer color - for testing only
+            if(this.IsSample)
+            {
+                g.FillRectangle(TracerBrushColor, ThisRect);
+            }
+            else
+            {
+                g.FillRectangle(BrushColor, ThisRect);
+            }
         }
     }
 }
