@@ -23,33 +23,33 @@ namespace MapGenerator
         private void SetBrushByElevation()
         {
             // grey
-            int v = (int)(Elevation * 255 / ParentMap.maxElevation);
-            Color c = Color.FromArgb(v, v, v);
-            BrushColor = new SolidBrush(c);
+            //int v = (int)(Elevation * 255 / ParentMap.maxElevation);
+            //Color c = Color.FromArgb(v, v, v);
+            //BrushColor = new SolidBrush(c);
 
             // land vs water
-            //if (Elevation < ParentMap.WaterElevation)
-            //{
-            //    // at 0 elevation: 0,0,255
-            //    // at waterElevation: 0,100,255
+            if (Elevation < ParentMap.WaterElevation)
+            {
+                // at 0 elevation: 0,0,255
+                // at waterElevation: 0,100,255
 
-            //    int v = (int)(Elevation * 100 / ParentMap.WaterElevation);
-            //    Color c = Color.FromArgb(0, v, 255);
-            //    BrushColor = new SolidBrush(c);
-            //}
-            //else
-            //{
-            //    // at waterElevation: 0,140,0
-            //    // at maxElevation: 255,255,255
-            //    // green gradient
-            //    int v = (int)(Elevation * 140 / ParentMap.maxElevation);
-            //    Color c = Color.FromArgb(v, (Math.Max(((255-v)/2) + v,140)), v);
-            //    BrushColor = new SolidBrush(c);
-            //}
+                int v = (int)(Elevation * 100 / ParentMap.WaterElevation);
+                Color c = Color.FromArgb(0, v, 255);
+                BrushColor = new SolidBrush(c);
+            }
+            else
+            {
+                // at waterElevation: 0,140,0
+                // at maxElevation: 255,255,255
+                // green gradient
+                int v = (int)(Elevation * 140 / ParentMap.maxElevation);
+                Color c = Color.FromArgb(v, (Math.Max(((255 - v) / 2) + v, 140)), v);
+                BrushColor = new SolidBrush(c);
+            }
         }
 
         public Brush BrushColor;
-        public Brush TracerBrushColor = new SolidBrush(Colors.Blue);
+        public Brush TracerBrushColor = new SolidBrush(Color.Blue);
         public RectangleF ThisRect;
 
         public Cell(Map ParentMap, int X, int Y)
@@ -63,14 +63,14 @@ namespace MapGenerator
         internal void PaintCell(Graphics g)
         {
             // capture if this is a sample pixel, and overwrite the dynamic color for a tracer color - for testing only
-            if(this.IsSample)
-            {
-                g.FillRectangle(TracerBrushColor, ThisRect);
-            }
-            else
-            {
+            //if(this.IsSample)
+            //{
+            //    g.FillRectangle(TracerBrushColor, ThisRect);
+            //}
+            //else
+            //{
                 g.FillRectangle(BrushColor, ThisRect);
-            }
+            //}
         }
     }
 }

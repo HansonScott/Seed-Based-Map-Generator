@@ -109,6 +109,7 @@ namespace MapGenerator
 
             for (int x = 0; x < Cells.Length; x++) // for each column
             {
+                // calculate the horizontal sampling indicies
                 x0 = ((int)(x / sampleSize) * sampleSize);
                 x1 = ((x0 + sampleSize) % Cells.Length); //wrap around if we flow over
                 h_blend = (x - x0) * sampleFrequency;
