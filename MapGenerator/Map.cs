@@ -27,8 +27,8 @@ namespace MapGenerator
         public int WaterElevation = 500;
 
         public bool AddSmooth01, AddSmooth02, AddSmooth03, AddSmooth04;
-        public double SmoothnessFactor, SmoothnessFactor02, SmoothnessFactor03, SmoothnessFactor04;
-        public double Amp01, Amp02, Amp03, Amp04;
+        public float SmoothnessFactor, SmoothnessFactor02, SmoothnessFactor03, SmoothnessFactor04;
+        public float Amp01, Amp02, Amp03, Amp04;
         #endregion
 
         #region Constructor and Setup
@@ -92,7 +92,7 @@ namespace MapGenerator
             if (AddSmooth04) { Cells4 = ApplyPseudoPerlinSmoothing(Cells, (SmoothnessFactor * SmoothnessFactor04), Amp04); }
 
             // now add them all together.
-            double result = 0;
+            float result = 0;
             List<double> vals = new List<double>();
             for (int x = 0; x < Cells.Length; x++)
             {
@@ -105,12 +105,12 @@ namespace MapGenerator
                     if (AddSmooth03) { vals.Add(Cells3[x][y].Elevation); }
                     if (AddSmooth04) { vals.Add(Cells4[x][y].Elevation); }
 
-                    foreach (double v in vals)
+                    foreach (float v in vals)
                     {
                         // v is between 0 and 1, with the +- 0.5 representing the % movement away from flat.
                         // so, pulling out the 0.5 gives us a +- random amplitude for the pass
                         // so, multiplying the result will nudge the result up or down by betweeen zero and +- the amplitude for the pass.
-                        result = result * (1 - (v - 0.5));
+                        result = result * (1f - (v - 0.5f));
                     }
 
                     Cells[x][y].Elevation = result;
@@ -122,7 +122,7 @@ namespace MapGenerator
 
         }
 
-        private Cell[][] ApplyPseudoPerlinSmoothing(Cell[][] Cells, double granularity, double amplitude)
+        private Cell[][] ApplyPseudoPerlinSmoothing(Cell[][] Cells, float granularity, float amplitude)
         {
             Cell[][] results = Copy(Cells);            
 
@@ -131,7 +131,7 @@ namespace MapGenerator
             float sampleFrequency = 1.0f / sampleSize;
             float x0,x1,y0,y1; // sample nodes to hit
             float h_blend, v_blend;
-            double top, bottom;
+            float top, bottom;
 
             // set the random value for each sell, adjusting for the possible amplitude allowed in this pass.
             Random eRand = RandLvl2[(int)DetailedRandomizer.ElevationRand];
@@ -139,7 +139,7 @@ namespace MapGenerator
             {
                 for (int y = 0; y < results[x].Length; y++) // for each row in the X'th column
                 {
-                    double v = (eRand.NextDouble() * amplitude) + (0.5 - amplitude / 2);
+                    float v = ((float)eRand.NextDouble() * amplitude) + (0.5f - amplitude / 2f);
                     results[x][y].Elevation = v; // results in +/- amplitude.
                 }
             }
@@ -185,41 +185,38 @@ namespace MapGenerator
                 for(int y = 0; y < Cells[x].Length; y++)
                 {
                     results[x][y] = new Cell(this, Cells[x][y].X, Cells[x][y].Y);
-
-                    // NOTE: don't propigate the random values, let each pass figure it out.
-                    //results[x][y].Elevation = Cells[x][y].Elevation;
                 }
             }
 
             return results;
         }
 
-        double Interpolate(double x0, double x1, double alpha)
+        float Interpolate(float x0, float x1, float alpha)
         {
             //return InterpolateLinear(x0, x1, alpha);
             return InterpolatePoly(x0, x1, alpha);
         }
-        double InterpolateLinear(double x0, double x1, double alpha)
+        float InterpolateLinear(float x0, float x1, float alpha)
         {
             // this looks like a sort of dot product calculation, but certainly linear
             return x0 * (1 - alpha) + alpha * x1;
         }
-        double InterpolatePoly(double x0, double x1, double t)
+        float InterpolatePoly(float x0, float x1, float t)
         {
             // first, figure out how much weight we should give to the movement along the curve from X0 to X1
             //6t^5-15t^4+10t^3
             //double y = t * t * t * (t * (6 * t - 15) + 10); // NOTE: y is between 0 and 1, given that t is between 0 and 1
 
             // 3t^2 - 2t^3 - gives a more rounded look to the first perlin smoothing pass than the 5th order, above.
-            double y = t * t * (3 - 2 * t);
+            float y = t * t * (3f - 2f * t);
 
             // then apply the weight to the values X0, and X1
-            double diff = x1 - x0;
+            float diff = x1 - x0;
 
-            double partialDiff = diff * y; // determine how far we shoudl move along the difference.
+            float partialDiff = diff * y; // determine how far we shoudl move along the difference.
             
             //and lastly, adjust the partial diff for where we started.
-            double adjustedPartialDiff = partialDiff + x0;
+            float adjustedPartialDiff = partialDiff + x0;
             
             return adjustedPartialDiff;
         }

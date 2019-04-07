@@ -12,11 +12,11 @@ namespace MapGenerator
 {
     public partial class MapSettings : Form
     {
-        public double Smoothness
+        public float Smoothness
         {
             get
             {
-                return (double)this.nudSmoothness.Value;
+                return (float)this.nudSmoothness.Value;
             }
         }
         public int WaterLevel
@@ -31,14 +31,14 @@ namespace MapGenerator
         public bool AddSmooth02 { get { return cbAdd02.Checked; } }
         public bool AddSmooth03 { get { return cbAdd03.Checked; } }
         public bool AddSmooth04 { get { return cbAdd04.Checked; } }
-        public double SmoothnessFactor { get { return (double)nudSmoothness.Value; } }
-        public double SmoothnessFactor02 { get { return (double)nudGrain02.Value; } }
-        public double SmoothnessFactor03 { get { return (double)nudGrain03.Value; } }
-        public double SmoothnessFactor04 { get { return (double)nudGrain04.Value; } }
-        public double Amp01 { get { return 1.0; } }
-        public double Amp02 { get { return (double)nudAmp02.Value; } }
-        public double Amp03 { get { return (double)nudAmp03.Value; } }
-        public double Amp04 { get { return (double)nudAmp04.Value; } }
+        public float SmoothnessFactor { get { return (float)nudSmoothness.Value; } }
+        public float SmoothnessFactor02 { get { return (float)nudGrain02.Value; } }
+        public float SmoothnessFactor03 { get { return (float)nudGrain03.Value; } }
+        public float SmoothnessFactor04 { get { return (float)nudGrain04.Value; } }
+        public float Amp01 { get { return 1.0f; } }
+        public float Amp02 { get { return (float)nudAmp02.Value; } }
+        public float Amp03 { get { return (float)nudAmp03.Value; } }
+        public float Amp04 { get { return (float)nudAmp04.Value; } }
 
         public MapSettings()
         {
