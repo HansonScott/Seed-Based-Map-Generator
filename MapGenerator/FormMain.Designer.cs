@@ -36,6 +36,7 @@
             this.nudSmoothness = new System.Windows.Forms.NumericUpDown();
             this.nudWater = new System.Windows.Forms.NumericUpDown();
             this.lblWater = new System.Windows.Forms.Label();
+            this.tbOutput = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.nudSmoothness)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudWater)).BeginInit();
             this.SuspendLayout();
@@ -47,7 +48,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.pMap.Location = new System.Drawing.Point(109, 0);
             this.pMap.Name = "pMap";
-            this.pMap.Size = new System.Drawing.Size(691, 451);
+            this.pMap.Size = new System.Drawing.Size(691, 418);
             this.pMap.TabIndex = 0;
             this.pMap.Paint += new System.Windows.Forms.PaintEventHandler(this.pMap_Paint);
             // 
@@ -135,11 +136,21 @@
             this.lblWater.TabIndex = 6;
             this.lblWater.Text = "Water Level:";
             // 
+            // tbOutput
+            // 
+            this.tbOutput.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.tbOutput.Location = new System.Drawing.Point(109, 424);
+            this.tbOutput.Name = "tbOutput";
+            this.tbOutput.Size = new System.Drawing.Size(691, 20);
+            this.tbOutput.TabIndex = 8;
+            // 
             // FormMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.tbOutput);
             this.Controls.Add(this.nudWater);
             this.Controls.Add(this.lblWater);
             this.Controls.Add(this.nudSmoothness);
@@ -169,6 +180,7 @@
         private System.Windows.Forms.NumericUpDown nudSmoothness;
         private System.Windows.Forms.NumericUpDown nudWater;
         private System.Windows.Forms.Label lblWater;
+        private System.Windows.Forms.TextBox tbOutput;
     }
 }
 

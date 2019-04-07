@@ -9,40 +9,50 @@ namespace MapGenerator
         public int X;
         public int Y;
         public bool IsSample;
-        private int _Elevation;
-        public int Elevation
+        private double _Elevation;
+        public double Elevation
         {
             get { return _Elevation; }
             set
             {
                 _Elevation = value;
-                SetBrushByElevation();
+                //SetBrushByElevation();
             }
         }
 
-        private void SetBrushByElevation()
+        public void SetBrushByElevation()
         {
             // grey
             //int v = (int)(Elevation * 255 / ParentMap.maxElevation);
+            //int v = (int)(Elevation * 255); // assume value to be between 0 and 1
             //Color c = Color.FromArgb(v, v, v);
             //BrushColor = new SolidBrush(c);
 
-            // land vs water
-            if (Elevation < ParentMap.WaterElevation)
+            double actualElevation = (Elevation * ParentMap.maxElevation);
+
+            // below water
+            if (actualElevation < ParentMap.WaterElevation)
             {
                 // at 0 elevation: 0,0,255
                 // at waterElevation: 0,100,255
 
-                int v = (int)(Elevation * 100 / ParentMap.WaterElevation);
+                //int v = (int)(Elevation * 100 / ParentMap.WaterElevation);
+                int v = (int)(Elevation * 100);
                 Color c = Color.FromArgb(0, v, 255);
                 BrushColor = new SolidBrush(c);
             }
-            else
+            // within 10% of water elevation
+            else if(actualElevation < (ParentMap.WaterElevation * 1.1))
+            {
+                BrushColor = new SolidBrush(Color.Tan);
+            }
+            else // above water
             {
                 // at waterElevation: 0,140,0
                 // at maxElevation: 255,255,255
                 // green gradient
-                int v = (int)(Elevation * 140 / ParentMap.maxElevation);
+                //int v = (int)(Elevation * 140 / ParentMap.maxElevation);
+                int v = (int)(Elevation * 140);
                 Color c = Color.FromArgb(v, (Math.Max(((255 - v) / 2) + v, 140)), v);
                 BrushColor = new SolidBrush(c);
             }
@@ -63,14 +73,14 @@ namespace MapGenerator
         internal void PaintCell(Graphics g)
         {
             // capture if this is a sample pixel, and overwrite the dynamic color for a tracer color - for testing only
-            //if(this.IsSample)
-            //{
-            //    g.FillRectangle(TracerBrushColor, ThisRect);
-            //}
-            //else
-            //{
+            if (this.IsSample)
+            {
+                g.FillRectangle(TracerBrushColor, ThisRect);
+            }
+            else
+            {
                 g.FillRectangle(BrushColor, ThisRect);
-            //}
+            }
         }
     }
 }

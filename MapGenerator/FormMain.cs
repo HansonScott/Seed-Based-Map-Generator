@@ -5,6 +5,7 @@ using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -36,6 +37,8 @@ namespace MapGenerator
 
         private void btnGenerate_Click(object sender, EventArgs e)
         {
+            Cursor.Current = Cursors.WaitCursor;
+            Output("Generating map...");
             int seed = GetSeedFromTextBox();
             CurrentMap = new Map(seed, pMap.ClientRectangle);
 
@@ -45,7 +48,10 @@ namespace MapGenerator
 
             CurrentMap.GenerateMap();
 
+            Output("Generating map done, drawing...");
             this.pMap.Refresh();
+            Output("Drawing map done");
+            Cursor.Current = Cursors.Default;
         }
 
         private int GetSeedFromTextBox()
@@ -59,6 +65,12 @@ namespace MapGenerator
                 tbSeed.Text = result.ToString();
             }
             return result;
+        }
+        private void Output(string msg)
+        {
+            tbOutput.Text = msg;
+            tbOutput.Refresh();
+            Thread.Sleep(10);
         }
     }
 }
