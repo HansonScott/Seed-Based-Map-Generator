@@ -9,6 +9,45 @@ namespace MapGenerator
 {
     public class Map
     {
+        #region Custom Logging Events
+        public delegate void LoggingHandler(object sender, MapLoggingEventArgs e);
+        public event LoggingHandler OnLog;
+
+        internal void RaiseLog(string message)
+        {
+            RaiseLog(new MapLog(message));
+        }
+        internal void RaiseLog(MapLog log)
+        {
+            // using this inline vs checking for null is more thread safe
+            OnLog?.Invoke(this, new MapLoggingEventArgs(log));
+        }
+        public class MapLog
+        {
+            public string Message;
+            public System.Diagnostics.TraceLevel Severity;
+            public DateTime When;
+
+            public MapLog(string Message) : this(Message, System.Diagnostics.TraceLevel.Verbose) { }
+            public MapLog(string Message, System.Diagnostics.TraceLevel Severity) : this(Message, Severity, DateTime.Now) { }
+            public MapLog(string Message, System.Diagnostics.TraceLevel Severity, DateTime When)
+            {
+                this.Message = Message;
+                this.Severity = Severity;
+                this.When = When;
+            }
+        }
+        public class MapLoggingEventArgs : EventArgs
+        {
+            public MapLog Log;
+
+            public MapLoggingEventArgs(MapLog log)
+            {
+                this.Log = log;
+            }
+        }
+        #endregion
+
         private int seed;
         private Rectangle size;
 
@@ -69,29 +108,45 @@ namespace MapGenerator
 
         public void GenerateMap()
         {
-            BuildMapDetails();
-        }
-
-        private void BuildMapDetails()
-        {
+            RaiseLog("Generating map...");
             SetElevation();
         }
 
         private void SetElevation()
         {
+            // before we reset the elevations, make sure we clear the resulting brushes
+            Cell.ClearElevationBrushes();
+
             Random eRand = RandLvl2[(int)DetailedRandomizer.ElevationRand];
 
             // learned that doing it multiple times is the right way, to round out the edges using different granularity
             Cell[][] Cells1 = null;
-            if (AddSmooth01) { Cells1 = ApplyPseudoPerlinSmoothing(Cells, SmoothnessFactor, Amp01); }
+            if (AddSmooth01)
+            {
+                RaiseLog("Setting initial elevation...");
+                Cells1 = ApplyPseudoPerlinSmoothing(Cells, SmoothnessFactor, Amp01);
+            }
             Cell[][] Cells2 = null;
-            if (AddSmooth02) { Cells2 = ApplyPseudoPerlinSmoothing(Cells, (SmoothnessFactor * SmoothnessFactor02), Amp02); }
+            if (AddSmooth02)
+            {
+                RaiseLog("Adjusting elevation, level 2...");
+                Cells2 = ApplyPseudoPerlinSmoothing(Cells, (SmoothnessFactor * SmoothnessFactor02), Amp02);
+            }
             Cell[][] Cells3 = null;
-            if (AddSmooth03) { Cells3 = ApplyPseudoPerlinSmoothing(Cells, (SmoothnessFactor * SmoothnessFactor03), Amp03); }
+            if (AddSmooth03)
+            {
+                RaiseLog("Adjusting elevation, level 3...");
+                Cells3 = ApplyPseudoPerlinSmoothing(Cells, (SmoothnessFactor * SmoothnessFactor03), Amp03);
+            }
             Cell[][] Cells4 = null;
-            if (AddSmooth04) { Cells4 = ApplyPseudoPerlinSmoothing(Cells, (SmoothnessFactor * SmoothnessFactor04), Amp04); }
+            if (AddSmooth04)
+            {
+                RaiseLog("Adjusting elevation, level 4...");
+                Cells4 = ApplyPseudoPerlinSmoothing(Cells, (SmoothnessFactor * SmoothnessFactor04), Amp04);
+            }
 
             // now add them all together.
+            RaiseLog("Adjusting elevation, combining all adjustments...");
             float result = 0;
             List<double> vals = new List<double>();
             for (int x = 0; x < Cells.Length; x++)
@@ -119,7 +174,7 @@ namespace MapGenerator
                     Cells[x][y].SetBrushByElevation();
                 }
             }
-
+            RaiseLog("Done with elevation.");
         }
 
         private Cell[][] ApplyPseudoPerlinSmoothing(Cell[][] Cells, float granularity, float amplitude)

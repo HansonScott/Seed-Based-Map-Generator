@@ -8,6 +8,7 @@ namespace MapGenerator
     {
         #region Static Resources
         private static Dictionary<float, SolidBrush> ElevationBrushes;
+        public static void ClearElevationBrushes() { ElevationBrushes?.Clear(); }
         #endregion
 
         #region Fields
@@ -50,9 +51,9 @@ namespace MapGenerator
                 ElevationBrushes = new Dictionary<float, SolidBrush>();
             }
 
-            if(ElevationBrushes.ContainsKey(Elevation))
+            if(ElevationBrushes.ContainsKey((float)Math.Round((decimal)Elevation, 3)))
             {
-                this.BrushColor = ElevationBrushes[Elevation];
+                this.BrushColor = ElevationBrushes[(float)Math.Round((decimal)Elevation, 3)];
                 return;
             }
             else
@@ -92,7 +93,7 @@ namespace MapGenerator
                     BrushColor = new SolidBrush(c);
                 }
 
-                ElevationBrushes.Add(Elevation, BrushColor);
+                ElevationBrushes.Add((float)Math.Round((decimal)Elevation, 3), BrushColor);
             } // end else, not in static collection
         }
         internal void PaintCell(Graphics g)

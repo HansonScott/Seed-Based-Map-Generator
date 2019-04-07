@@ -47,6 +47,8 @@ namespace MapGenerator
             // apply any parameters before generating...
             ApplySettings(CurrentMap, Settings);
 
+            CurrentMap.OnLog += CurrentMap_OnLog;
+
             CurrentMap.GenerateMap();
 
             Output("Generating map done, drawing...");
@@ -55,8 +57,14 @@ namespace MapGenerator
             Cursor.Current = Cursors.Default;
         }
 
+        private void CurrentMap_OnLog(object sender, Map.MapLoggingEventArgs e)
+        {
+            Output(e.Log.Message);
+        }
+
         private void ApplySettings(Map m, MapSettings s)
         {
+            #region Elevation
             m.WaterElevation = s.WaterLevel;
 
             m.SmoothnessFactor = s.Smoothness;
@@ -74,7 +82,7 @@ namespace MapGenerator
             m.Amp02 = s.Amp02;
             m.Amp03 = s.Amp03;
             m.Amp04 = s.Amp04;
-
+            #endregion
 
         }
 
