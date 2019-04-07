@@ -24,10 +24,12 @@ namespace MapGenerator
         #endregion
 
         public Map CurrentMap;
-
+        public MapSettings Settings;
         public FormMain()
         {
             InitializeComponent();
+
+            Settings = new MapSettings();
         }
 
         private void pMap_Paint(object sender, PaintEventArgs e)
@@ -43,8 +45,7 @@ namespace MapGenerator
             CurrentMap = new Map(seed, pMap.ClientRectangle);
 
             // apply any parameters before generating...
-            CurrentMap.SmoothnessFactor = (double)nudSmoothness.Value;
-            CurrentMap.WaterElevation = (int)nudWater.Value;
+            ApplySettings(CurrentMap, Settings);
 
             CurrentMap.GenerateMap();
 
@@ -52,6 +53,29 @@ namespace MapGenerator
             this.pMap.Refresh();
             Output("Drawing map done");
             Cursor.Current = Cursors.Default;
+        }
+
+        private void ApplySettings(Map m, MapSettings s)
+        {
+            m.WaterElevation = s.WaterLevel;
+
+            m.SmoothnessFactor = s.Smoothness;
+            m.AddSmooth01 = true; // hard coded, must have at least 1 smoothing
+            m.AddSmooth02 = s.AddSmooth02;
+            m.AddSmooth03 = s.AddSmooth03;
+            m.AddSmooth04 = s.AddSmooth04;
+
+            m.SmoothnessFactor = s.SmoothnessFactor;
+            m.SmoothnessFactor02 = s.SmoothnessFactor02;
+            m.SmoothnessFactor03 = s.SmoothnessFactor03;
+            m.SmoothnessFactor04 = s.SmoothnessFactor04;
+
+            m.Amp01 = s.Amp01;
+            m.Amp02 = s.Amp02;
+            m.Amp03 = s.Amp03;
+            m.Amp04 = s.Amp04;
+
+
         }
 
         private int GetSeedFromTextBox()
@@ -71,6 +95,11 @@ namespace MapGenerator
             tbOutput.Text = msg;
             tbOutput.Refresh();
             Thread.Sleep(10);
+        }
+
+        private void btnSettings_Click(object sender, EventArgs e)
+        {
+            Settings.Show(this);
         }
     }
 }

@@ -32,13 +32,8 @@
             this.btnGenerate = new System.Windows.Forms.Button();
             this.lblSeed = new System.Windows.Forms.Label();
             this.tbSeed = new System.Windows.Forms.TextBox();
-            this.lblSmoothness = new System.Windows.Forms.Label();
-            this.nudSmoothness = new System.Windows.Forms.NumericUpDown();
-            this.nudWater = new System.Windows.Forms.NumericUpDown();
-            this.lblWater = new System.Windows.Forms.Label();
             this.tbOutput = new System.Windows.Forms.TextBox();
-            ((System.ComponentModel.ISupportInitialize)(this.nudSmoothness)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.nudWater)).BeginInit();
+            this.btnSettings = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // pMap
@@ -78,64 +73,6 @@
             this.tbSeed.Size = new System.Drawing.Size(100, 20);
             this.tbSeed.TabIndex = 3;
             // 
-            // lblSmoothness
-            // 
-            this.lblSmoothness.AutoSize = true;
-            this.lblSmoothness.Location = new System.Drawing.Point(6, 119);
-            this.lblSmoothness.Name = "lblSmoothness";
-            this.lblSmoothness.Size = new System.Drawing.Size(37, 13);
-            this.lblSmoothness.TabIndex = 4;
-            this.lblSmoothness.Text = "Zoom:";
-            // 
-            // nudSmoothness
-            // 
-            this.nudSmoothness.DecimalPlaces = 1;
-            this.nudSmoothness.Increment = new decimal(new int[] {
-            1,
-            0,
-            0,
-            65536});
-            this.nudSmoothness.Location = new System.Drawing.Point(3, 135);
-            this.nudSmoothness.Name = "nudSmoothness";
-            this.nudSmoothness.Size = new System.Drawing.Size(100, 20);
-            this.nudSmoothness.TabIndex = 5;
-            this.nudSmoothness.Value = new decimal(new int[] {
-            40,
-            0,
-            0,
-            0});
-            // 
-            // nudWater
-            // 
-            this.nudWater.Increment = new decimal(new int[] {
-            50,
-            0,
-            0,
-            0});
-            this.nudWater.Location = new System.Drawing.Point(3, 186);
-            this.nudWater.Maximum = new decimal(new int[] {
-            1000,
-            0,
-            0,
-            0});
-            this.nudWater.Name = "nudWater";
-            this.nudWater.Size = new System.Drawing.Size(100, 20);
-            this.nudWater.TabIndex = 7;
-            this.nudWater.Value = new decimal(new int[] {
-            500,
-            0,
-            0,
-            0});
-            // 
-            // lblWater
-            // 
-            this.lblWater.AutoSize = true;
-            this.lblWater.Location = new System.Drawing.Point(12, 170);
-            this.lblWater.Name = "lblWater";
-            this.lblWater.Size = new System.Drawing.Size(68, 13);
-            this.lblWater.TabIndex = 6;
-            this.lblWater.Text = "Water Level:";
-            // 
             // tbOutput
             // 
             this.tbOutput.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
@@ -145,16 +82,23 @@
             this.tbOutput.Size = new System.Drawing.Size(691, 20);
             this.tbOutput.TabIndex = 8;
             // 
+            // btnSettings
+            // 
+            this.btnSettings.Location = new System.Drawing.Point(5, 222);
+            this.btnSettings.Name = "btnSettings";
+            this.btnSettings.Size = new System.Drawing.Size(98, 23);
+            this.btnSettings.TabIndex = 9;
+            this.btnSettings.Text = "Settings";
+            this.btnSettings.UseVisualStyleBackColor = true;
+            this.btnSettings.Click += new System.EventHandler(this.btnSettings_Click);
+            // 
             // FormMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.btnSettings);
             this.Controls.Add(this.tbOutput);
-            this.Controls.Add(this.nudWater);
-            this.Controls.Add(this.lblWater);
-            this.Controls.Add(this.nudSmoothness);
-            this.Controls.Add(this.lblSmoothness);
             this.Controls.Add(this.tbSeed);
             this.Controls.Add(this.lblSeed);
             this.Controls.Add(this.btnGenerate);
@@ -163,8 +107,6 @@
             this.ShowIcon = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Random Map Generator";
-            ((System.ComponentModel.ISupportInitialize)(this.nudSmoothness)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.nudWater)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -176,11 +118,8 @@
         private System.Windows.Forms.Button btnGenerate;
         private System.Windows.Forms.Label lblSeed;
         private System.Windows.Forms.TextBox tbSeed;
-        private System.Windows.Forms.Label lblSmoothness;
-        private System.Windows.Forms.NumericUpDown nudSmoothness;
-        private System.Windows.Forms.NumericUpDown nudWater;
-        private System.Windows.Forms.Label lblWater;
         private System.Windows.Forms.TextBox tbOutput;
+        private System.Windows.Forms.Button btnSettings;
     }
 }
 

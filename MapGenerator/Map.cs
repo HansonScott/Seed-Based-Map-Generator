@@ -26,8 +26,9 @@ namespace MapGenerator
         public int maxElevation = 1000;
         public int WaterElevation = 500;
 
-        public double SmoothnessFactor = 0.5;
-
+        public bool AddSmooth01, AddSmooth02, AddSmooth03, AddSmooth04;
+        public double SmoothnessFactor, SmoothnessFactor02, SmoothnessFactor03, SmoothnessFactor04;
+        public double Amp01, Amp02, Amp03, Amp04;
         #endregion
 
         #region Constructor and Setup
@@ -81,10 +82,14 @@ namespace MapGenerator
             Random eRand = RandLvl2[(int)DetailedRandomizer.ElevationRand];
 
             // learned that doing it multiple times is the right way, to round out the edges using different granularity
-            Cell[][] Cells1 = ApplyPseudoPerlinSmoothing(Cells, SmoothnessFactor, 1.0);
-            Cell[][] Cells2 = ApplyPseudoPerlinSmoothing(Cells, (SmoothnessFactor * 0.8), 0.7);
-            Cell[][] Cells3 = ApplyPseudoPerlinSmoothing(Cells, (SmoothnessFactor * 0.5), 0.4);
-            //Cell[][] Cells4 = ApplyPseudoPerlinSmoothing(Cells, (SmoothnessFactor * 0.15), 0.1);
+            Cell[][] Cells1 = null;
+            if (AddSmooth01) { Cells1 = ApplyPseudoPerlinSmoothing(Cells, SmoothnessFactor, Amp01); }
+            Cell[][] Cells2 = null;
+            if (AddSmooth02) { Cells2 = ApplyPseudoPerlinSmoothing(Cells, (SmoothnessFactor * SmoothnessFactor02), Amp02); }
+            Cell[][] Cells3 = null;
+            if (AddSmooth03) { Cells3 = ApplyPseudoPerlinSmoothing(Cells, (SmoothnessFactor * SmoothnessFactor03), Amp03); }
+            Cell[][] Cells4 = null;
+            if (AddSmooth04) { Cells4 = ApplyPseudoPerlinSmoothing(Cells, (SmoothnessFactor * SmoothnessFactor04), Amp04); }
 
             // now add them all together.
             double result = 0;
@@ -93,14 +98,12 @@ namespace MapGenerator
             {
                 for (int y = 0; y < Cells[x].Length; y++)
                 {
-                    //result = 0.5; // start at the middle
-                    result = Cells1[x][y].Elevation; // start with our first value
+                    result = Cells1[x][y].Elevation; // start with our first random value
 
                     vals.Clear();
-                    //vals.Add(Cells1[x][y].Elevation);
-                    vals.Add(Cells2[x][y].Elevation);
-                    vals.Add(Cells3[x][y].Elevation);
-                    //vals.Add(Cells4[x][y].Elevation);
+                    if (AddSmooth02) { vals.Add(Cells2[x][y].Elevation); }
+                    if (AddSmooth03) { vals.Add(Cells3[x][y].Elevation); }
+                    if (AddSmooth04) { vals.Add(Cells4[x][y].Elevation); }
 
                     foreach (double v in vals)
                     {
