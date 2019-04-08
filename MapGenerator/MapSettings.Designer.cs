@@ -44,6 +44,8 @@
             this.nudAmp02 = new System.Windows.Forms.NumericUpDown();
             this.lblGrain = new System.Windows.Forms.Label();
             this.nudGrain02 = new System.Windows.Forms.NumericUpDown();
+            this.lblContinent = new System.Windows.Forms.Label();
+            this.nudContinentBias = new System.Windows.Forms.NumericUpDown();
             ((System.ComponentModel.ISupportInitialize)(this.nudWater)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudSmoothness)).BeginInit();
             this.gbElevation.SuspendLayout();
@@ -53,6 +55,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.nudGrain03)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudAmp02)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudGrain02)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudContinentBias)).BeginInit();
             this.SuspendLayout();
             // 
             // nudWater
@@ -115,6 +118,8 @@
             // 
             // gbElevation
             // 
+            this.gbElevation.Controls.Add(this.lblContinent);
+            this.gbElevation.Controls.Add(this.nudContinentBias);
             this.gbElevation.Controls.Add(this.cbAdd04);
             this.gbElevation.Controls.Add(this.cbAdd03);
             this.gbElevation.Controls.Add(this.cbAdd02);
@@ -128,7 +133,7 @@
             this.gbElevation.Controls.Add(this.nudGrain02);
             this.gbElevation.Location = new System.Drawing.Point(127, 12);
             this.gbElevation.Name = "gbElevation";
-            this.gbElevation.Size = new System.Drawing.Size(341, 160);
+            this.gbElevation.Size = new System.Drawing.Size(341, 169);
             this.gbElevation.TabIndex = 12;
             this.gbElevation.TabStop = false;
             this.gbElevation.Text = "Elevation";
@@ -138,7 +143,7 @@
             this.cbAdd04.AutoSize = true;
             this.cbAdd04.Checked = true;
             this.cbAdd04.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.cbAdd04.Location = new System.Drawing.Point(6, 103);
+            this.cbAdd04.Location = new System.Drawing.Point(6, 88);
             this.cbAdd04.Name = "cbAdd04";
             this.cbAdd04.Size = new System.Drawing.Size(45, 17);
             this.cbAdd04.TabIndex = 23;
@@ -150,7 +155,7 @@
             this.cbAdd03.AutoSize = true;
             this.cbAdd03.Checked = true;
             this.cbAdd03.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.cbAdd03.Location = new System.Drawing.Point(6, 78);
+            this.cbAdd03.Location = new System.Drawing.Point(6, 63);
             this.cbAdd03.Name = "cbAdd03";
             this.cbAdd03.Size = new System.Drawing.Size(45, 17);
             this.cbAdd03.TabIndex = 22;
@@ -162,7 +167,7 @@
             this.cbAdd02.AutoSize = true;
             this.cbAdd02.Checked = true;
             this.cbAdd02.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.cbAdd02.Location = new System.Drawing.Point(6, 51);
+            this.cbAdd02.Location = new System.Drawing.Point(6, 36);
             this.cbAdd02.Name = "cbAdd02";
             this.cbAdd02.Size = new System.Drawing.Size(45, 17);
             this.cbAdd02.TabIndex = 21;
@@ -177,7 +182,7 @@
             0,
             0,
             131072});
-            this.nudAmp04.Location = new System.Drawing.Point(233, 103);
+            this.nudAmp04.Location = new System.Drawing.Point(233, 88);
             this.nudAmp04.Maximum = new decimal(new int[] {
             10,
             0,
@@ -200,7 +205,7 @@
             0,
             0,
             131072});
-            this.nudGrain04.Location = new System.Drawing.Point(97, 103);
+            this.nudGrain04.Location = new System.Drawing.Point(97, 88);
             this.nudGrain04.Maximum = new decimal(new int[] {
             10,
             0,
@@ -223,7 +228,7 @@
             0,
             0,
             131072});
-            this.nudAmp03.Location = new System.Drawing.Point(233, 77);
+            this.nudAmp03.Location = new System.Drawing.Point(233, 62);
             this.nudAmp03.Maximum = new decimal(new int[] {
             10,
             0,
@@ -246,7 +251,7 @@
             0,
             0,
             131072});
-            this.nudGrain03.Location = new System.Drawing.Point(97, 77);
+            this.nudGrain03.Location = new System.Drawing.Point(97, 62);
             this.nudGrain03.Maximum = new decimal(new int[] {
             10,
             0,
@@ -264,7 +269,7 @@
             // lblAmplitude
             // 
             this.lblAmplitude.AutoSize = true;
-            this.lblAmplitude.Location = new System.Drawing.Point(230, 35);
+            this.lblAmplitude.Location = new System.Drawing.Point(230, 20);
             this.lblAmplitude.Name = "lblAmplitude";
             this.lblAmplitude.Size = new System.Drawing.Size(70, 13);
             this.lblAmplitude.TabIndex = 16;
@@ -278,7 +283,7 @@
             0,
             0,
             131072});
-            this.nudAmp02.Location = new System.Drawing.Point(233, 51);
+            this.nudAmp02.Location = new System.Drawing.Point(233, 36);
             this.nudAmp02.Maximum = new decimal(new int[] {
             10,
             0,
@@ -296,7 +301,7 @@
             // lblGrain
             // 
             this.lblGrain.AutoSize = true;
-            this.lblGrain.Location = new System.Drawing.Point(94, 35);
+            this.lblGrain.Location = new System.Drawing.Point(94, 20);
             this.lblGrain.Name = "lblGrain";
             this.lblGrain.Size = new System.Drawing.Size(56, 13);
             this.lblGrain.TabIndex = 14;
@@ -310,7 +315,7 @@
             0,
             0,
             131072});
-            this.nudGrain02.Location = new System.Drawing.Point(97, 51);
+            this.nudGrain02.Location = new System.Drawing.Point(97, 36);
             this.nudGrain02.Maximum = new decimal(new int[] {
             10,
             0,
@@ -324,6 +329,33 @@
             0,
             0,
             65536});
+            // 
+            // lblContinent
+            // 
+            this.lblContinent.AutoSize = true;
+            this.lblContinent.Location = new System.Drawing.Point(6, 128);
+            this.lblContinent.Name = "lblContinent";
+            this.lblContinent.Size = new System.Drawing.Size(75, 13);
+            this.lblContinent.TabIndex = 25;
+            this.lblContinent.Text = "Continent Bias";
+            // 
+            // nudContinentBias
+            // 
+            this.nudContinentBias.DecimalPlaces = 5;
+            this.nudContinentBias.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            131072});
+            this.nudContinentBias.Location = new System.Drawing.Point(97, 126);
+            this.nudContinentBias.Maximum = new decimal(new int[] {
+            10,
+            0,
+            0,
+            65536});
+            this.nudContinentBias.Name = "nudContinentBias";
+            this.nudContinentBias.Size = new System.Drawing.Size(74, 20);
+            this.nudContinentBias.TabIndex = 24;
             // 
             // MapSettings
             // 
@@ -352,6 +384,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.nudGrain03)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudAmp02)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudGrain02)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudContinentBias)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -375,5 +408,7 @@
         private System.Windows.Forms.NumericUpDown nudGrain03;
         private System.Windows.Forms.CheckBox cbAdd04;
         private System.Windows.Forms.CheckBox cbAdd03;
+        private System.Windows.Forms.Label lblContinent;
+        private System.Windows.Forms.NumericUpDown nudContinentBias;
     }
 }

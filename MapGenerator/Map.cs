@@ -68,6 +68,7 @@ namespace MapGenerator
         public bool AddSmooth01, AddSmooth02, AddSmooth03, AddSmooth04;
         public float SmoothnessFactor, SmoothnessFactor02, SmoothnessFactor03, SmoothnessFactor04;
         public float Amp01, Amp02, Amp03, Amp04;
+        public float ContinentBias;
         #endregion
 
         #region Constructor and Setup
@@ -145,6 +146,8 @@ namespace MapGenerator
                 Cells4 = ApplyPseudoPerlinSmoothing(Cells, (SmoothnessFactor * SmoothnessFactor04), Amp04);
             }
 
+            float actualMaxElevation = 0f;
+
             // now add them all together.
             RaiseLog("Adjusting elevation, combining all adjustments...");
             float result = 0;
@@ -170,11 +173,58 @@ namespace MapGenerator
 
                     Cells[x][y].Elevation = result;
 
-                    // now that we're all done calculating, set up for drawing.
+                    // store this for the continental bias.
+                    actualMaxElevation = Math.Max(actualMaxElevation, result);
+                }
+            }
+
+            if(ContinentBias > 0.0f)
+            {
+                RaiseLog("Adjusting for continental bias.");
+                float Xm = Cells.Length / 2;
+                float Ym = Cells[0].Length / 2;
+                for (int x = 0; x < Cells.Length; x++)
+                {
+                    for (int y = 0; y < Cells[x].Length; y++)
+                    {
+                        float e = Cells[x][y].Elevation;
+
+                        // a2 + b2 = c2
+                        float distFromCenter = (float)(Math.Sqrt((Xm - x) * (Xm - x) + (Ym - y) * (Ym - y))); // calculate distance from center
+                        float distFromCenterPerc = distFromCenter / (float)(Math.Sqrt((Xm * Xm) + (Ym * Ym)));
+
+                        // in this case:
+                        // x0 = is the height at the middle
+                        // x1 = is the height at the edge
+                        // t  = is the percentage (float) of the distance between the two
+
+                        // by default, it would be 0.5 aross the map.
+                        // so the bias pulls the outside down, and the middle up.
+
+                        e = this.InterpolatePoly(e - (ContinentBias / 2), e + (ContinentBias / 2), (1-distFromCenterPerc));
+                        e = Math.Min(Math.Max(e, 0), actualMaxElevation); // keep within existing limits
+
+                        Cells[x][y].Elevation = e;
+                    }
+                }
+            }
+
+            // now that we're all done calculating, set up for drawing.
+            RaiseLog("Setting paint brush by elevation.");
+            for (int x = 0; x < Cells.Length; x++)
+            {
+                for (int y = 0; y < Cells[x].Length; y++)
+                {
                     Cells[x][y].SetBrushByElevation();
                 }
             }
+
             RaiseLog("Done with elevation.");
+        }
+
+        internal string[] GetInfoAt(int x, int y)
+        {
+            return Cells[x][y].GetInfo();
         }
 
         private Cell[][] ApplyPseudoPerlinSmoothing(Cell[][] Cells, float granularity, float amplitude)
@@ -268,7 +318,7 @@ namespace MapGenerator
             // then apply the weight to the values X0, and X1
             float diff = x1 - x0;
 
-            float partialDiff = diff * y; // determine how far we shoudl move along the difference.
+            float partialDiff = diff * y; // determine how far we should move along the difference.
             
             //and lastly, adjust the partial diff for where we started.
             float adjustedPartialDiff = partialDiff + x0;

@@ -74,7 +74,8 @@ namespace MapGenerator
 
                     //int v = (int)(Elevation * 100 / ParentMap.WaterElevation);
                     int v = (int)(Elevation * 100);
-                    Color c = Color.FromArgb(0, v, 255);
+                    int b = (int)((actualElevation / ParentMap.WaterElevation) * 125) + 130;
+                    Color c = Color.FromArgb(0, Math.Max(Math.Min(v, 255), 0), b);
                     BrushColor = new SolidBrush(c);
                 }
                 // within 10% of water elevation
@@ -84,12 +85,15 @@ namespace MapGenerator
                 }
                 else // above water
                 {
-                    // at waterElevation: 0,140,0
-                    // at maxElevation: 255,255,255
+                    // at waterElevation: 0,140,0 // light green
+                    // at maxElevation: 255,255,255 // white
                     // green gradient
                     //int v = (int)(Elevation * 140 / ParentMap.maxElevation);
                     int v = (int)(Elevation * 140);
-                    Color c = Color.FromArgb(v, (Math.Max(((255 - v) / 2) + v, 140)), v);
+                    Color c = Color.FromArgb(v,
+                                            (Math.Max(((255 - v) / 2) + v, 140)), 
+                                            v);
+
                     BrushColor = new SolidBrush(c);
                 }
 
@@ -107,6 +111,16 @@ namespace MapGenerator
             //{
                 g.FillRectangle(BrushColor, ThisRect);
             //}
+        }
+
+        internal string[] GetInfo()
+        {
+            List<string> info = new List<string>();
+
+            // add all interesting info
+            info.Add($"Elevation: {Elevation}");
+
+            return info.ToArray();
         }
         #endregion
 

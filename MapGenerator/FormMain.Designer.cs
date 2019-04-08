@@ -34,6 +34,7 @@
             this.tbSeed = new System.Windows.Forms.TextBox();
             this.tbOutput = new System.Windows.Forms.TextBox();
             this.btnSettings = new System.Windows.Forms.Button();
+            this.tbInfo = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
             // 
             // pMap
@@ -41,11 +42,13 @@
             this.pMap.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.pMap.Cursor = System.Windows.Forms.Cursors.Cross;
             this.pMap.Location = new System.Drawing.Point(109, 0);
             this.pMap.Name = "pMap";
             this.pMap.Size = new System.Drawing.Size(691, 418);
             this.pMap.TabIndex = 0;
             this.pMap.Paint += new System.Windows.Forms.PaintEventHandler(this.pMap_Paint);
+            this.pMap.MouseMove += new System.Windows.Forms.MouseEventHandler(this.pMap_MouseMove);
             // 
             // btnGenerate
             // 
@@ -92,11 +95,22 @@
             this.btnSettings.UseVisualStyleBackColor = true;
             this.btnSettings.Click += new System.EventHandler(this.btnSettings_Click);
             // 
+            // tbInfo
+            // 
+            this.tbInfo.BackColor = System.Drawing.SystemColors.Control;
+            this.tbInfo.Enabled = false;
+            this.tbInfo.Location = new System.Drawing.Point(5, 273);
+            this.tbInfo.Multiline = true;
+            this.tbInfo.Name = "tbInfo";
+            this.tbInfo.Size = new System.Drawing.Size(100, 171);
+            this.tbInfo.TabIndex = 10;
+            // 
             // FormMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.tbInfo);
             this.Controls.Add(this.btnSettings);
             this.Controls.Add(this.tbOutput);
             this.Controls.Add(this.tbSeed);
@@ -120,6 +134,7 @@
         private System.Windows.Forms.TextBox tbSeed;
         private System.Windows.Forms.TextBox tbOutput;
         private System.Windows.Forms.Button btnSettings;
+        private System.Windows.Forms.TextBox tbInfo;
     }
 }
 

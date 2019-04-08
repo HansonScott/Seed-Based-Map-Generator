@@ -82,6 +82,8 @@ namespace MapGenerator
             m.Amp02 = s.Amp02;
             m.Amp03 = s.Amp03;
             m.Amp04 = s.Amp04;
+
+            m.ContinentBias = s.ContinentBias;
             #endregion
 
         }
@@ -108,6 +110,37 @@ namespace MapGenerator
         private void btnSettings_Click(object sender, EventArgs e)
         {
             Settings.Show(this);
+        }
+
+        private void pMap_MouseEnter(object sender, EventArgs e)
+        {
+            Cursor.Current = Cursors.Cross;
+        }
+
+        private void pMap_MouseLeave(object sender, EventArgs e)
+        {
+            Cursor.Current = Cursors.Default;
+        }
+
+        private void pMap_MouseMove(object sender, MouseEventArgs e)
+        {
+            if(CurrentMap == null) { return; }
+
+            string[] info = CurrentMap.GetInfoAt(e.X, e.Y);
+            string result = string.Empty;
+            foreach(string i in info)
+            {
+                if(result.Length > 0)
+                {
+                    result += Environment.NewLine;
+                }
+
+                result += i;
+            }
+
+            tbInfo.Text = result;
+            tbInfo.Refresh();
+            Thread.Sleep(10);
         }
     }
 }

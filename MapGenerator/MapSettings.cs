@@ -40,6 +40,8 @@ namespace MapGenerator
         public float Amp03 { get { return (float)nudAmp03.Value; } }
         public float Amp04 { get { return (float)nudAmp04.Value; } }
 
+        public float ContinentBias { get { return (float)nudContinentBias.Value; } }
+
         public MapSettings()
         {
             InitializeComponent();
