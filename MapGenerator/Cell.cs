@@ -17,9 +17,13 @@ namespace MapGenerator
         public int Y;
         public bool IsSample;
         private float _Elevation;
-        public SolidBrush BrushColor;
-        //public SolidBrush TracerBrushColor = new SolidBrush(Color.Blue);
+        public SolidBrush ElevationBrushColor;
+        public SolidBrush RiverBrushColor = new SolidBrush(Color.FromArgb(50, 50, 255));
+        public SolidBrush LakeBrushColor = new SolidBrush(Color.FromArgb(50, 50, 255));
         public RectangleF ThisRect;
+
+        public bool IsRiver;
+        public bool IsLake;
         #endregion
 
         #region Properties
@@ -31,6 +35,8 @@ namespace MapGenerator
                 _Elevation = value;
             }
         }
+
+        public float ActualElevation { get { return (Elevation * ParentMap.maxElevation); } }
         #endregion
 
         #region Constructor and Setup
@@ -53,7 +59,7 @@ namespace MapGenerator
 
             if(ElevationBrushes.ContainsKey((float)Math.Round((decimal)Elevation, 3)))
             {
-                this.BrushColor = ElevationBrushes[(float)Math.Round((decimal)Elevation, 3)];
+                this.ElevationBrushColor = ElevationBrushes[(float)Math.Round((decimal)Elevation, 3)];
                 return;
             }
             else
@@ -64,24 +70,22 @@ namespace MapGenerator
                 //Color c = Color.FromArgb(v, v, v);
                 //BrushColor = new SolidBrush(c);
 
-                double actualElevation = (Elevation * ParentMap.maxElevation);
-
                 // below water
-                if (actualElevation < ParentMap.WaterElevation)
+                if (ActualElevation < ParentMap.WaterElevation)
                 {
                     // at 0 elevation: 0,0,255
                     // at waterElevation: 0,100,255
 
                     //int v = (int)(Elevation * 100 / ParentMap.WaterElevation);
                     int v = (int)(Elevation * 100);
-                    int b = (int)((actualElevation / ParentMap.WaterElevation) * 125) + 130;
+                    int b = (int)((ActualElevation / ParentMap.WaterElevation) * 125) + 130;
                     Color c = Color.FromArgb(0, Math.Max(Math.Min(v, 255), 0), b);
-                    BrushColor = new SolidBrush(c);
+                    ElevationBrushColor = new SolidBrush(c);
                 }
                 // within 10% of water elevation
-                else if (actualElevation < (ParentMap.WaterElevation * 1.1))
+                else if (ActualElevation < (ParentMap.WaterElevation * 1.1))
                 {
-                    BrushColor = new SolidBrush(Color.Tan);
+                    ElevationBrushColor = new SolidBrush(Color.Tan);
                 }
                 else // above water
                 {
@@ -94,23 +98,27 @@ namespace MapGenerator
                                             (Math.Max(((255 - v) / 2) + v, 140)), 
                                             v);
 
-                    BrushColor = new SolidBrush(c);
+                    ElevationBrushColor = new SolidBrush(c);
                 }
 
-                ElevationBrushes.Add((float)Math.Round((decimal)Elevation, 3), BrushColor);
+                ElevationBrushes.Add((float)Math.Round((decimal)Elevation, 3), ElevationBrushColor);
             } // end else, not in static collection
         }
         internal void PaintCell(Graphics g)
         {
             // capture if this is a sample pixel, and overwrite the dynamic color for a tracer color - for testing only
-            //if (this.IsSample)
-            //{
-            //    g.FillRectangle(TracerBrushColor, ThisRect);
-            //}
-            //else
-            //{
-                g.FillRectangle(BrushColor, ThisRect);
-            //}
+            if (this.IsLake)
+            {
+                g.FillRectangle(LakeBrushColor, ThisRect);
+            }
+            else if(this.IsRiver)
+            {
+                g.FillRectangle(RiverBrushColor, ThisRect);
+            }
+            else 
+            {
+                g.FillRectangle(ElevationBrushColor, ThisRect);
+            }
         }
 
         internal string[] GetInfo()
@@ -119,6 +127,10 @@ namespace MapGenerator
 
             // add all interesting info
             info.Add($"Elevation: {Elevation}");
+            if(IsRiver)
+            {
+                info.Add("River");
+            }
 
             return info.ToArray();
         }

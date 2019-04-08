@@ -46,6 +46,11 @@
             this.nudGrain02 = new System.Windows.Forms.NumericUpDown();
             this.lblContinent = new System.Windows.Forms.Label();
             this.nudContinentBias = new System.Windows.Forms.NumericUpDown();
+            this.gbRivers = new System.Windows.Forms.GroupBox();
+            this.lblRivers = new System.Windows.Forms.Label();
+            this.nudRiverBias = new System.Windows.Forms.NumericUpDown();
+            this.nudRiverSourceElevationMin = new System.Windows.Forms.NumericUpDown();
+            this.lblRiverSourceElevationMin = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.nudWater)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudSmoothness)).BeginInit();
             this.gbElevation.SuspendLayout();
@@ -56,6 +61,9 @@
             ((System.ComponentModel.ISupportInitialize)(this.nudAmp02)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudGrain02)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudContinentBias)).BeginInit();
+            this.gbRivers.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudRiverBias)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudRiverSourceElevationMin)).BeginInit();
             this.SuspendLayout();
             // 
             // nudWater
@@ -357,11 +365,88 @@
             this.nudContinentBias.Size = new System.Drawing.Size(74, 20);
             this.nudContinentBias.TabIndex = 24;
             // 
+            // gbRivers
+            // 
+            this.gbRivers.Controls.Add(this.nudRiverSourceElevationMin);
+            this.gbRivers.Controls.Add(this.lblRiverSourceElevationMin);
+            this.gbRivers.Controls.Add(this.nudRiverBias);
+            this.gbRivers.Controls.Add(this.lblRivers);
+            this.gbRivers.Location = new System.Drawing.Point(474, 17);
+            this.gbRivers.Name = "gbRivers";
+            this.gbRivers.Size = new System.Drawing.Size(314, 164);
+            this.gbRivers.TabIndex = 13;
+            this.gbRivers.TabStop = false;
+            this.gbRivers.Text = "Rivers";
+            // 
+            // lblRivers
+            // 
+            this.lblRivers.AutoSize = true;
+            this.lblRivers.Location = new System.Drawing.Point(6, 16);
+            this.lblRivers.Name = "lblRivers";
+            this.lblRivers.Size = new System.Drawing.Size(55, 13);
+            this.lblRivers.TabIndex = 0;
+            this.lblRivers.Text = "River Bias";
+            // 
+            // nudRiverBias
+            // 
+            this.nudRiverBias.DecimalPlaces = 5;
+            this.nudRiverBias.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            131072});
+            this.nudRiverBias.Location = new System.Drawing.Point(67, 13);
+            this.nudRiverBias.Maximum = new decimal(new int[] {
+            10,
+            0,
+            0,
+            65536});
+            this.nudRiverBias.Name = "nudRiverBias";
+            this.nudRiverBias.Size = new System.Drawing.Size(74, 20);
+            this.nudRiverBias.TabIndex = 25;
+            this.nudRiverBias.Value = new decimal(new int[] {
+            9,
+            0,
+            0,
+            65536});
+            // 
+            // nudRiverSourceElevationMin
+            // 
+            this.nudRiverSourceElevationMin.Increment = new decimal(new int[] {
+            50,
+            0,
+            0,
+            0});
+            this.nudRiverSourceElevationMin.Location = new System.Drawing.Point(158, 41);
+            this.nudRiverSourceElevationMin.Maximum = new decimal(new int[] {
+            1000,
+            0,
+            0,
+            0});
+            this.nudRiverSourceElevationMin.Name = "nudRiverSourceElevationMin";
+            this.nudRiverSourceElevationMin.Size = new System.Drawing.Size(100, 20);
+            this.nudRiverSourceElevationMin.TabIndex = 27;
+            this.nudRiverSourceElevationMin.Value = new decimal(new int[] {
+            800,
+            0,
+            0,
+            0});
+            // 
+            // lblRiverSourceElevationMin
+            // 
+            this.lblRiverSourceElevationMin.AutoSize = true;
+            this.lblRiverSourceElevationMin.Location = new System.Drawing.Point(6, 43);
+            this.lblRiverSourceElevationMin.Name = "lblRiverSourceElevationMin";
+            this.lblRiverSourceElevationMin.Size = new System.Drawing.Size(146, 13);
+            this.lblRiverSourceElevationMin.TabIndex = 26;
+            this.lblRiverSourceElevationMin.Text = "Min elevation for river source:";
+            // 
             // MapSettings
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.gbRivers);
             this.Controls.Add(this.gbElevation);
             this.Controls.Add(this.nudWater);
             this.Controls.Add(this.lblWater);
@@ -385,6 +470,10 @@
             ((System.ComponentModel.ISupportInitialize)(this.nudAmp02)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudGrain02)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudContinentBias)).EndInit();
+            this.gbRivers.ResumeLayout(false);
+            this.gbRivers.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudRiverBias)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudRiverSourceElevationMin)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -410,5 +499,10 @@
         private System.Windows.Forms.CheckBox cbAdd03;
         private System.Windows.Forms.Label lblContinent;
         private System.Windows.Forms.NumericUpDown nudContinentBias;
+        private System.Windows.Forms.GroupBox gbRivers;
+        private System.Windows.Forms.NumericUpDown nudRiverBias;
+        private System.Windows.Forms.Label lblRivers;
+        private System.Windows.Forms.NumericUpDown nudRiverSourceElevationMin;
+        private System.Windows.Forms.Label lblRiverSourceElevationMin;
     }
 }

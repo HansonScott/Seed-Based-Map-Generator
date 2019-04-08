@@ -84,6 +84,8 @@ namespace MapGenerator
             m.Amp04 = s.Amp04;
 
             m.ContinentBias = s.ContinentBias;
+            m.RiverBias = s.RiverBias;
+            m.RiverSourceElevationMinimum = s.RiverSourceElevationMin;
             #endregion
 
         }
@@ -102,7 +104,8 @@ namespace MapGenerator
         }
         private void Output(string msg)
         {
-            tbOutput.Text = msg;
+            tbOutput.AppendText(Environment.NewLine);
+            tbOutput.AppendText(msg);
             tbOutput.Refresh();
             Thread.Sleep(10);
         }

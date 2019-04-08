@@ -41,7 +41,8 @@ namespace MapGenerator
         public float Amp04 { get { return (float)nudAmp04.Value; } }
 
         public float ContinentBias { get { return (float)nudContinentBias.Value; } }
-
+        public float RiverBias { get { return (float)nudRiverBias.Value; } }
+        public int RiverSourceElevationMin { get { return (int)nudRiverSourceElevationMin.Value; } }
         public MapSettings()
         {
             InitializeComponent();

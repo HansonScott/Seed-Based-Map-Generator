@@ -45,7 +45,7 @@
             this.pMap.Cursor = System.Windows.Forms.Cursors.Cross;
             this.pMap.Location = new System.Drawing.Point(109, 0);
             this.pMap.Name = "pMap";
-            this.pMap.Size = new System.Drawing.Size(691, 418);
+            this.pMap.Size = new System.Drawing.Size(691, 361);
             this.pMap.TabIndex = 0;
             this.pMap.Paint += new System.Windows.Forms.PaintEventHandler(this.pMap_Paint);
             this.pMap.MouseMove += new System.Windows.Forms.MouseEventHandler(this.pMap_MouseMove);
@@ -80,9 +80,13 @@
             // 
             this.tbOutput.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.tbOutput.Location = new System.Drawing.Point(109, 424);
+            this.tbOutput.BackColor = System.Drawing.Color.Black;
+            this.tbOutput.ForeColor = System.Drawing.Color.White;
+            this.tbOutput.Location = new System.Drawing.Point(109, 367);
+            this.tbOutput.Multiline = true;
             this.tbOutput.Name = "tbOutput";
-            this.tbOutput.Size = new System.Drawing.Size(691, 20);
+            this.tbOutput.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.tbOutput.Size = new System.Drawing.Size(691, 77);
             this.tbOutput.TabIndex = 8;
             // 
             // btnSettings

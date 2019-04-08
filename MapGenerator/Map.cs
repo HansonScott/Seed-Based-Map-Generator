@@ -64,11 +64,13 @@ namespace MapGenerator
         #region Parameters
         public int maxElevation = 1000;
         public int WaterElevation = 500;
+        public int RiverSourceElevationMinimum = 700;
 
         public bool AddSmooth01, AddSmooth02, AddSmooth03, AddSmooth04;
         public float SmoothnessFactor, SmoothnessFactor02, SmoothnessFactor03, SmoothnessFactor04;
         public float Amp01, Amp02, Amp03, Amp04;
         public float ContinentBias;
+        public float RiverBias;
         #endregion
 
         #region Constructor and Setup
@@ -107,12 +109,19 @@ namespace MapGenerator
         }
         #endregion
 
+        public string[] GetInfoAt(int x, int y)
+        {
+            return Cells[x][y].GetInfo();
+        }
+
         public void GenerateMap()
         {
             RaiseLog("Generating map...");
             SetElevation();
+            AddRivers();
         }
 
+        #region Elevation
         private void SetElevation()
         {
             // before we reset the elevations, make sure we clear the resulting brushes
@@ -221,12 +230,6 @@ namespace MapGenerator
 
             RaiseLog("Done with elevation.");
         }
-
-        internal string[] GetInfoAt(int x, int y)
-        {
-            return Cells[x][y].GetInfo();
-        }
-
         private Cell[][] ApplyPseudoPerlinSmoothing(Cell[][] Cells, float granularity, float amplitude)
         {
             Cell[][] results = Copy(Cells);            
@@ -280,7 +283,6 @@ namespace MapGenerator
 
             return results;
         }
-
         private Cell[][] Copy(Cell[][] cells)
         {
             Cell[][] results = new Cell[Cells.Length][];
@@ -295,7 +297,6 @@ namespace MapGenerator
 
             return results;
         }
-
         float Interpolate(float x0, float x1, float alpha)
         {
             //return InterpolateLinear(x0, x1, alpha);
@@ -325,7 +326,312 @@ namespace MapGenerator
             
             return adjustedPartialDiff;
         }
-        
+        #endregion
+
+        #region Rivers
+        private void AddRivers()
+        {
+            if (RiverBias == 0.0f) { return; }
+
+            RaiseLog("Adding rivers...");
+
+            // theory: find a high point, and wander down hill until we hit a water tile.
+            List<Cell> sourceLocations = GetHighLocationForRiverSource(RiverBias);
+
+            RaiseLog($"Created {sourceLocations.Count} river sources, running rivers downhill...");
+
+            for(int i = 0; i < sourceLocations.Count; i++)
+            {
+                try
+                {
+                    RunRiversDownHill(sourceLocations[i]);
+                }
+                catch(Exception ex)
+                {
+                    RaiseLog($"Exception: {ex.Message}");
+                    continue;
+                }
+            }
+        }
+        private List<Cell> GetHighLocationForRiverSource(float riverBias)
+        {
+            List<Cell> result = new List<Cell>();
+
+            try
+            {
+                // use the bias prarm to find the cells that are 'high' enough
+                float dm = DistanceBetweenCells(new Cell(null, 0, 0), new Cell(null, this.size.Width, this.size.Height));
+                float spread = (1 - riverBias) * dm;
+
+                bool FitsCriteriaForRiverSource = true;
+                for (int x = 0; x < Cells.Length; x++)
+                {
+                    for (int y = 0; y < Cells[x].Length; y++)
+                    {
+                        Cell c = Cells[x][y];
+                        FitsCriteriaForRiverSource = true;
+
+                        // qualifications: 
+                        // cell must be high enough
+                        if (c.ActualElevation < RiverSourceElevationMinimum) { continue; } // not high enough
+
+                        // cell must not be close to an existing source - use bias for distance
+                        foreach (Cell s in result)
+                        {
+                            float d = DistanceBetweenCells(c, s);
+                            if (d < spread) { FitsCriteriaForRiverSource = false; break; } // too close to existing
+                        }
+
+                        if (!FitsCriteriaForRiverSource) { continue; } // then we've lost.
+
+                        // if cell meets qualifications
+                        c.IsRiver = true;
+                        result.Add(c);
+                    }
+                }
+            }
+            catch(Exception ex)
+            {
+                RaiseLog($"Exception: {ex.Message}");
+            }
+            return result;
+        }
+
+        private float DistanceBetweenCells(Cell c1, Cell c2)
+        {
+            return (float)Math.Sqrt(((c2.X - c1.X)*(c2.X - c1.X)) + ((c2.Y - c1.Y)*(c2.Y - c1.Y)));
+        }
+
+        private void RunRiversDownHill(Cell c)
+        {
+            //RaiseLog("Running a river downhill...");
+
+            // theory: recursive, 
+            // look through all neighbor cells, make them all into river (makes all rivers 3 cells wide)
+            List<Cell> neighbors = GetCellNeighbors(c);
+            List<Cell> lowerNeighbors = new List<Cell>();
+
+            // trim the list for only lower neighbors
+            foreach (Cell n in neighbors)
+            {
+                if (!n.IsLake &&
+                    !n.IsRiver &&
+                    n.Elevation < c.Elevation) { lowerNeighbors.Add(n); }
+            }
+
+            // find the lowest elevation, call this function again with that one.
+            Cell lowest = null;
+            if (lowerNeighbors.Count == 1)
+            {
+                lowest = lowerNeighbors[0];
+            }
+            else
+            {
+                for (int i = 0; i < lowerNeighbors.Count; i++)
+                {
+                    Cell n = lowerNeighbors[i];
+                    if (n.IsRiver) { continue; } // don't bother go backwards, we would have already checked that cell.
+
+                    n.IsRiver = true;
+
+                    if (lowest == null ||
+                        lowest.Elevation > n.Elevation)
+                    {
+                        // future: if multiples with same elevation, then choose one randomly (with seeded random)
+
+                        lowest = n;
+                    }
+                }
+            }
+
+            // no lower cells to go to?
+            if (lowest == null)
+            {
+                CreateLakeAroundCell(c);
+
+                return;
+            } 
+
+            if (lowest.Elevation > c.Elevation)
+            {
+                // make into a lake?
+                for (int i = 0; i < neighbors.Count; i++)
+                {
+                    Cell n = neighbors[i];
+                    n.IsRiver = false;
+                    n.IsLake = true;
+                }
+            }
+            else // the lowest one does continue.
+            {
+                if(lowest.ActualElevation < WaterElevation){ return; } // then we've hit water, discontinue.
+                else
+                {
+                    // recursively call more river making.
+                    RunRiversDownHill(lowest);
+                }
+            }
+        }
+
+        private void CreateLakeAroundCell(Cell c)
+        {
+            //RaiseLog("Creating a lake around a stalled river cell...");
+            try
+            {
+                List<Cell> neighbors = GetCellNeighbors(c, 3, new List<Cell>() { c }); // randomize the distance outward?
+
+                Cell lowest = null;
+                for (int n = 0; n < neighbors.Count; n++)
+                {
+                    neighbors[n].IsLake = true;
+
+                    // now check for an outgoing river from the lake
+                    if (lowest == null ||
+                        (lowest.Elevation * 1.1) < c.Elevation) // at least 10% lower
+                    {
+                        if (lowest == null ||
+                            neighbors[n].Elevation < lowest.Elevation)
+                        {
+                            lowest = neighbors[n];
+                        }
+                    }
+                }
+
+                if (lowest != null)
+                {
+                    // only run more river if we are not already part of a river or lake.
+                    if(!lowest.IsLake &&
+                        !lowest.IsRiver)
+                    {
+                        lowest.IsRiver = true;
+                        RunRiversDownHill(lowest);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                RaiseLog($"Exception: {ex.Message}");
+            }
+        }
+
+        private List<Cell> GetCellNeighbors(Cell c)
+        {
+            return GetCellNeighbors(c, 1, new List<Cell>() { c });
+        }
+        private List<Cell> GetCellNeighbors(Cell c, int dist, List<Cell> excludeTheseCells)
+        {
+            List<Cell> results = new List<Cell>();
+
+            bool[] Xs = new bool[10]; // 1-based and pos 5 is c
+            bool[] Ys = new bool[10]; // 1-based pos 5 is c
+
+            // because c exists, then
+            Xs[2] = true;
+            Xs[8] = true;
+            Ys[4] = true;
+            Ys[6] = true;
+
+            // look west
+            if(c.X - 1 >= 0)
+            {
+                Xs[1] = true;
+                Xs[4] = true;
+                Xs[7] = true;
+            }
+
+            // look east
+            if(c.X + 1 < Cells.Length)
+            {
+                Xs[3] = true;
+                Xs[6] = true;
+                Xs[9] = true;
+            }
+
+            // look north
+            if (c.Y - 1 >= 0)
+            {
+                Ys[1] = true;
+                Ys[2] = true;
+                Ys[3] = true;
+            }
+
+            // look south
+            if (c.Y + 1 < Cells[0].Length)
+            {
+                Ys[7] = true;
+                Ys[8] = true;
+                Ys[9] = true;
+            }
+
+            Cell CellOfInterest = null;
+            for(int i = 1; i < 10; i++)
+            {
+                if(Xs[i] && Ys[i])
+                {
+                    switch(i)
+                    {
+                        case 1:
+                            CellOfInterest = Cells[c.X - 1][c.Y - 1];
+                            break;
+                        case 2:
+                            CellOfInterest = Cells[c.X][c.Y - 1];
+                            break;
+                        case 3:
+                            CellOfInterest = Cells[c.X + 1][c.Y - 1];
+                            break;
+                        case 4:
+                            CellOfInterest = Cells[c.X - 1][c.Y];
+                            break;
+                        case 6:
+                            CellOfInterest = Cells[c.X + 1][c.Y];
+                            break;
+                        case 7:
+                            CellOfInterest = Cells[c.X - 1][c.Y + 1];
+                            break;
+                        case 8:
+                            CellOfInterest = Cells[c.X][c.Y + 1];
+                            break;
+                        case 9:
+                            CellOfInterest = Cells[c.X + 1][c.Y + 1];
+                            break;
+                        default:
+                            break;
+                    } // end switch
+                    if(CellOfInterest != null &&
+                        !excludeTheseCells.Contains(CellOfInterest))
+                    {
+                        results.Add(CellOfInterest);
+                    }
+                }
+            }
+
+            // keep going, until we run out of distance.
+            if (dist > 1)
+            {
+                List<Cell> tempResults = new List<Cell>();
+                tempResults.AddRange(results); // first off, copy the known ones into the growing list.
+
+                // recursively call this with each neighbor
+                foreach (Cell n in results)
+                {
+                    List<Cell> cells = GetCellNeighbors(n, dist - 1, tempResults); // exclude our temp list, so we don't backtrack
+                    foreach (Cell cn in cells)
+                    {
+                        if (!tempResults.Contains(cn))
+                        {
+                            tempResults.Add(cn);
+                        }
+                    }
+                }
+
+                // now set the resulting collection back to the final result.
+                results.AddRange(tempResults);
+            }
+
+            return results;
+        }
+        #endregion
+
         internal void PaintMap(Graphics g)
         {
             foreach(Cell[] rows in Cells)
