@@ -233,7 +233,7 @@ namespace MapGenerator
             {
                 for (int y = 0; y < Cells[x].Length; y++)
                 {
-                    Cells[x][y].SetBrushByElevation();
+                    Cells[x][y].SetBrushByElevationAndType();
                 }
             }
 
@@ -503,6 +503,8 @@ namespace MapGenerator
 
             // future: check to create an outgoing river
             // NOTE: this code doesn't work, as it keeps making new lakes over and over to the NW.
+            // theory: raise the level of all the lake cells, then try again for a river.
+            // OR: keep track and don't let the lakes touch?
             //if (lowest != null)
             //{
             //    List<Cell> cells = GetCellNeighbors(lowest, LakeSize + 1, new List<Cell>());

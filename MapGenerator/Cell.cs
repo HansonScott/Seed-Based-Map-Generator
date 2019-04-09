@@ -22,8 +22,11 @@ namespace MapGenerator
         public Color LakeColor = Color.FromArgb(50, 50, 255);
         public RectangleF ThisRect;
 
-        public bool IsRiver;
-        public bool IsLake;
+        private bool _IsRiver;
+        private bool _IsLake;
+
+        private SolidBrush b;
+
         #endregion
 
         #region Properties
@@ -35,7 +38,24 @@ namespace MapGenerator
                 _Elevation = value;
             }
         }
-
+        public bool IsRiver
+        {
+            get { return _IsRiver; }
+            set
+            {
+                _IsRiver = value;
+                SetBrushByElevationAndType();
+            }
+        }
+        public bool IsLake
+        {
+            get { return _IsLake; }
+            set
+            {
+                _IsLake = value;
+                SetBrushByElevationAndType();
+            }
+        }
         public float ActualElevation { get { return (Elevation * ParentMap.maxElevation); } }
         #endregion
 
@@ -50,7 +70,7 @@ namespace MapGenerator
         #endregion
 
         #region Public Methods
-        public void SetBrushByElevation()
+        public void SetBrushByElevationAndType()
         {
             if(ElevationColors == null)
             {
@@ -60,7 +80,6 @@ namespace MapGenerator
             if(ElevationColors.ContainsKey((float)Math.Round((decimal)Elevation, 3)))
             {
                 this.ElevationColor = ElevationColors[(float)Math.Round((decimal)Elevation, 3)];
-                return;
             }
             else
             {
@@ -100,24 +119,23 @@ namespace MapGenerator
 
                 ElevationColors.Add((float)Math.Round((decimal)Elevation, 3), ElevationColor);
             } // end else, not in static collection
-        }
-        internal void PaintCell(Graphics g)
-        {
-            // capture if this is a sample pixel, and overwrite the dynamic color for a tracer color - for testing only
-            SolidBrush b;
+
+            // now set the actual drawing brush
             if (this.IsLake)
             {
                 b = new SolidBrush(LakeColor);
             }
-            else if(this.IsRiver)
+            else if (this.IsRiver)
             {
                 b = new SolidBrush(RiverColor);
             }
-            else 
+            else
             {
                 b = new SolidBrush(ElevationColor);
             }
-
+        }
+        internal void PaintCell(Graphics g)
+        {
             g.FillRectangle(b, ThisRect);
         }
 
