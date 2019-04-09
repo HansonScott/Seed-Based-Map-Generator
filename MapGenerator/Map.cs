@@ -71,6 +71,7 @@ namespace MapGenerator
         public float Amp01, Amp02, Amp03, Amp04;
         public float ContinentBias;
         public float RiverBias;
+        public int LakeSize;
         #endregion
 
         #region Constructor and Setup
@@ -478,11 +479,15 @@ namespace MapGenerator
             //RaiseLog("Creating a lake around a stalled river cell...");
             try
             {
-                List<Cell> neighbors = GetCellNeighbors(c, 3, new List<Cell>() { c }); // randomize the distance outward?
+                List<Cell> neighbors = GetCellNeighbors(c, LakeSize, new List<Cell>() { c }); // randomize the distance outward?
 
                 Cell lowest = null;
                 for (int n = 0; n < neighbors.Count; n++)
                 {
+                    // filter for a circle of sorts, not a square
+                    if(DistanceBetweenCells(c, neighbors[n]) > (LakeSize - 1)){ continue; }
+
+
                     neighbors[n].IsLake = true;
 
                     // now check for an outgoing river from the lake

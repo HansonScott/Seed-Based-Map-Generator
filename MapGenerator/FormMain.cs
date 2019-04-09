@@ -86,6 +86,7 @@ namespace MapGenerator
             m.ContinentBias = s.ContinentBias;
             m.RiverBias = s.RiverBias;
             m.RiverSourceElevationMinimum = s.RiverSourceElevationMin;
+            m.LakeSize = s.LakeSize;
             #endregion
 
         }
