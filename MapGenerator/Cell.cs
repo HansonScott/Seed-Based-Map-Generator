@@ -7,8 +7,8 @@ namespace MapGenerator
     public class Cell
     {
         #region Static Resources
-        private static Dictionary<float, SolidBrush> ElevationBrushes;
-        public static void ClearElevationBrushes() { ElevationBrushes?.Clear(); }
+        private static Dictionary<float, Color> ElevationColors;
+        public static void ClearElevationBrushes() { ElevationColors?.Clear(); }
         #endregion
 
         #region Fields
@@ -17,9 +17,9 @@ namespace MapGenerator
         public int Y;
         public bool IsSample;
         private float _Elevation;
-        public SolidBrush ElevationBrushColor;
-        public SolidBrush RiverBrushColor = new SolidBrush(Color.FromArgb(50, 50, 255));
-        public SolidBrush LakeBrushColor = new SolidBrush(Color.FromArgb(50, 50, 255));
+        public Color ElevationColor;
+        public Color RiverColor = Color.FromArgb(50, 50, 255);
+        public Color LakeColor = Color.FromArgb(50, 50, 255);
         public RectangleF ThisRect;
 
         public bool IsRiver;
@@ -52,14 +52,14 @@ namespace MapGenerator
         #region Public Methods
         public void SetBrushByElevation()
         {
-            if(ElevationBrushes == null)
+            if(ElevationColors == null)
             {
-                ElevationBrushes = new Dictionary<float, SolidBrush>();
+                ElevationColors = new Dictionary<float, Color>();
             }
 
-            if(ElevationBrushes.ContainsKey((float)Math.Round((decimal)Elevation, 3)))
+            if(ElevationColors.ContainsKey((float)Math.Round((decimal)Elevation, 3)))
             {
-                this.ElevationBrushColor = ElevationBrushes[(float)Math.Round((decimal)Elevation, 3)];
+                this.ElevationColor = ElevationColors[(float)Math.Round((decimal)Elevation, 3)];
                 return;
             }
             else
@@ -79,13 +79,12 @@ namespace MapGenerator
                     //int v = (int)(Elevation * 100 / ParentMap.WaterElevation);
                     int v = (int)(Elevation * 100);
                     int b = (int)((ActualElevation / ParentMap.WaterElevation) * 125) + 130;
-                    Color c = Color.FromArgb(0, Math.Max(Math.Min(v, 255), 0), b);
-                    ElevationBrushColor = new SolidBrush(c);
+                    ElevationColor = Color.FromArgb(0, Math.Max(Math.Min(v, 255), 0), b);
                 }
                 // within 10% of water elevation
                 else if (ActualElevation < (ParentMap.WaterElevation * 1.1))
                 {
-                    ElevationBrushColor = new SolidBrush(Color.Tan);
+                    ElevationColor = Color.Tan;
                 }
                 else // above water
                 {
@@ -94,31 +93,32 @@ namespace MapGenerator
                     // green gradient
                     //int v = (int)(Elevation * 140 / ParentMap.maxElevation);
                     int v = (int)(Elevation * 140);
-                    Color c = Color.FromArgb(v,
-                                            (Math.Max(((255 - v) / 2) + v, 140)), 
-                                            v);
-
-                    ElevationBrushColor = new SolidBrush(c);
+                    ElevationColor = Color.FromArgb(v,
+                                                    (Math.Max(((255 - v) / 2) + v, 140)), 
+                                                    v);
                 }
 
-                ElevationBrushes.Add((float)Math.Round((decimal)Elevation, 3), ElevationBrushColor);
+                ElevationColors.Add((float)Math.Round((decimal)Elevation, 3), ElevationColor);
             } // end else, not in static collection
         }
         internal void PaintCell(Graphics g)
         {
             // capture if this is a sample pixel, and overwrite the dynamic color for a tracer color - for testing only
+            SolidBrush b;
             if (this.IsLake)
             {
-                g.FillRectangle(LakeBrushColor, ThisRect);
+                b = new SolidBrush(LakeColor);
             }
             else if(this.IsRiver)
             {
-                g.FillRectangle(RiverBrushColor, ThisRect);
+                b = new SolidBrush(RiverColor);
             }
             else 
             {
-                g.FillRectangle(ElevationBrushColor, ThisRect);
+                b = new SolidBrush(ElevationColor);
             }
+
+            g.FillRectangle(b, ThisRect);
         }
 
         internal string[] GetInfo()
@@ -126,10 +126,14 @@ namespace MapGenerator
             List<string> info = new List<string>();
 
             // add all interesting info
-            info.Add($"Elevation: {Elevation}");
+            info.Add($"Elevation: {ActualElevation}");
             if(IsRiver)
             {
                 info.Add("River");
+            }
+            else if(IsLake)
+            {
+                info.Add("Lake");
             }
 
             return info.ToArray();

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -23,13 +24,21 @@ namespace MapGenerator
         }
         #endregion
 
+        public enum SessionStates
+        {
+            Waiting = 0,
+            GeneratingMap = 1,
+        }
+        public SessionStates CurrentState;
         public Map CurrentMap;
         public MapSettings Settings;
+
         public FormMain()
         {
             InitializeComponent();
 
             Settings = new MapSettings();
+            CurrentState = SessionStates.Waiting;
         }
 
         private void pMap_Paint(object sender, PaintEventArgs e)
@@ -39,6 +48,9 @@ namespace MapGenerator
 
         private void btnGenerate_Click(object sender, EventArgs e)
         {
+            if(CurrentState == SessionStates.GeneratingMap) { return; }
+            CurrentState = SessionStates.GeneratingMap;
+
             Cursor.Current = Cursors.WaitCursor;
             Output("Generating map...");
             int seed = GetSeedFromTextBox();
@@ -55,6 +67,7 @@ namespace MapGenerator
             this.pMap.Refresh();
             Output("Drawing map done");
             Cursor.Current = Cursors.Default;
+            CurrentState = SessionStates.Waiting;
         }
 
         private void CurrentMap_OnLog(object sender, Map.MapLoggingEventArgs e)
@@ -113,6 +126,7 @@ namespace MapGenerator
 
         private void btnSettings_Click(object sender, EventArgs e)
         {
+            Settings = new MapSettings();
             Settings.Show(this);
         }
 
@@ -146,5 +160,34 @@ namespace MapGenerator
             tbInfo.Refresh();
             Thread.Sleep(10);
         }
+
+        private void btnSaveImage_Click(object sender, EventArgs e)
+        {
+            Save();
+        }
+
+        private void Save()
+        {
+            SaveFileDialog sfd = new SaveFileDialog();
+            sfd.Filter = "Image Files | *.bmp";
+            sfd.DefaultExt = "bmp";
+
+            string folder = Application.StartupPath + Path.DirectorySeparatorChar + "Images";
+            if(!Directory.Exists(folder))
+            {
+                Directory.CreateDirectory(folder);
+            }
+            sfd.InitialDirectory = folder;
+            sfd.FileName = GetSeedFromTextBox().ToString() + ".bmp";
+
+            if (sfd.ShowDialog() == DialogResult.OK)
+            {
+                string filename = sfd.FileName;
+                Bitmap b = new Bitmap(pMap.Width, pMap.Height);
+                this.pMap.DrawToBitmap(b, pMap.DisplayRectangle);
+                b.Save(filename);
+            }
+        }
+
     }
 }

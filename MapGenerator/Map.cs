@@ -112,7 +112,15 @@ namespace MapGenerator
 
         public string[] GetInfoAt(int x, int y)
         {
-            return Cells[x][y].GetInfo();
+            if(Cells.Length > x &&
+                Cells[x].Length > y)
+            {
+                return Cells[x][y].GetInfo();
+            }
+            else
+            {
+                return new string[] { };
+            }
         }
 
         public void GenerateMap()
@@ -140,19 +148,19 @@ namespace MapGenerator
             Cell[][] Cells2 = null;
             if (AddSmooth02)
             {
-                RaiseLog("Adjusting elevation, level 2...");
+                RaiseLog("Adjusting elevation, level 2/4...");
                 Cells2 = ApplyPseudoPerlinSmoothing(Cells, (SmoothnessFactor * SmoothnessFactor02), Amp02);
             }
             Cell[][] Cells3 = null;
             if (AddSmooth03)
             {
-                RaiseLog("Adjusting elevation, level 3...");
+                RaiseLog("Adjusting elevation, level 3/4...");
                 Cells3 = ApplyPseudoPerlinSmoothing(Cells, (SmoothnessFactor * SmoothnessFactor03), Amp03);
             }
             Cell[][] Cells4 = null;
             if (AddSmooth04)
             {
-                RaiseLog("Adjusting elevation, level 4...");
+                RaiseLog("Adjusting elevation, level 4/4...");
                 Cells4 = ApplyPseudoPerlinSmoothing(Cells, (SmoothnessFactor * SmoothnessFactor04), Amp04);
             }
 
@@ -397,12 +405,6 @@ namespace MapGenerator
             }
             return result;
         }
-
-        private float DistanceBetweenCells(Cell c1, Cell c2)
-        {
-            return (float)Math.Sqrt(((c2.X - c1.X)*(c2.X - c1.X)) + ((c2.Y - c1.Y)*(c2.Y - c1.Y)));
-        }
-
         private void RunRiversDownHill(Cell c)
         {
             //RaiseLog("Running a river downhill...");
@@ -473,52 +475,65 @@ namespace MapGenerator
                 }
             }
         }
-
         private void CreateLakeAroundCell(Cell c)
         {
             //RaiseLog("Creating a lake around a stalled river cell...");
-            try
+            List<Cell> neighbors = GetCellNeighbors(c, LakeSize, new List<Cell>() { c }); // randomize the distance outward?
+
+            Cell lowest = null;
+            for (int n = 0; n < neighbors.Count; n++)
             {
-                List<Cell> neighbors = GetCellNeighbors(c, LakeSize, new List<Cell>() { c }); // randomize the distance outward?
+                // filter for a circle of sorts, not a square
+                if(DistanceBetweenCells(c, neighbors[n]) > (LakeSize - 1)){ continue; }
 
-                Cell lowest = null;
-                for (int n = 0; n < neighbors.Count; n++)
+
+                neighbors[n].IsLake = true;
+
+                // now check for an outgoing river from the lake
+                if (lowest == null ||
+                    (lowest.Elevation * 1.1) < c.Elevation) // at least 10% lower
                 {
-                    // filter for a circle of sorts, not a square
-                    if(DistanceBetweenCells(c, neighbors[n]) > (LakeSize - 1)){ continue; }
-
-
-                    neighbors[n].IsLake = true;
-
-                    // now check for an outgoing river from the lake
                     if (lowest == null ||
-                        (lowest.Elevation * 1.1) < c.Elevation) // at least 10% lower
+                        neighbors[n].Elevation < lowest.Elevation)
                     {
-                        if (lowest == null ||
-                            neighbors[n].Elevation < lowest.Elevation)
-                        {
-                            lowest = neighbors[n];
-                        }
+                        lowest = neighbors[n];
                     }
                 }
+            }
 
-                if (lowest != null)
-                {
-                    // only run more river if we are not already part of a river or lake.
-                    if(!lowest.IsLake &&
-                        !lowest.IsRiver)
-                    {
-                        lowest.IsRiver = true;
-                        RunRiversDownHill(lowest);
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                RaiseLog($"Exception: {ex.Message}");
-            }
+            // future: check to create an outgoing river
+            // NOTE: this code doesn't work, as it keeps making new lakes over and over to the NW.
+            //if (lowest != null)
+            //{
+            //    List<Cell> cells = GetCellNeighbors(lowest, LakeSize + 1, new List<Cell>());
+
+            //    if(cells.Count > 0)
+            //    {
+            //        Cell nextLowestNonLake = null;
+            //        foreach (Cell nc in cells)
+            //        {
+            //            if (nextLowestNonLake == null ||
+            //                nc.Elevation < nextLowestNonLake.Elevation)
+            //            {
+            //                nextLowestNonLake = nc;
+            //            }
+            //        }
+
+            //        if (!nextLowestNonLake.IsLake)
+            //        {
+            //            RaiseLog("Creating the continuation river from lake low point...");
+            //            lowest.IsRiver = true;
+            //            RunRiversDownHill(lowest);
+            //        }
+            //    }
+            //}
         }
+        #endregion
 
+        private float DistanceBetweenCells(Cell c1, Cell c2)
+        {
+            return (float)Math.Sqrt(((c2.X - c1.X) * (c2.X - c1.X)) + ((c2.Y - c1.Y) * (c2.Y - c1.Y)));
+        }
         private List<Cell> GetCellNeighbors(Cell c)
         {
             return GetCellNeighbors(c, 1, new List<Cell>() { c });
@@ -635,7 +650,6 @@ namespace MapGenerator
 
             return results;
         }
-        #endregion
 
         internal void PaintMap(Graphics g)
         {

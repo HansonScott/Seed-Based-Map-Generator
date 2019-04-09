@@ -35,6 +35,7 @@
             this.tbOutput = new System.Windows.Forms.TextBox();
             this.btnSettings = new System.Windows.Forms.Button();
             this.tbInfo = new System.Windows.Forms.TextBox();
+            this.btnSaveImage = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // pMap
@@ -109,11 +110,22 @@
             this.tbInfo.Size = new System.Drawing.Size(100, 171);
             this.tbInfo.TabIndex = 10;
             // 
+            // btnSaveImage
+            // 
+            this.btnSaveImage.Location = new System.Drawing.Point(3, 100);
+            this.btnSaveImage.Name = "btnSaveImage";
+            this.btnSaveImage.Size = new System.Drawing.Size(100, 23);
+            this.btnSaveImage.TabIndex = 11;
+            this.btnSaveImage.Text = "Save as Image";
+            this.btnSaveImage.UseVisualStyleBackColor = true;
+            this.btnSaveImage.Click += new System.EventHandler(this.btnSaveImage_Click);
+            // 
             // FormMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.btnSaveImage);
             this.Controls.Add(this.tbInfo);
             this.Controls.Add(this.btnSettings);
             this.Controls.Add(this.tbOutput);
@@ -139,6 +151,7 @@
         private System.Windows.Forms.TextBox tbOutput;
         private System.Windows.Forms.Button btnSettings;
         private System.Windows.Forms.TextBox tbInfo;
+        private System.Windows.Forms.Button btnSaveImage;
     }
 }
 
