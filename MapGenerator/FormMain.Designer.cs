@@ -36,6 +36,7 @@
             this.btnSettings = new System.Windows.Forms.Button();
             this.tbInfo = new System.Windows.Forms.TextBox();
             this.btnSaveImage = new System.Windows.Forms.Button();
+            this.btnRedraw = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // pMap
@@ -53,9 +54,9 @@
             // 
             // btnGenerate
             // 
-            this.btnGenerate.Location = new System.Drawing.Point(12, 12);
+            this.btnGenerate.Location = new System.Drawing.Point(2, 12);
             this.btnGenerate.Name = "btnGenerate";
-            this.btnGenerate.Size = new System.Drawing.Size(75, 23);
+            this.btnGenerate.Size = new System.Drawing.Size(100, 23);
             this.btnGenerate.TabIndex = 1;
             this.btnGenerate.Text = "Generate";
             this.btnGenerate.UseVisualStyleBackColor = true;
@@ -94,7 +95,7 @@
             // 
             this.btnSettings.Location = new System.Drawing.Point(5, 222);
             this.btnSettings.Name = "btnSettings";
-            this.btnSettings.Size = new System.Drawing.Size(98, 23);
+            this.btnSettings.Size = new System.Drawing.Size(100, 23);
             this.btnSettings.TabIndex = 9;
             this.btnSettings.Text = "Settings";
             this.btnSettings.UseVisualStyleBackColor = true;
@@ -120,11 +121,22 @@
             this.btnSaveImage.UseVisualStyleBackColor = true;
             this.btnSaveImage.Click += new System.EventHandler(this.btnSaveImage_Click);
             // 
+            // btnRedraw
+            // 
+            this.btnRedraw.Location = new System.Drawing.Point(4, 125);
+            this.btnRedraw.Name = "btnRedraw";
+            this.btnRedraw.Size = new System.Drawing.Size(100, 23);
+            this.btnRedraw.TabIndex = 12;
+            this.btnRedraw.Text = "Redraw";
+            this.btnRedraw.UseVisualStyleBackColor = true;
+            this.btnRedraw.Click += new System.EventHandler(this.btnRedraw_Click);
+            // 
             // FormMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.btnRedraw);
             this.Controls.Add(this.btnSaveImage);
             this.Controls.Add(this.tbInfo);
             this.Controls.Add(this.btnSettings);
@@ -152,6 +164,7 @@
         private System.Windows.Forms.Button btnSettings;
         private System.Windows.Forms.TextBox tbInfo;
         private System.Windows.Forms.Button btnSaveImage;
+        private System.Windows.Forms.Button btnRedraw;
     }
 }
 

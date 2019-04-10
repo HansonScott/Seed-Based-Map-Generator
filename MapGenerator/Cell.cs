@@ -9,6 +9,8 @@ namespace MapGenerator
         #region Static Resources
         private static Dictionary<float, Color> ElevationColors;
         public static void ClearElevationBrushes() { ElevationColors?.Clear(); }
+        private static Dictionary<float, Color> TemperatureColors;
+        public static void ClearTemperatureBrushes() { TemperatureColors?.Clear(); }
         #endregion
 
         #region Fields
@@ -25,8 +27,12 @@ namespace MapGenerator
         private bool _IsRiver;
         private bool _IsLake;
 
-        private SolidBrush b;
+        private SolidBrush ElevationBrush;
+        private SolidBrush TemperatureBrush;
 
+        private float _Temperature;
+        public Color TemperatureColor;
+        private float _Moisture;
         #endregion
 
         #region Properties
@@ -36,6 +42,24 @@ namespace MapGenerator
             set
             {
                 _Elevation = value;
+            }
+        }
+        public float Temperature
+        {
+            get { return _Temperature; }
+            set
+            {
+
+                _Temperature = value;
+            }
+        }
+        public float Moisture
+        {
+            get { return _Moisture; }
+            set
+            {
+
+                _Moisture = value;
             }
         }
         public bool IsRiver
@@ -56,7 +80,9 @@ namespace MapGenerator
                 SetBrushByElevationAndType();
             }
         }
-        public float ActualElevation { get { return (Elevation * ParentMap.maxElevation); } }
+        public float ActualElevation { get { return (Elevation * ParentMap.MaxElevation); } }
+        public float ActualTemperature { get { return (Temperature * ParentMap.MaxTemperature); } }
+        public float ActualMoisture { get { return (Moisture * ParentMap.MaxMoisture); } }
         #endregion
 
         #region Constructor and Setup
@@ -72,6 +98,7 @@ namespace MapGenerator
         #region Public Methods
         public void SetBrushByElevationAndType()
         {
+            #region elevation
             if(ElevationColors == null)
             {
                 ElevationColors = new Dictionary<float, Color>();
@@ -123,20 +150,52 @@ namespace MapGenerator
             // now set the actual drawing brush
             if (this.IsLake)
             {
-                b = new SolidBrush(LakeColor);
+                ElevationBrush = new SolidBrush(LakeColor);
             }
             else if (this.IsRiver)
             {
-                b = new SolidBrush(RiverColor);
+                ElevationBrush = new SolidBrush(RiverColor);
             }
             else
             {
-                b = new SolidBrush(ElevationColor);
+                ElevationBrush = new SolidBrush(ElevationColor);
             }
+            #endregion
+
+            #region Temperature
+            if (TemperatureColors == null)
+            {
+                TemperatureColors = new Dictionary<float, Color>();
+            }
+
+            if (TemperatureColors.ContainsKey((float)Math.Round((decimal)Temperature, 3)))
+            {
+                this.TemperatureColor = TemperatureColors[(float)Math.Round((decimal)Temperature, 3)];
+            }
+            else
+            {
+                // at max temp: 255, 255,  - white
+                // at 0 temp: 0, 0, 0  - black
+
+                int b = (int)(Temperature * 255);
+                int v = Math.Max(Math.Min(b, 255), 0);
+                TemperatureColor = Color.FromArgb(v, v, v);
+
+                TemperatureColors.Add((float)Math.Round((decimal)Temperature, 3), TemperatureColor);
+            } // end else, not in static collection
+
+            TemperatureBrush = new SolidBrush(TemperatureColor);
+            #endregion
         }
-        internal void PaintCell(Graphics g)
+
+        internal void PaintElevation(Graphics g)
         {
-            g.FillRectangle(b, ThisRect);
+            g.FillRectangle(ElevationBrush, ThisRect);
+        }
+
+        internal void PaintTemp(Graphics g)
+        {
+            g.FillRectangle(TemperatureBrush, ThisRect);
         }
 
         internal string[] GetInfo()
@@ -145,8 +204,11 @@ namespace MapGenerator
 
             // add all interesting info
             info.Add("Elevation: ");
-            info.Add(ActualElevation.ToString());
-            if(IsRiver)
+            info.Add(((int)ActualElevation).ToString());
+            info.Add("Temperature: ");
+            info.Add(((int)ActualTemperature).ToString());
+
+            if (IsRiver)
             {
                 info.Add("River");
             }

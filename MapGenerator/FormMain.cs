@@ -77,6 +77,9 @@ namespace MapGenerator
 
         private void ApplySettings(Map m, MapSettings s)
         {
+            m.DrawElevation = s.DrawElevation;
+            m.DrawTemperature = s.DrawTemperature;
+
             #region Elevation
             m.WaterElevation = s.WaterLevel;
 
@@ -102,6 +105,25 @@ namespace MapGenerator
             m.LakeSize = s.LakeSize;
             #endregion
 
+            #region Temparature
+            m.TSmoothnessFactor = s.Smoothness;
+            m.AddTSmooth01 = true; // hard coded, must have at least 1 smoothing
+            m.AddTSmooth02 = s.AddTSmooth02;
+            m.AddTSmooth03 = s.AddTSmooth03;
+            m.AddSmooth04 = s.AddTSmooth04;
+
+            m.TSmoothnessFactor = s.TSmoothnessFactor;
+            m.TSmoothnessFactor02 = s.TSmoothnessFactor02;
+            m.TSmoothnessFactor03 = s.TSmoothnessFactor03;
+            m.TSmoothnessFactor04 = s.TSmoothnessFactor04;
+
+            m.TAmp01 = s.TAmp01;
+            m.TAmp02 = s.TAmp02;
+            m.TAmp03 = s.TAmp03;
+            m.TAmp04 = s.TAmp04;
+
+            m.PolarBias = s.PolarBias;
+            #endregion
         }
 
         private int GetSeedFromTextBox()
@@ -189,5 +211,10 @@ namespace MapGenerator
             }
         }
 
+        private void btnRedraw_Click(object sender, EventArgs e)
+        {
+            ApplySettings(CurrentMap, Settings);
+            pMap.Refresh();
+        }
     }
 }

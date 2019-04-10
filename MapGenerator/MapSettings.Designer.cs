@@ -53,6 +53,22 @@
             this.lblRiverSourceElevationMin = new System.Windows.Forms.Label();
             this.nudRiverBias = new System.Windows.Forms.NumericUpDown();
             this.lblRivers = new System.Windows.Forms.Label();
+            this.gbTemperature = new System.Windows.Forms.GroupBox();
+            this.lblPoleBias = new System.Windows.Forms.Label();
+            this.nudTPolarBias = new System.Windows.Forms.NumericUpDown();
+            this.cbAddTSmooth04 = new System.Windows.Forms.CheckBox();
+            this.cbAddTempSmooth03 = new System.Windows.Forms.CheckBox();
+            this.cbAddTempSmooth02 = new System.Windows.Forms.CheckBox();
+            this.nudTIntensity04 = new System.Windows.Forms.NumericUpDown();
+            this.nudTGrain04 = new System.Windows.Forms.NumericUpDown();
+            this.nudTIntensity03 = new System.Windows.Forms.NumericUpDown();
+            this.nudTGrain03 = new System.Windows.Forms.NumericUpDown();
+            this.label2 = new System.Windows.Forms.Label();
+            this.nudTIntensity02 = new System.Windows.Forms.NumericUpDown();
+            this.label3 = new System.Windows.Forms.Label();
+            this.nudTGrain02 = new System.Windows.Forms.NumericUpDown();
+            this.rbDrawElevation = new System.Windows.Forms.RadioButton();
+            this.rbDrawTemperature = new System.Windows.Forms.RadioButton();
             ((System.ComponentModel.ISupportInitialize)(this.nudWater)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudSmoothness)).BeginInit();
             this.gbElevation.SuspendLayout();
@@ -67,6 +83,14 @@
             ((System.ComponentModel.ISupportInitialize)(this.nudLakeSize)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudRiverSourceElevationMin)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudRiverBias)).BeginInit();
+            this.gbTemperature.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudTPolarBias)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudTIntensity04)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudTGrain04)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudTIntensity03)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudTGrain03)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudTIntensity02)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudTGrain02)).BeginInit();
             this.SuspendLayout();
             // 
             // nudWater
@@ -160,7 +184,7 @@
             // 
             // nudContinentBias
             // 
-            this.nudContinentBias.DecimalPlaces = 5;
+            this.nudContinentBias.DecimalPlaces = 2;
             this.nudContinentBias.Increment = new decimal(new int[] {
             1,
             0,
@@ -219,7 +243,7 @@
             // 
             // nudAmp04
             // 
-            this.nudAmp04.DecimalPlaces = 5;
+            this.nudAmp04.DecimalPlaces = 2;
             this.nudAmp04.Increment = new decimal(new int[] {
             1,
             0,
@@ -242,7 +266,7 @@
             // 
             // nudGrain04
             // 
-            this.nudGrain04.DecimalPlaces = 5;
+            this.nudGrain04.DecimalPlaces = 2;
             this.nudGrain04.Increment = new decimal(new int[] {
             1,
             0,
@@ -265,7 +289,7 @@
             // 
             // nudAmp03
             // 
-            this.nudAmp03.DecimalPlaces = 5;
+            this.nudAmp03.DecimalPlaces = 2;
             this.nudAmp03.Increment = new decimal(new int[] {
             1,
             0,
@@ -288,7 +312,7 @@
             // 
             // nudGrain03
             // 
-            this.nudGrain03.DecimalPlaces = 5;
+            this.nudGrain03.DecimalPlaces = 2;
             this.nudGrain03.Increment = new decimal(new int[] {
             1,
             0,
@@ -320,7 +344,7 @@
             // 
             // nudAmp02
             // 
-            this.nudAmp02.DecimalPlaces = 5;
+            this.nudAmp02.DecimalPlaces = 2;
             this.nudAmp02.Increment = new decimal(new int[] {
             1,
             0,
@@ -352,7 +376,7 @@
             // 
             // nudGrain02
             // 
-            this.nudGrain02.DecimalPlaces = 5;
+            this.nudGrain02.DecimalPlaces = 2;
             this.nudGrain02.Increment = new decimal(new int[] {
             1,
             0,
@@ -452,7 +476,7 @@
             // 
             // nudRiverBias
             // 
-            this.nudRiverBias.DecimalPlaces = 5;
+            this.nudRiverBias.DecimalPlaces = 2;
             this.nudRiverBias.Increment = new decimal(new int[] {
             1,
             0,
@@ -482,11 +506,283 @@
             this.lblRivers.TabIndex = 0;
             this.lblRivers.Text = "River Bias";
             // 
+            // gbTemperature
+            // 
+            this.gbTemperature.Controls.Add(this.lblPoleBias);
+            this.gbTemperature.Controls.Add(this.nudTPolarBias);
+            this.gbTemperature.Controls.Add(this.cbAddTSmooth04);
+            this.gbTemperature.Controls.Add(this.cbAddTempSmooth03);
+            this.gbTemperature.Controls.Add(this.cbAddTempSmooth02);
+            this.gbTemperature.Controls.Add(this.nudTIntensity04);
+            this.gbTemperature.Controls.Add(this.nudTGrain04);
+            this.gbTemperature.Controls.Add(this.nudTIntensity03);
+            this.gbTemperature.Controls.Add(this.nudTGrain03);
+            this.gbTemperature.Controls.Add(this.label2);
+            this.gbTemperature.Controls.Add(this.nudTIntensity02);
+            this.gbTemperature.Controls.Add(this.label3);
+            this.gbTemperature.Controls.Add(this.nudTGrain02);
+            this.gbTemperature.Location = new System.Drawing.Point(127, 187);
+            this.gbTemperature.Name = "gbTemperature";
+            this.gbTemperature.Size = new System.Drawing.Size(341, 169);
+            this.gbTemperature.TabIndex = 14;
+            this.gbTemperature.TabStop = false;
+            this.gbTemperature.Text = "Temperature";
+            // 
+            // lblPoleBias
+            // 
+            this.lblPoleBias.AutoSize = true;
+            this.lblPoleBias.Location = new System.Drawing.Point(6, 128);
+            this.lblPoleBias.Name = "lblPoleBias";
+            this.lblPoleBias.Size = new System.Drawing.Size(54, 13);
+            this.lblPoleBias.TabIndex = 25;
+            this.lblPoleBias.Text = "Polar Bias";
+            // 
+            // nudTPolarBias
+            // 
+            this.nudTPolarBias.DecimalPlaces = 2;
+            this.nudTPolarBias.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            131072});
+            this.nudTPolarBias.Location = new System.Drawing.Point(97, 126);
+            this.nudTPolarBias.Maximum = new decimal(new int[] {
+            10,
+            0,
+            0,
+            65536});
+            this.nudTPolarBias.Name = "nudTPolarBias";
+            this.nudTPolarBias.Size = new System.Drawing.Size(74, 20);
+            this.nudTPolarBias.TabIndex = 24;
+            this.nudTPolarBias.Value = new decimal(new int[] {
+            4,
+            0,
+            0,
+            65536});
+            // 
+            // cbAddTSmooth04
+            // 
+            this.cbAddTSmooth04.AutoSize = true;
+            this.cbAddTSmooth04.Checked = true;
+            this.cbAddTSmooth04.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.cbAddTSmooth04.Location = new System.Drawing.Point(6, 88);
+            this.cbAddTSmooth04.Name = "cbAddTSmooth04";
+            this.cbAddTSmooth04.Size = new System.Drawing.Size(45, 17);
+            this.cbAddTSmooth04.TabIndex = 23;
+            this.cbAddTSmooth04.Text = "Add";
+            this.cbAddTSmooth04.UseVisualStyleBackColor = true;
+            // 
+            // cbAddTempSmooth03
+            // 
+            this.cbAddTempSmooth03.AutoSize = true;
+            this.cbAddTempSmooth03.Checked = true;
+            this.cbAddTempSmooth03.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.cbAddTempSmooth03.Location = new System.Drawing.Point(6, 63);
+            this.cbAddTempSmooth03.Name = "cbAddTempSmooth03";
+            this.cbAddTempSmooth03.Size = new System.Drawing.Size(45, 17);
+            this.cbAddTempSmooth03.TabIndex = 22;
+            this.cbAddTempSmooth03.Text = "Add";
+            this.cbAddTempSmooth03.UseVisualStyleBackColor = true;
+            // 
+            // cbAddTempSmooth02
+            // 
+            this.cbAddTempSmooth02.AutoSize = true;
+            this.cbAddTempSmooth02.Checked = true;
+            this.cbAddTempSmooth02.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.cbAddTempSmooth02.Location = new System.Drawing.Point(6, 36);
+            this.cbAddTempSmooth02.Name = "cbAddTempSmooth02";
+            this.cbAddTempSmooth02.Size = new System.Drawing.Size(45, 17);
+            this.cbAddTempSmooth02.TabIndex = 21;
+            this.cbAddTempSmooth02.Text = "Add";
+            this.cbAddTempSmooth02.UseVisualStyleBackColor = true;
+            // 
+            // nudTIntensity04
+            // 
+            this.nudTIntensity04.DecimalPlaces = 2;
+            this.nudTIntensity04.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            131072});
+            this.nudTIntensity04.Location = new System.Drawing.Point(233, 88);
+            this.nudTIntensity04.Maximum = new decimal(new int[] {
+            10,
+            0,
+            0,
+            65536});
+            this.nudTIntensity04.Name = "nudTIntensity04";
+            this.nudTIntensity04.Size = new System.Drawing.Size(75, 20);
+            this.nudTIntensity04.TabIndex = 20;
+            this.nudTIntensity04.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            65536});
+            // 
+            // nudTGrain04
+            // 
+            this.nudTGrain04.DecimalPlaces = 2;
+            this.nudTGrain04.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            131072});
+            this.nudTGrain04.Location = new System.Drawing.Point(97, 88);
+            this.nudTGrain04.Maximum = new decimal(new int[] {
+            10,
+            0,
+            0,
+            65536});
+            this.nudTGrain04.Name = "nudTGrain04";
+            this.nudTGrain04.Size = new System.Drawing.Size(74, 20);
+            this.nudTGrain04.TabIndex = 19;
+            this.nudTGrain04.Value = new decimal(new int[] {
+            2,
+            0,
+            0,
+            65536});
+            // 
+            // nudTIntensity03
+            // 
+            this.nudTIntensity03.DecimalPlaces = 2;
+            this.nudTIntensity03.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            131072});
+            this.nudTIntensity03.Location = new System.Drawing.Point(233, 62);
+            this.nudTIntensity03.Maximum = new decimal(new int[] {
+            10,
+            0,
+            0,
+            65536});
+            this.nudTIntensity03.Name = "nudTIntensity03";
+            this.nudTIntensity03.Size = new System.Drawing.Size(75, 20);
+            this.nudTIntensity03.TabIndex = 18;
+            this.nudTIntensity03.Value = new decimal(new int[] {
+            2,
+            0,
+            0,
+            65536});
+            // 
+            // nudTGrain03
+            // 
+            this.nudTGrain03.DecimalPlaces = 2;
+            this.nudTGrain03.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            131072});
+            this.nudTGrain03.Location = new System.Drawing.Point(97, 62);
+            this.nudTGrain03.Maximum = new decimal(new int[] {
+            10,
+            0,
+            0,
+            65536});
+            this.nudTGrain03.Name = "nudTGrain03";
+            this.nudTGrain03.Size = new System.Drawing.Size(74, 20);
+            this.nudTGrain03.TabIndex = 17;
+            this.nudTGrain03.Value = new decimal(new int[] {
+            3,
+            0,
+            0,
+            65536});
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(230, 20);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(70, 13);
+            this.label2.TabIndex = 16;
+            this.label2.Text = "Intensity (0-1)";
+            // 
+            // nudTIntensity02
+            // 
+            this.nudTIntensity02.DecimalPlaces = 2;
+            this.nudTIntensity02.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            131072});
+            this.nudTIntensity02.Location = new System.Drawing.Point(233, 36);
+            this.nudTIntensity02.Maximum = new decimal(new int[] {
+            10,
+            0,
+            0,
+            65536});
+            this.nudTIntensity02.Name = "nudTIntensity02";
+            this.nudTIntensity02.Size = new System.Drawing.Size(75, 20);
+            this.nudTIntensity02.TabIndex = 15;
+            this.nudTIntensity02.Value = new decimal(new int[] {
+            3,
+            0,
+            0,
+            65536});
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(94, 20);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(56, 13);
+            this.label3.TabIndex = 14;
+            this.label3.Text = "Grain (0-1)";
+            // 
+            // nudTGrain02
+            // 
+            this.nudTGrain02.DecimalPlaces = 2;
+            this.nudTGrain02.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            131072});
+            this.nudTGrain02.Location = new System.Drawing.Point(97, 36);
+            this.nudTGrain02.Maximum = new decimal(new int[] {
+            10,
+            0,
+            0,
+            65536});
+            this.nudTGrain02.Name = "nudTGrain02";
+            this.nudTGrain02.Size = new System.Drawing.Size(74, 20);
+            this.nudTGrain02.TabIndex = 13;
+            this.nudTGrain02.Value = new decimal(new int[] {
+            5,
+            0,
+            0,
+            65536});
+            // 
+            // rbDrawElevation
+            // 
+            this.rbDrawElevation.AutoSize = true;
+            this.rbDrawElevation.Checked = true;
+            this.rbDrawElevation.Location = new System.Drawing.Point(8, 116);
+            this.rbDrawElevation.Name = "rbDrawElevation";
+            this.rbDrawElevation.Size = new System.Drawing.Size(97, 17);
+            this.rbDrawElevation.TabIndex = 15;
+            this.rbDrawElevation.TabStop = true;
+            this.rbDrawElevation.Text = "Draw Elevation";
+            this.rbDrawElevation.UseVisualStyleBackColor = true;
+            // 
+            // rbDrawTemperature
+            // 
+            this.rbDrawTemperature.AutoSize = true;
+            this.rbDrawTemperature.Location = new System.Drawing.Point(8, 137);
+            this.rbDrawTemperature.Name = "rbDrawTemperature";
+            this.rbDrawTemperature.Size = new System.Drawing.Size(113, 17);
+            this.rbDrawTemperature.TabIndex = 16;
+            this.rbDrawTemperature.TabStop = true;
+            this.rbDrawTemperature.Text = "Draw Temperature";
+            this.rbDrawTemperature.UseVisualStyleBackColor = true;
+            // 
             // MapSettings
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.rbDrawTemperature);
+            this.Controls.Add(this.rbDrawElevation);
+            this.Controls.Add(this.gbTemperature);
             this.Controls.Add(this.gbRivers);
             this.Controls.Add(this.gbElevation);
             this.Controls.Add(this.nudWater);
@@ -516,6 +812,15 @@
             ((System.ComponentModel.ISupportInitialize)(this.nudLakeSize)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudRiverSourceElevationMin)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudRiverBias)).EndInit();
+            this.gbTemperature.ResumeLayout(false);
+            this.gbTemperature.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudTPolarBias)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudTIntensity04)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudTGrain04)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudTIntensity03)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudTGrain03)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudTIntensity02)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudTGrain02)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -548,5 +853,21 @@
         private System.Windows.Forms.Label lblRiverSourceElevationMin;
         private System.Windows.Forms.NumericUpDown nudLakeSize;
         private System.Windows.Forms.Label lblLakeSize;
+        private System.Windows.Forms.GroupBox gbTemperature;
+        private System.Windows.Forms.Label lblPoleBias;
+        private System.Windows.Forms.NumericUpDown nudTPolarBias;
+        private System.Windows.Forms.CheckBox cbAddTSmooth04;
+        private System.Windows.Forms.CheckBox cbAddTempSmooth03;
+        private System.Windows.Forms.CheckBox cbAddTempSmooth02;
+        private System.Windows.Forms.NumericUpDown nudTIntensity04;
+        private System.Windows.Forms.NumericUpDown nudTGrain04;
+        private System.Windows.Forms.NumericUpDown nudTIntensity03;
+        private System.Windows.Forms.NumericUpDown nudTGrain03;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.NumericUpDown nudTIntensity02;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.NumericUpDown nudTGrain02;
+        private System.Windows.Forms.RadioButton rbDrawElevation;
+        private System.Windows.Forms.RadioButton rbDrawTemperature;
     }
 }

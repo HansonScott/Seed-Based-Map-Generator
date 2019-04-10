@@ -59,12 +59,20 @@ namespace MapGenerator
         {
             ColorRand = 0,
             ElevationRand = 1,
+            TemperatureRand = 2,
         }
 
         #region Parameters
-        public int maxElevation = 1000;
-        public int WaterElevation = 500;
-        public int RiverSourceElevationMinimum = 700;
+
+        public bool DrawElevation = true;
+        public bool DrawTemperature = true;
+
+        public int MaxElevation = 1000;
+        public int MaxTemperature = 40; // Celsius is much easier to program :)
+        public int FreezeTemperature = 0;
+        public int MaxMoisture = 100; // not sure of the units, but 100 seems easy to program :)
+        public int WaterElevation = 500; // default to half the max?
+        public int RiverSourceElevationMinimum = 800; // close to the top, but not extreme?
 
         public bool AddSmooth01, AddSmooth02, AddSmooth03, AddSmooth04;
         public float SmoothnessFactor, SmoothnessFactor02, SmoothnessFactor03, SmoothnessFactor04;
@@ -72,6 +80,10 @@ namespace MapGenerator
         public float ContinentBias;
         public float RiverBias;
         public int LakeSize;
+        public bool AddTSmooth01, AddTSmooth02, AddTSmooth03, AddTSmooth04;
+        public float TSmoothnessFactor, TSmoothnessFactor02, TSmoothnessFactor03, TSmoothnessFactor04;
+        public float TAmp01, TAmp02, TAmp03, TAmp04;
+        public float PolarBias;
         #endregion
 
         #region Constructor and Setup
@@ -128,6 +140,7 @@ namespace MapGenerator
             RaiseLog("Generating map...");
             SetElevation();
             AddRivers();
+            SetTemperature();
         }
 
         #region Elevation
@@ -143,25 +156,25 @@ namespace MapGenerator
             if (AddSmooth01)
             {
                 RaiseLog("Setting initial elevation...");
-                Cells1 = ApplyPseudoPerlinSmoothing(Cells, SmoothnessFactor, Amp01);
+                Cells1 = ApplyPseudoPerlinSmoothing(eRand, Cells, SmoothnessFactor, Amp01);
             }
             Cell[][] Cells2 = null;
             if (AddSmooth02)
             {
                 RaiseLog("Adjusting elevation, level 2/4...");
-                Cells2 = ApplyPseudoPerlinSmoothing(Cells, (SmoothnessFactor * SmoothnessFactor02), Amp02);
+                Cells2 = ApplyPseudoPerlinSmoothing(eRand, Cells, (SmoothnessFactor * SmoothnessFactor02), Amp02);
             }
             Cell[][] Cells3 = null;
             if (AddSmooth03)
             {
                 RaiseLog("Adjusting elevation, level 3/4...");
-                Cells3 = ApplyPseudoPerlinSmoothing(Cells, (SmoothnessFactor * SmoothnessFactor03), Amp03);
+                Cells3 = ApplyPseudoPerlinSmoothing(eRand, Cells, (SmoothnessFactor * SmoothnessFactor03), Amp03);
             }
             Cell[][] Cells4 = null;
             if (AddSmooth04)
             {
                 RaiseLog("Adjusting elevation, level 4/4...");
-                Cells4 = ApplyPseudoPerlinSmoothing(Cells, (SmoothnessFactor * SmoothnessFactor04), Amp04);
+                Cells4 = ApplyPseudoPerlinSmoothing(eRand, Cells, (SmoothnessFactor * SmoothnessFactor04), Amp04);
             }
 
             float actualMaxElevation = 0f;
@@ -239,7 +252,7 @@ namespace MapGenerator
 
             RaiseLog("Done with elevation.");
         }
-        private Cell[][] ApplyPseudoPerlinSmoothing(Cell[][] Cells, float granularity, float amplitude)
+        private Cell[][] ApplyPseudoPerlinSmoothing(Random thisRand, Cell[][] Cells, float granularity, float amplitude)
         {
             Cell[][] results = Copy(Cells);            
 
@@ -251,12 +264,11 @@ namespace MapGenerator
             float top, bottom;
 
             // set the random value for each sell, adjusting for the possible amplitude allowed in this pass.
-            Random eRand = RandLvl2[(int)DetailedRandomizer.ElevationRand];
             for (int x = 0; x < results.Length; x++) // for each column
             {
                 for (int y = 0; y < results[x].Length; y++) // for each row in the X'th column
                 {
-                    float v = ((float)eRand.NextDouble() * amplitude) + (0.5f - amplitude / 2f);
+                    float v = ((float)thisRand.NextDouble() * amplitude) + (0.5f - amplitude / 2f);
                     results[x][y].Elevation = v; // results in +/- amplitude.
                 }
             }
@@ -532,6 +544,112 @@ namespace MapGenerator
         }
         #endregion
 
+        #region Temperature
+        private void SetTemperature()
+        {
+            // before we reset the elevations, make sure we clear the resulting brushes
+            Cell.ClearTemperatureBrushes();
+
+            Random tRand = RandLvl2[(int)DetailedRandomizer.TemperatureRand];
+
+            // learned that doing it multiple times is the right way, to round out the edges using different granularity
+            Cell[][] Cells1 = null;
+            if (AddTSmooth01)
+            {
+                RaiseLog("Setting initial temparate...");
+                Cells1 = ApplyPseudoPerlinSmoothing(tRand, Cells, TSmoothnessFactor, TAmp01);
+            }
+            Cell[][] Cells2 = null;
+            if (AddTSmooth02)
+            {
+                RaiseLog("Adjusting temperature, level 2/4...");
+                Cells2 = ApplyPseudoPerlinSmoothing(tRand, Cells, (SmoothnessFactor * TSmoothnessFactor02), TAmp02);
+            }
+            Cell[][] Cells3 = null;
+            if (AddTSmooth03)
+            {
+                RaiseLog("Adjusting temperature, level 3/4...");
+                Cells3 = ApplyPseudoPerlinSmoothing(tRand, Cells, (SmoothnessFactor * TSmoothnessFactor03), TAmp03);
+            }
+            Cell[][] Cells4 = null;
+            if (AddTSmooth04)
+            {
+                RaiseLog("Adjusting temperature, level 4/4...");
+                Cells4 = ApplyPseudoPerlinSmoothing(tRand, Cells, (SmoothnessFactor * TSmoothnessFactor04), TAmp04);
+            }
+
+            float actualMaxTemperature = 0f;
+
+            // now add them all together.
+            RaiseLog("Adjusting temperature, combining all adjustments...");
+            float result = 0;
+            List<double> vals = new List<double>();
+            for (int x = 0; x < Cells.Length; x++)
+            {
+                for (int y = 0; y < Cells[x].Length; y++)
+                {
+                    // NOTE: since the default perlin noise function sets elevation, just use that property instead.
+                    result = Cells1[x][y].Elevation; // start with our first random value
+
+                    vals.Clear();
+                    if (AddTSmooth02) { vals.Add(Cells2[x][y].Elevation); }
+                    if (AddTSmooth03) { vals.Add(Cells3[x][y].Elevation); }
+                    if (AddTSmooth04) { vals.Add(Cells4[x][y].Elevation); }
+
+                    foreach (float v in vals)
+                    {
+                        // v is between 0 and 1, with the +- 0.5 representing the % movement away from flat.
+                        // so, pulling out the 0.5 gives us a +- random amplitude for the pass
+                        // so, multiplying the result will nudge the result up or down by betweeen zero and +- the amplitude for the pass.
+                        result = result * (1f - (v - 0.5f));
+                    }
+
+                    Cells[x][y].Temperature = result;
+
+                    // store this for the continental bias.
+                    actualMaxTemperature = Math.Max(actualMaxTemperature, result);
+                }
+            }
+
+            if (PolarBias> 0.0f)
+            {
+                RaiseLog("Adjusting for polar bias.");
+                float Xm = Cells.Length / 2;
+                float Ym = Cells[0].Length / 2;
+                for (int x = 0; x < Cells.Length; x++)
+                {
+                    for (int y = 0; y < Cells[x].Length; y++)
+                    {
+                        float e = Cells[x][y].Temperature;
+
+                        // note: since this is a single dimention, no need for formulas.
+                        float distFromCenter = Ym - y;
+                        float distFromCenterPerc = distFromCenter / Ym;
+
+                        // by default, it would be 0.5 aross the map.
+                        // so the bias pulls the outside down, and the middle up.
+                        e = this.InterpolatePoly(e - (PolarBias / 2), e + (PolarBias / 2), (1 - (distFromCenterPerc)));
+                        e = Math.Min(Math.Max(e, 0), actualMaxTemperature); // keep within existing limits
+
+                        Cells[x][y].Temperature = e;
+                    }
+                }
+            }
+
+            // now that we're all done calculating, set up for drawing.
+            RaiseLog("Setting paint brush by temperature.");
+            for (int x = 0; x < Cells.Length; x++)
+            {
+                for (int y = 0; y < Cells[x].Length; y++)
+                {
+                    Cells[x][y].SetBrushByElevationAndType();
+                }
+            }
+
+            RaiseLog("Done with temperature.");
+        }
+        #endregion
+
         private float DistanceBetweenCells(Cell c1, Cell c2)
         {
             return (float)Math.Sqrt(((c2.X - c1.X) * (c2.X - c1.X)) + ((c2.Y - c1.Y) * (c2.Y - c1.Y)));
@@ -659,7 +777,18 @@ namespace MapGenerator
             {
                 foreach(Cell c in rows)
                 {
-                    c.PaintCell(g);
+                    if(DrawElevation)
+                    {
+                        c.PaintElevation(g);
+                    }
+                    else if(DrawTemperature)
+                    {
+                        c.PaintTemp(g);
+                    }
+                    else
+                    {
+
+                    }
                 }
             }
         }
