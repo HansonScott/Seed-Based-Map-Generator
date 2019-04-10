@@ -144,7 +144,8 @@ namespace MapGenerator
             List<string> info = new List<string>();
 
             // add all interesting info
-            info.Add($"Elevation: {ActualElevation}");
+            info.Add("Elevation: ");
+            info.Add(ActualElevation.ToString());
             if(IsRiver)
             {
                 info.Add("River");
@@ -152,6 +153,10 @@ namespace MapGenerator
             else if(IsLake)
             {
                 info.Add("Lake");
+            }
+            else if(ActualElevation <= ParentMap.WaterElevation)
+            {
+                info.Add("Water");
             }
 
             return info.ToArray();
