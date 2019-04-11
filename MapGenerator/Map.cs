@@ -60,17 +60,19 @@ namespace MapGenerator
             ColorRand = 0,
             ElevationRand = 1,
             TemperatureRand = 2,
+            RainfallRand = 3,
         }
 
         #region Parameters
 
         public bool DrawElevation = true;
         public bool DrawTemperature = true;
+        public bool DrawRainfall = true;
 
         public int MaxElevation = 1000;
         public int MaxTemperature = 40; // Celsius is much easier to program :)
         public int FreezeTemperature = 0;
-        public int MaxMoisture = 100; // not sure of the units, but 100 seems easy to program :)
+        public int MaxRainfall = 100; // not sure of the rainfall units or range, but 100 seems easy to program :)
         public int WaterElevation = 500; // default to half the max?
         public int RiverSourceElevationMinimum = 800; // close to the top, but not extreme?
 
@@ -80,10 +82,16 @@ namespace MapGenerator
         public float ContinentBias;
         public float RiverBias;
         public int LakeSize;
+
         public bool AddTSmooth01, AddTSmooth02, AddTSmooth03, AddTSmooth04;
         public float TSmoothnessFactor, TSmoothnessFactor02, TSmoothnessFactor03, TSmoothnessFactor04;
         public float TAmp01, TAmp02, TAmp03, TAmp04;
         public float PolarBias;
+
+        public bool AddRSmooth01, AddRSmooth02, AddRSmooth03, AddRSmooth04;
+        public float RSmoothnessFactor, RSmoothnessFactor02, RSmoothnessFactor03, RSmoothnessFactor04;
+        public float RAmp01, RAmp02, RAmp03, RAmp04;
+        public float RainfallBias;
         #endregion
 
         #region Constructor and Setup
@@ -141,6 +149,7 @@ namespace MapGenerator
             SetElevation();
             AddRivers();
             SetTemperature();
+            SetRainfall();
         }
 
         #region Elevation
@@ -246,7 +255,7 @@ namespace MapGenerator
             {
                 for (int y = 0; y < Cells[x].Length; y++)
                 {
-                    Cells[x][y].SetBrushByElevationAndType();
+                    Cells[x][y].SetBrushByEnvironment();
                 }
             }
 
@@ -642,11 +651,122 @@ namespace MapGenerator
             {
                 for (int y = 0; y < Cells[x].Length; y++)
                 {
-                    Cells[x][y].SetBrushByElevationAndType();
+                    Cells[x][y].SetBrushByEnvironment();
                 }
             }
 
             RaiseLog("Done with temperature.");
+        }
+        #endregion
+
+        #region Rainfall
+        private void SetRainfall()
+        {
+            // before we reset the elevations, make sure we clear the resulting brushes
+            Cell.ClearRainfallBrushes();
+
+            Random rRand = RandLvl2[(int)DetailedRandomizer.RainfallRand];
+
+            // learned that doing it multiple times is the right way, to round out the edges using different granularity
+            Cell[][] Cells1 = null;
+            if (AddRSmooth01)
+            {
+                RaiseLog("Setting initial rainfall...");
+                Cells1 = ApplyPseudoPerlinSmoothing(rRand, Cells, RSmoothnessFactor, RAmp01);
+            }
+            Cell[][] Cells2 = null;
+            if (AddRSmooth02)
+            {
+                RaiseLog("Adjusting rainfall, level 2/4...");
+                Cells2 = ApplyPseudoPerlinSmoothing(rRand, Cells, (SmoothnessFactor * RSmoothnessFactor02), RAmp02);
+            }
+            Cell[][] Cells3 = null;
+            if (AddRSmooth03)
+            {
+                RaiseLog("Adjusting rainfall, level 3/4...");
+                Cells3 = ApplyPseudoPerlinSmoothing(rRand, Cells, (SmoothnessFactor * RSmoothnessFactor03), RAmp03);
+            }
+            Cell[][] Cells4 = null;
+            if (AddRSmooth04)
+            {
+                RaiseLog("Adjusting rainfall, level 4/4...");
+                Cells4 = ApplyPseudoPerlinSmoothing(rRand, Cells, (SmoothnessFactor * RSmoothnessFactor04), RAmp04);
+            }
+
+            float actualMaxRainfall = 0f;
+
+            // now add them all together.
+            RaiseLog("Adjusting rainfall, combining all adjustments...");
+            float result = 0;
+            List<double> vals = new List<double>();
+            for (int x = 0; x < Cells.Length; x++)
+            {
+                for (int y = 0; y < Cells[x].Length; y++)
+                {
+                    // NOTE: since the default perlin noise function sets elevation, just use that property instead.
+                    result = Cells1[x][y].Elevation; // start with our first random value
+
+                    vals.Clear();
+                    if (AddTSmooth02) { vals.Add(Cells2[x][y].Elevation); }
+                    if (AddTSmooth03) { vals.Add(Cells3[x][y].Elevation); }
+                    if (AddTSmooth04) { vals.Add(Cells4[x][y].Elevation); }
+
+                    foreach (float v in vals)
+                    {
+                        // v is between 0 and 1, with the +- 0.5 representing the % movement away from flat.
+                        // so, pulling out the 0.5 gives us a +- random amplitude for the pass
+                        // so, multiplying the result will nudge the result up or down by betweeen zero and +- the amplitude for the pass.
+                        result = result * (1f - (v - 0.5f));
+                    }
+
+                    Cells[x][y].Rainfall = result;
+
+                    // store this for the continental bias.
+                    actualMaxRainfall = Math.Max(actualMaxRainfall, result);
+                }
+            }
+
+            if (RainfallBias != 0.0f)
+            {
+                RaiseLog("Adjusting for rainfall bias.");
+                for (int x = 0; x < Cells.Length; x++)
+                {
+                    for (int y = 0; y < Cells[x].Length; y++)
+                    {
+                        float rVal = Cells[x][y].Rainfall;
+
+                        // theory - more rain on the edge of the bias.
+                        float distFromEdge = Cells.Length - x;
+                        if(RainfallBias < 0.0)
+                        {
+                            distFromEdge = x;
+                        }
+
+                        float distFromEdgePerc = distFromEdge / Cells.Length;
+
+                        // figure out the percentage along the curve we should be
+                        float e = this.InterpolatePoly(0, 1, distFromEdgePerc);
+                        e = e - 0.5f; // we want to either add or subtract from the random number (so, +- 0.5, rather than 0-1)
+                        float adjust = e * Math.Abs(RainfallBias); // temper the adjustment by the bias
+                        rVal = rVal + adjust; // adjust rVal by a %
+                        rVal = Math.Min(Math.Max(rVal, 0), actualMaxRainfall); // keep within existing limits
+
+                        Cells[x][y].Rainfall = rVal;
+                    }
+                }
+            }
+
+            // now that we're all done calculating, set up for drawing.
+            RaiseLog("Setting paint brush by rainfall.");
+            for (int x = 0; x < Cells.Length; x++)
+            {
+                for (int y = 0; y < Cells[x].Length; y++)
+                {
+                    Cells[x][y].SetBrushByEnvironment();
+                }
+            }
+
+            RaiseLog("Done with rainfall.");
         }
         #endregion
 
@@ -785,9 +905,9 @@ namespace MapGenerator
                     {
                         c.PaintTemp(g);
                     }
-                    else
+                    else if(DrawRainfall)
                     {
-
+                        c.PainRainfall(g);
                     }
                 }
             }

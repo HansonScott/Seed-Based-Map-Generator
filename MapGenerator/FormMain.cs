@@ -79,6 +79,7 @@ namespace MapGenerator
         {
             m.DrawElevation = s.DrawElevation;
             m.DrawTemperature = s.DrawTemperature;
+            m.DrawRainfall = s.DrawRainfall;
 
             #region Elevation
             m.WaterElevation = s.WaterLevel;
@@ -110,7 +111,7 @@ namespace MapGenerator
             m.AddTSmooth01 = true; // hard coded, must have at least 1 smoothing
             m.AddTSmooth02 = s.AddTSmooth02;
             m.AddTSmooth03 = s.AddTSmooth03;
-            m.AddSmooth04 = s.AddTSmooth04;
+            m.AddTSmooth04 = s.AddTSmooth04;
 
             m.TSmoothnessFactor = s.TSmoothnessFactor;
             m.TSmoothnessFactor02 = s.TSmoothnessFactor02;
@@ -124,6 +125,27 @@ namespace MapGenerator
 
             m.PolarBias = s.PolarBias;
             #endregion
+
+            #region Rainfall
+            m.RSmoothnessFactor = s.Smoothness;
+            m.AddRSmooth01 = true; // hard coded, must have at least 1 smoothing
+            m.AddRSmooth02 = s.AddRGrain02;
+            m.AddRSmooth03 = s.AddRGrain03;
+            m.AddRSmooth04 = s.AddRGrain04;
+
+            m.RSmoothnessFactor = s.SmoothnessFactor;
+            m.RSmoothnessFactor02 = s.RSmoothnessFactor02;
+            m.RSmoothnessFactor03 = s.RSmoothnessFactor03;
+            m.RSmoothnessFactor04 = s.RSmoothnessFactor04;
+
+            m.RAmp01 = s.RAmp01;
+            m.RAmp02 = s.RAmp02;
+            m.RAmp03 = s.RAmp03;
+            m.RAmp04 = s.RAmp04;
+
+            m.RainfallBias = s.RainfallBias;
+            #endregion
+
         }
 
         private int GetSeedFromTextBox()

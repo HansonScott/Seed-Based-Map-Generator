@@ -69,6 +69,21 @@
             this.nudTGrain02 = new System.Windows.Forms.NumericUpDown();
             this.rbDrawElevation = new System.Windows.Forms.RadioButton();
             this.rbDrawTemperature = new System.Windows.Forms.RadioButton();
+            this.gbRainfall = new System.Windows.Forms.GroupBox();
+            this.lblRainFallBias = new System.Windows.Forms.Label();
+            this.nudRBias = new System.Windows.Forms.NumericUpDown();
+            this.cbRAdd04 = new System.Windows.Forms.CheckBox();
+            this.cbRAdd03 = new System.Windows.Forms.CheckBox();
+            this.cbRAdd02 = new System.Windows.Forms.CheckBox();
+            this.nudRAmp04 = new System.Windows.Forms.NumericUpDown();
+            this.nudRGrain04 = new System.Windows.Forms.NumericUpDown();
+            this.nudRAmp03 = new System.Windows.Forms.NumericUpDown();
+            this.nudRGrain03 = new System.Windows.Forms.NumericUpDown();
+            this.label4 = new System.Windows.Forms.Label();
+            this.nudRAmp02 = new System.Windows.Forms.NumericUpDown();
+            this.label5 = new System.Windows.Forms.Label();
+            this.nudRGrain02 = new System.Windows.Forms.NumericUpDown();
+            this.rbDrawRainfall = new System.Windows.Forms.RadioButton();
             ((System.ComponentModel.ISupportInitialize)(this.nudWater)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudSmoothness)).BeginInit();
             this.gbElevation.SuspendLayout();
@@ -91,6 +106,14 @@
             ((System.ComponentModel.ISupportInitialize)(this.nudTGrain03)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudTIntensity02)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudTGrain02)).BeginInit();
+            this.gbRainfall.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudRBias)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudRAmp04)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudRGrain04)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudRAmp03)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudRGrain03)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudRAmp02)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudRGrain02)).BeginInit();
             this.SuspendLayout();
             // 
             // nudWater
@@ -775,11 +798,275 @@
             this.rbDrawTemperature.Text = "Draw Temperature";
             this.rbDrawTemperature.UseVisualStyleBackColor = true;
             // 
+            // gbRainfall
+            // 
+            this.gbRainfall.Controls.Add(this.lblRainFallBias);
+            this.gbRainfall.Controls.Add(this.nudRBias);
+            this.gbRainfall.Controls.Add(this.cbRAdd04);
+            this.gbRainfall.Controls.Add(this.cbRAdd03);
+            this.gbRainfall.Controls.Add(this.cbRAdd02);
+            this.gbRainfall.Controls.Add(this.nudRAmp04);
+            this.gbRainfall.Controls.Add(this.nudRGrain04);
+            this.gbRainfall.Controls.Add(this.nudRAmp03);
+            this.gbRainfall.Controls.Add(this.nudRGrain03);
+            this.gbRainfall.Controls.Add(this.label4);
+            this.gbRainfall.Controls.Add(this.nudRAmp02);
+            this.gbRainfall.Controls.Add(this.label5);
+            this.gbRainfall.Controls.Add(this.nudRGrain02);
+            this.gbRainfall.Location = new System.Drawing.Point(475, 186);
+            this.gbRainfall.Name = "gbRainfall";
+            this.gbRainfall.Size = new System.Drawing.Size(341, 169);
+            this.gbRainfall.TabIndex = 17;
+            this.gbRainfall.TabStop = false;
+            this.gbRainfall.Text = "Rainfall";
+            // 
+            // lblRainFallBias
+            // 
+            this.lblRainFallBias.AutoSize = true;
+            this.lblRainFallBias.Location = new System.Drawing.Point(6, 128);
+            this.lblRainFallBias.Name = "lblRainFallBias";
+            this.lblRainFallBias.Size = new System.Drawing.Size(65, 13);
+            this.lblRainFallBias.TabIndex = 25;
+            this.lblRainFallBias.Text = "Rainfall Bias";
+            // 
+            // nudRBias
+            // 
+            this.nudRBias.DecimalPlaces = 2;
+            this.nudRBias.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            131072});
+            this.nudRBias.Location = new System.Drawing.Point(97, 126);
+            this.nudRBias.Maximum = new decimal(new int[] {
+            10,
+            0,
+            0,
+            65536});
+            this.nudRBias.Minimum = new decimal(new int[] {
+            10,
+            0,
+            0,
+            -2147418112});
+            this.nudRBias.Name = "nudRBias";
+            this.nudRBias.Size = new System.Drawing.Size(74, 20);
+            this.nudRBias.TabIndex = 24;
+            this.nudRBias.Value = new decimal(new int[] {
+            4,
+            0,
+            0,
+            65536});
+            // 
+            // cbRAdd04
+            // 
+            this.cbRAdd04.AutoSize = true;
+            this.cbRAdd04.Checked = true;
+            this.cbRAdd04.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.cbRAdd04.Location = new System.Drawing.Point(6, 88);
+            this.cbRAdd04.Name = "cbRAdd04";
+            this.cbRAdd04.Size = new System.Drawing.Size(45, 17);
+            this.cbRAdd04.TabIndex = 23;
+            this.cbRAdd04.Text = "Add";
+            this.cbRAdd04.UseVisualStyleBackColor = true;
+            // 
+            // cbRAdd03
+            // 
+            this.cbRAdd03.AutoSize = true;
+            this.cbRAdd03.Checked = true;
+            this.cbRAdd03.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.cbRAdd03.Location = new System.Drawing.Point(6, 63);
+            this.cbRAdd03.Name = "cbRAdd03";
+            this.cbRAdd03.Size = new System.Drawing.Size(45, 17);
+            this.cbRAdd03.TabIndex = 22;
+            this.cbRAdd03.Text = "Add";
+            this.cbRAdd03.UseVisualStyleBackColor = true;
+            // 
+            // cbRAdd02
+            // 
+            this.cbRAdd02.AutoSize = true;
+            this.cbRAdd02.Checked = true;
+            this.cbRAdd02.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.cbRAdd02.Location = new System.Drawing.Point(6, 36);
+            this.cbRAdd02.Name = "cbRAdd02";
+            this.cbRAdd02.Size = new System.Drawing.Size(45, 17);
+            this.cbRAdd02.TabIndex = 21;
+            this.cbRAdd02.Text = "Add";
+            this.cbRAdd02.UseVisualStyleBackColor = true;
+            // 
+            // nudRAmp04
+            // 
+            this.nudRAmp04.DecimalPlaces = 2;
+            this.nudRAmp04.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            131072});
+            this.nudRAmp04.Location = new System.Drawing.Point(233, 88);
+            this.nudRAmp04.Maximum = new decimal(new int[] {
+            10,
+            0,
+            0,
+            65536});
+            this.nudRAmp04.Name = "nudRAmp04";
+            this.nudRAmp04.Size = new System.Drawing.Size(75, 20);
+            this.nudRAmp04.TabIndex = 20;
+            this.nudRAmp04.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            65536});
+            // 
+            // nudRGrain04
+            // 
+            this.nudRGrain04.DecimalPlaces = 2;
+            this.nudRGrain04.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            131072});
+            this.nudRGrain04.Location = new System.Drawing.Point(97, 88);
+            this.nudRGrain04.Maximum = new decimal(new int[] {
+            10,
+            0,
+            0,
+            65536});
+            this.nudRGrain04.Name = "nudRGrain04";
+            this.nudRGrain04.Size = new System.Drawing.Size(74, 20);
+            this.nudRGrain04.TabIndex = 19;
+            this.nudRGrain04.Value = new decimal(new int[] {
+            2,
+            0,
+            0,
+            65536});
+            // 
+            // nudRAmp03
+            // 
+            this.nudRAmp03.DecimalPlaces = 2;
+            this.nudRAmp03.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            131072});
+            this.nudRAmp03.Location = new System.Drawing.Point(233, 62);
+            this.nudRAmp03.Maximum = new decimal(new int[] {
+            10,
+            0,
+            0,
+            65536});
+            this.nudRAmp03.Name = "nudRAmp03";
+            this.nudRAmp03.Size = new System.Drawing.Size(75, 20);
+            this.nudRAmp03.TabIndex = 18;
+            this.nudRAmp03.Value = new decimal(new int[] {
+            2,
+            0,
+            0,
+            65536});
+            // 
+            // nudRGrain03
+            // 
+            this.nudRGrain03.DecimalPlaces = 2;
+            this.nudRGrain03.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            131072});
+            this.nudRGrain03.Location = new System.Drawing.Point(97, 62);
+            this.nudRGrain03.Maximum = new decimal(new int[] {
+            10,
+            0,
+            0,
+            65536});
+            this.nudRGrain03.Name = "nudRGrain03";
+            this.nudRGrain03.Size = new System.Drawing.Size(74, 20);
+            this.nudRGrain03.TabIndex = 17;
+            this.nudRGrain03.Value = new decimal(new int[] {
+            3,
+            0,
+            0,
+            65536});
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(230, 20);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(70, 13);
+            this.label4.TabIndex = 16;
+            this.label4.Text = "Intensity (0-1)";
+            // 
+            // nudRAmp02
+            // 
+            this.nudRAmp02.DecimalPlaces = 2;
+            this.nudRAmp02.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            131072});
+            this.nudRAmp02.Location = new System.Drawing.Point(233, 36);
+            this.nudRAmp02.Maximum = new decimal(new int[] {
+            10,
+            0,
+            0,
+            65536});
+            this.nudRAmp02.Name = "nudRAmp02";
+            this.nudRAmp02.Size = new System.Drawing.Size(75, 20);
+            this.nudRAmp02.TabIndex = 15;
+            this.nudRAmp02.Value = new decimal(new int[] {
+            3,
+            0,
+            0,
+            65536});
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(94, 20);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(56, 13);
+            this.label5.TabIndex = 14;
+            this.label5.Text = "Grain (0-1)";
+            // 
+            // nudRGrain02
+            // 
+            this.nudRGrain02.DecimalPlaces = 2;
+            this.nudRGrain02.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            131072});
+            this.nudRGrain02.Location = new System.Drawing.Point(97, 36);
+            this.nudRGrain02.Maximum = new decimal(new int[] {
+            10,
+            0,
+            0,
+            65536});
+            this.nudRGrain02.Name = "nudRGrain02";
+            this.nudRGrain02.Size = new System.Drawing.Size(74, 20);
+            this.nudRGrain02.TabIndex = 13;
+            this.nudRGrain02.Value = new decimal(new int[] {
+            5,
+            0,
+            0,
+            65536});
+            // 
+            // rbDrawRainfall
+            // 
+            this.rbDrawRainfall.AutoSize = true;
+            this.rbDrawRainfall.Location = new System.Drawing.Point(8, 162);
+            this.rbDrawRainfall.Name = "rbDrawRainfall";
+            this.rbDrawRainfall.Size = new System.Drawing.Size(88, 17);
+            this.rbDrawRainfall.TabIndex = 18;
+            this.rbDrawRainfall.TabStop = true;
+            this.rbDrawRainfall.Text = "Draw Rainfall";
+            this.rbDrawRainfall.UseVisualStyleBackColor = true;
+            // 
             // MapSettings
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 450);
+            this.ClientSize = new System.Drawing.Size(876, 450);
+            this.Controls.Add(this.rbDrawRainfall);
+            this.Controls.Add(this.gbRainfall);
             this.Controls.Add(this.rbDrawTemperature);
             this.Controls.Add(this.rbDrawElevation);
             this.Controls.Add(this.gbTemperature);
@@ -821,6 +1108,15 @@
             ((System.ComponentModel.ISupportInitialize)(this.nudTGrain03)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudTIntensity02)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudTGrain02)).EndInit();
+            this.gbRainfall.ResumeLayout(false);
+            this.gbRainfall.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudRBias)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudRAmp04)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudRGrain04)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudRAmp03)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudRGrain03)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudRAmp02)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudRGrain02)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -869,5 +1165,20 @@
         private System.Windows.Forms.NumericUpDown nudTGrain02;
         private System.Windows.Forms.RadioButton rbDrawElevation;
         private System.Windows.Forms.RadioButton rbDrawTemperature;
+        private System.Windows.Forms.GroupBox gbRainfall;
+        private System.Windows.Forms.Label lblRainFallBias;
+        private System.Windows.Forms.NumericUpDown nudRBias;
+        private System.Windows.Forms.CheckBox cbRAdd04;
+        private System.Windows.Forms.CheckBox cbRAdd03;
+        private System.Windows.Forms.CheckBox cbRAdd02;
+        private System.Windows.Forms.NumericUpDown nudRAmp04;
+        private System.Windows.Forms.NumericUpDown nudRGrain04;
+        private System.Windows.Forms.NumericUpDown nudRAmp03;
+        private System.Windows.Forms.NumericUpDown nudRGrain03;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.NumericUpDown nudRAmp02;
+        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.NumericUpDown nudRGrain02;
+        private System.Windows.Forms.RadioButton rbDrawRainfall;
     }
 }

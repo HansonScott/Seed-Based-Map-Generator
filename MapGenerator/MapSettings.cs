@@ -60,8 +60,25 @@ namespace MapGenerator
 
         public float PolarBias { get { return (float)nudTPolarBias.Value; } }
 
+        public bool AddRGrain01 { get { return true; } }
+        public bool AddRGrain02 { get { return cbRAdd02.Checked; } }
+        public bool AddRGrain03 { get { return cbRAdd03.Checked; } }
+        public bool AddRGrain04 { get { return cbRAdd04.Checked; } }
+        public float RSmoothnessFactor01 { get { return (float)nudSmoothness.Value; } }
+        public float RSmoothnessFactor02 { get { return (float)nudRGrain02.Value; } }
+        public float RSmoothnessFactor03 { get { return (float)nudRGrain03.Value; } }
+        public float RSmoothnessFactor04 { get { return (float)nudRGrain04.Value; } }
+        public float RAmp01 { get { return 0.5f; } }
+        public float RAmp02 { get { return (float)nudRAmp02.Value; } }
+        public float RAmp03 { get { return (float)nudRAmp03.Value; } }
+        public float RAmp04 { get { return (float)nudRAmp04.Value; } }
+
+        public float RainfallBias { get { return (float)nudRBias.Value; } }
+
+
         public bool DrawElevation { get { return this.rbDrawElevation.Checked; } }
         public bool DrawTemperature { get { return this.rbDrawTemperature.Checked; } }
+        public bool DrawRainfall { get { return this.rbDrawRainfall.Checked; } }
 
         public MapSettings()
         {

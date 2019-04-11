@@ -11,6 +11,8 @@ namespace MapGenerator
         public static void ClearElevationBrushes() { ElevationColors?.Clear(); }
         private static Dictionary<float, Color> TemperatureColors;
         public static void ClearTemperatureBrushes() { TemperatureColors?.Clear(); }
+        private static Dictionary<float, Color> RainfallColors;
+        public static void ClearRainfallBrushes() { RainfallColors?.Clear(); }
         #endregion
 
         #region Fields
@@ -29,10 +31,13 @@ namespace MapGenerator
 
         private SolidBrush ElevationBrush;
         private SolidBrush TemperatureBrush;
+        private SolidBrush RainfallBrush;
 
         private float _Temperature;
         public Color TemperatureColor;
-        private float _Moisture;
+
+        private float _Rainfall;
+        public Color RainfallColor;
         #endregion
 
         #region Properties
@@ -53,13 +58,13 @@ namespace MapGenerator
                 _Temperature = value;
             }
         }
-        public float Moisture
+        public float Rainfall
         {
-            get { return _Moisture; }
+            get { return _Rainfall; }
             set
             {
 
-                _Moisture = value;
+                _Rainfall = value;
             }
         }
         public bool IsRiver
@@ -68,7 +73,7 @@ namespace MapGenerator
             set
             {
                 _IsRiver = value;
-                SetBrushByElevationAndType();
+                SetBrushByEnvironment();
             }
         }
         public bool IsLake
@@ -77,12 +82,12 @@ namespace MapGenerator
             set
             {
                 _IsLake = value;
-                SetBrushByElevationAndType();
+                SetBrushByEnvironment();
             }
         }
         public float ActualElevation { get { return (Elevation * ParentMap.MaxElevation); } }
         public float ActualTemperature { get { return (Temperature * ParentMap.MaxTemperature); } }
-        public float ActualMoisture { get { return (Moisture * ParentMap.MaxMoisture); } }
+        public float ActualRainfall { get { return (Rainfall * ParentMap.MaxRainfall); } }
         #endregion
 
         #region Constructor and Setup
@@ -96,7 +101,7 @@ namespace MapGenerator
         #endregion
 
         #region Public Methods
-        public void SetBrushByElevationAndType()
+        public void SetBrushByEnvironment()
         {
             #region elevation
             if(ElevationColors == null)
@@ -186,6 +191,50 @@ namespace MapGenerator
 
             TemperatureBrush = new SolidBrush(TemperatureColor);
             #endregion
+
+            #region Rainfall
+            if (RainfallColors == null)
+            {
+                RainfallColors = new Dictionary<float, Color>();
+            }
+
+            if (RainfallColors.ContainsKey((float)Math.Round((decimal)Rainfall, 3)))
+            {
+                this.RainfallColor = RainfallColors[(float)Math.Round((decimal)Rainfall, 3)];
+            }
+            else
+            {
+                // Maroon       128,0,  0   0-10%
+                // red          255,0,  0   10-20%
+                // orange       255,128,0   20-30%
+                // yellow       255,255,0   30-40%
+                // lime         128,255,0   40-50%
+                // green        0,  255,0   50-60%
+                // teal         0,255,128   60-70%
+                // aqua         0,255,255   70-80%
+                // light blue   0,128,255   80-90%
+                // dark blue    0,  0,255   90-100%
+
+                float perc = ActualRainfall / ParentMap.MaxRainfall;
+                int r, g, b;
+                if (perc < .10)      { r = 128; g = 0; b = 0; }
+                else if (perc < .20) { r = 255; g = 0; b = 0; }
+                else if (perc < .30) { r = 255; g = 128; b = 0; }
+                else if (perc < .40) { r = 255; g = 255; b = 0; }
+                else if (perc < .50) { r = 128; g = 255; b = 0; }
+                else if (perc < .60) { r = 0; g = 255; b = 0; }
+                else if (perc < .70) { r = 0; g = 255; b = 128; }
+                else if (perc < .80) { r = 0; g = 255; b = 255; }
+                else if (perc < .90) { r = 0; g = 128; b = 255; }
+                else                 { r = 0; g = 0; b = 255; }
+
+                RainfallColor = Color.FromArgb(r, g, b);
+
+                RainfallColors.Add((float)Math.Round((decimal)Rainfall, 3), RainfallColor);
+            } // end else, not in static collection
+
+            RainfallBrush = new SolidBrush(RainfallColor);
+            #endregion
         }
 
         internal void PaintElevation(Graphics g)
@@ -198,6 +247,11 @@ namespace MapGenerator
             g.FillRectangle(TemperatureBrush, ThisRect);
         }
 
+        internal void PainRainfall(Graphics g)
+        {
+            g.FillRectangle(RainfallBrush, ThisRect);
+        }
+
         internal string[] GetInfo()
         {
             List<string> info = new List<string>();
@@ -207,6 +261,8 @@ namespace MapGenerator
             info.Add(((int)ActualElevation).ToString());
             info.Add("Temperature: ");
             info.Add(((int)ActualTemperature).ToString());
+            info.Add("Rainfall: ");
+            info.Add(((int)ActualRainfall).ToString());
 
             if (IsRiver)
             {
