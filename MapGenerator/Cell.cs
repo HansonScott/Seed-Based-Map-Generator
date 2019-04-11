@@ -26,8 +26,7 @@ namespace MapGenerator
         public Color LakeColor = Color.FromArgb(50, 50, 255);
         public RectangleF ThisRect;
 
-        private bool _IsRiver;
-        private bool _IsLake;
+        public Biome CellBiome;
 
         private SolidBrush ElevationBrush;
         private SolidBrush TemperatureBrush;
@@ -39,6 +38,28 @@ namespace MapGenerator
         private float _Rainfall;
         public Color RainfallColor;
         #endregion
+
+        public enum Biome
+        {
+            Ocean, // - mid blue, based on depth
+            River, // - greenish blue
+            Lake, // - greenish blue
+
+            // low temp
+            Polar, // low temp low rain - white
+            Frozen_Ocean, // tundra, but on water - soft greyish blue
+            Tundra, // cold temp, low to mid rain - white w/ dark brown? (dark teal, brown, light blue) 
+            Desert, // any temp, low rain - reddish tan, light brown
+
+            // mid temp
+            Boreal_Forest, // les rain - dark green or dark brown
+            Prairie, // mid rain - soft green
+            Woods_And_Shrubs, // more rain - mid green
+
+            // high temp
+            Savanna, // low to mid rain - tan / brown
+            Tropical_Rainforest, // mid to high rain - bright green
+        }
 
         #region Properties
         public float Elevation
@@ -69,19 +90,19 @@ namespace MapGenerator
         }
         public bool IsRiver
         {
-            get { return _IsRiver; }
+            get { return (this.CellBiome == Biome.River); }
             set
             {
-                _IsRiver = value;
+                this.CellBiome = Biome.River;
                 SetBrushByEnvironment();
             }
         }
         public bool IsLake
         {
-            get { return _IsLake; }
+            get { return (this.CellBiome == Biome.Lake); }
             set
             {
-                _IsLake = value;
+                this.CellBiome = Biome.Lake;
                 SetBrushByEnvironment();
             }
         }
