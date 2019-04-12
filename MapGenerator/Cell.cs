@@ -13,6 +13,8 @@ namespace MapGenerator
         public static void ClearTemperatureBrushes() { TemperatureColors?.Clear(); }
         private static Dictionary<float, Color> RainfallColors;
         public static void ClearRainfallBrushes() { RainfallColors?.Clear(); }
+        private static Dictionary<Biome, Color> BiomeColors;
+        public static void ClearBiomeBrushes() { BiomeColors?.Clear(); }
         #endregion
 
         #region Fields
@@ -27,10 +29,12 @@ namespace MapGenerator
         public RectangleF ThisRect;
 
         public Biome CellBiome;
+        public Color BiomeColor;
 
         private SolidBrush ElevationBrush;
         private SolidBrush TemperatureBrush;
         private SolidBrush RainfallBrush;
+        private SolidBrush BiomeBrush;
 
         private float _Temperature;
         public Color TemperatureColor;
@@ -41,24 +45,24 @@ namespace MapGenerator
 
         public enum Biome
         {
-            Ocean, // - mid blue, based on depth
-            River, // - greenish blue
-            Lake, // - greenish blue
+            Ocean = 1, // - mid blue, based on depth
+            River = 2, // - greenish blue
+            Lake = 3, // - greenish blue
 
             // low temp
-            Polar, // low temp low rain - white
-            Frozen_Ocean, // tundra, but on water - soft greyish blue
-            Tundra, // cold temp, low to mid rain - white w/ dark brown? (dark teal, brown, light blue) 
-            Desert, // any temp, low rain - reddish tan, light brown
+            Polar = 4, // low temp low rain - white
+            Frozen_Ocean = 5, // tundra, but on water - soft greyish blue
+            Tundra = 6, // cold temp, low to mid rain - white w/ dark brown? (dark teal, brown, light blue) 
 
             // mid temp
-            Boreal_Forest, // les rain - dark green or dark brown
-            Prairie, // mid rain - soft green
-            Woods_And_Shrubs, // more rain - mid green
+            Boreal_Forest = 7, // less rain - dark green or dark brown
+            Prairie = 8, // mid rain - soft green
+            Woods_And_Shrubs = 9, // more rain - mid green
 
             // high temp
-            Savanna, // low to mid rain - tan / brown
-            Tropical_Rainforest, // mid to high rain - bright green
+            Desert = 10, // any temp, low rain - reddish tan, light brown
+            Savanna = 11, // low to mid rain - tan / brown
+            Tropical_Rainforest = 12, // mid to high rain - bright green
         }
 
         #region Properties
@@ -200,12 +204,31 @@ namespace MapGenerator
             }
             else
             {
-                // at max temp: 255, 255,  - white
-                // at 0 temp: 0, 0, 0  - black
+                // Maroon       128,0,  0   0-10%
+                // red          255,0,  0   10-20%
+                // orange       255,128,0   20-30%
+                // yellow       255,255,0   30-40%
+                // lime         128,255,0   40-50%
+                // green        0,  255,0   50-60%
+                // teal         0,255,128   60-70%
+                // aqua         0,255,255   70-80%
+                // light blue   0,128,255   80-90%
+                // dark blue    0,  0,255   90-100%
 
-                int b = (int)(Temperature * 255);
-                int v = Math.Max(Math.Min(b, 255), 0);
-                TemperatureColor = Color.FromArgb(v, v, v);
+                float perc = ActualTemperature / ParentMap.MaxTemperature;
+                int r, g, b;
+                if (perc < .10) { r = 128; g = 0; b = 0; }
+                else if (perc < .20) { r = 255; g = 0; b = 0; }
+                else if (perc < .30) { r = 255; g = 128; b = 0; }
+                else if (perc < .40) { r = 255; g = 255; b = 0; }
+                else if (perc < .50) { r = 128; g = 255; b = 0; }
+                else if (perc < .60) { r = 0; g = 255; b = 0; }
+                else if (perc < .70) { r = 0; g = 255; b = 128; }
+                else if (perc < .80) { r = 0; g = 255; b = 255; }
+                else if (perc < .90) { r = 0; g = 128; b = 255; }
+                else { r = 0; g = 0; b = 255; }
+
+                TemperatureColor = Color.FromArgb(r, g, b);
 
                 TemperatureColors.Add((float)Math.Round((decimal)Temperature, 3), TemperatureColor);
             } // end else, not in static collection
@@ -256,11 +279,153 @@ namespace MapGenerator
 
             RainfallBrush = new SolidBrush(RainfallColor);
             #endregion
+
+            #region Biome
+            // combine temperature, rainfall, and elevation to determine the biome
+            if (!IsLake && !IsRiver)
+            {
+                if (ActualElevation < ParentMap.WaterElevation)
+                {
+                    if (ActualTemperature <= 0)
+                    {
+                        CellBiome = Biome.Frozen_Ocean;
+                    }
+                    else
+                    {
+                        CellBiome = Biome.Ocean;
+                    }
+                }
+                else // not water
+                {
+                    if (Temperature < 0.2)
+                    {
+                        this.CellBiome = Biome.Polar;
+                    }
+                    else if (Temperature < 0.4)
+                    {
+                        if (Rainfall < 0.4)
+                        {
+                            // low temp, low rain
+                            this.CellBiome = Biome.Desert;
+                        }
+                        else if (Rainfall > 0.7)
+                        {
+                            // low temp, high rain
+                            this.CellBiome = Biome.Boreal_Forest;
+                        }
+                        else // mid rainfall
+                        {
+                            // low temp, high rain
+                            this.CellBiome = Biome.Tundra;
+                        }
+                    }
+                    else if (Temperature > 0.7)
+                    {
+                        if (Rainfall < 0.4)
+                        {
+                            // high temp, low rain
+                            this.CellBiome = Biome.Desert;
+                        }
+                        else if (Rainfall > 0.7)
+                        {
+                            // high temp, high rain
+                            this.CellBiome = Biome.Tropical_Rainforest;
+                        }
+                        else
+                        {
+                            // high temp, mid rain
+                            this.CellBiome = Biome.Savanna;
+                        }
+                    }
+                    else // mid temp
+                    {
+                        if (Rainfall < 0.4)
+                        {
+                            // mid temp, low rain
+                            this.CellBiome = Biome.Prairie;
+                        }
+                        else if (Rainfall > 0.7)
+                        {
+                            // mid temp, high rain
+                            this.CellBiome = Biome.Woods_And_Shrubs;
+                        }
+                        else
+                        {
+                            // mid temp, mid rain
+                            this.CellBiome = Biome.Woods_And_Shrubs;
+                        }
+                    }
+                }
+            }
+
+            // now establish the colors and brushes accordingly.
+            if (BiomeColors == null)
+            {
+                BiomeColors = new Dictionary<Biome, Color>();
+            }
+
+            if (BiomeColors.ContainsKey(this.CellBiome))
+            {
+                this.BiomeColor = BiomeColors[this.CellBiome];
+            }
+            else
+            {
+                int br = 0, bg = 0, bb = 0;
+                // now that we have the biome, set the brush.
+                switch (this.CellBiome)
+                {
+                    case Biome.Boreal_Forest:
+                        br = 2; bg = 48; bb = 0;
+                        break;
+                    case Biome.Desert:
+                        br = 230; bg = 130; bb = 30;
+                        break;
+                    case Biome.Frozen_Ocean:
+                        br = 180; bg = 250; bb = 245;
+                        break;
+                    case Biome.Lake:
+                        br = 40; bg = 160; bb = 250;
+                        break;
+                    case Biome.Ocean:
+                        br = 0; bg = 0; bb = 255;
+                        break;
+                    case Biome.Polar:
+                        br = 255; bg = 250; bb = 255;
+                        break;
+                    case Biome.Prairie:
+                        br = 130; bg = 200; bb = 75;
+                        break;
+                    case Biome.River:
+                        br = 40; bg = 160; bb = 250;
+                        break;
+                    case Biome.Savanna:
+                        br = 170; bg = 75; bb = 40;
+                        break;
+                    case Biome.Tropical_Rainforest:
+                        br = 90; bg = 160; bb = 90;
+                        break;
+                    case Biome.Tundra:
+                        br = 237; bg = 237; bb = 237;
+                        break;
+                    case Biome.Woods_And_Shrubs:
+                        br = 40; bg = 120; bb = 20;
+                        break;
+                    default:
+                        break;
+                }
+
+                BiomeColor = Color.FromArgb(br, bg, bb);
+                BiomeColors.Add(this.CellBiome, BiomeColor);
+            }
+
+            this.BiomeBrush = new SolidBrush(BiomeColor);
+            #endregion
         }
 
         internal void PaintElevation(Graphics g)
         {
-            g.FillRectangle(ElevationBrush, ThisRect);
+            //g.FillRectangle(ElevationBrush, ThisRect);
+            g.FillRectangle(BiomeBrush, ThisRect);
         }
 
         internal void PaintTemp(Graphics g)
@@ -284,6 +449,8 @@ namespace MapGenerator
             info.Add(((int)ActualTemperature).ToString());
             info.Add("Rainfall: ");
             info.Add(((int)ActualRainfall).ToString());
+            info.Add("Biome: ");
+            info.Add(CellBiome.ToString());
 
             if (IsRiver)
             {

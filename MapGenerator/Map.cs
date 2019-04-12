@@ -613,7 +613,8 @@ namespace MapGenerator
                         result = result * (1f - (v - 0.5f));
                     }
 
-                    Cells[x][y].Temperature = result;
+                    // invert, for some reason the high values result in a lower temp...
+                    Cells[x][y].Temperature = 1 - result;
 
                     // store this for the continental bias.
                     actualMaxTemperature = Math.Max(actualMaxTemperature, result);
