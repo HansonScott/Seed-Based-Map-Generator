@@ -244,15 +244,15 @@ namespace MapGenerator
 
                 float perc = ActualTemperature / ParentMap.MaxTemperature;
                 int r, g, b;
-                if (perc < .10) { r = 128; g = 0; b = 0; }
-                else if (perc < .20) { r = 255; g = 0; b = 0; }
-                else if (perc < .30) { r = 255; g = 128; b = 0; }
-                else if (perc < .40) { r = 255; g = 255; b = 0; }
+                if      (perc < .10) { r = 0; g = 128; b = 255; }
+                else if (perc < .20) { r = 0; g = 255; b = 255; }
+                else if (perc < .30) { r = 0; g = 255; b = 128; }
+                else if (perc < .40) { r = 0; g = 255; b = 0; }
                 else if (perc < .50) { r = 128; g = 255; b = 0; }
-                else if (perc < .60) { r = 0; g = 255; b = 0; }
-                else if (perc < .70) { r = 0; g = 255; b = 128; }
-                else if (perc < .80) { r = 0; g = 255; b = 255; }
-                else if (perc < .90) { r = 0; g = 128; b = 255; }
+                else if (perc < .60) { r = 255; g = 255; b = 0; }
+                else if (perc < .70) { r = 255; g = 128; b = 0; }
+                else if (perc < .80) { r = 255; g = 0; b = 0; }
+                else if (perc < .90) { r = 128; g = 0; b = 0; }
                 else { r = 0; g = 0; b = 255; }
 
                 TemperatureColor = Color.FromArgb(r, g, b);
@@ -519,14 +519,14 @@ namespace MapGenerator
             List<string> info = new List<string>();
 
             // add all interesting info
-            info.Add("Elevation: ");
-            info.Add(((int)ActualElevation).ToString());
-            info.Add("Temperature: ");
-            info.Add(((int)ActualTemperature).ToString());
-            info.Add("Rainfall: ");
-            info.Add(((int)ActualRainfall).ToString());
-            info.Add("Biome: ");
-            info.Add(CellBiome.ToString());
+            info.Add($"Elevation: {(int)ActualElevation}");
+            //info.Add(((int)ActualElevation).ToString());
+            info.Add($"Temperature: {(int)ActualTemperature} C");
+            //info.Add(((int)ActualTemperature).ToString());
+            info.Add($"Rainfall: {(int)ActualRainfall}");
+            //info.Add(((int)ActualRainfall).ToString());
+            info.Add($"Biome: {CellBiome}");
+            //info.Add(CellBiome.ToString());
 
             if (IsRiver)
             {
