@@ -77,6 +77,9 @@ namespace MapGenerator
 
         private void ApplySettings(Map m, MapSettings s)
         {
+            if(m == null) { return; }
+
+            m.DrawBiomes = s.DrawBiomes;
             m.DrawElevation = s.DrawElevation;
             m.DrawTemperature = s.DrawTemperature;
             m.DrawRainfall = s.DrawRainfall;

@@ -500,7 +500,11 @@ namespace MapGenerator
 
         internal void PaintElevation(Graphics g)
         {
-            //g.FillRectangle(ElevationBrush, ThisRect);
+            g.FillRectangle(ElevationBrush, ThisRect);
+        }
+
+        internal void PaintBiomes(Graphics g)
+        {
             g.FillRectangle(BiomeBrush, ThisRect);
         }
 

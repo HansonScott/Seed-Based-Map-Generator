@@ -75,7 +75,7 @@ namespace MapGenerator
 
         public float RainfallBias { get { return (float)nudRBias.Value; } }
 
-
+        public bool DrawBiomes { get { return this.rbDrawBiomes.Checked; } }
         public bool DrawElevation { get { return this.rbDrawElevation.Checked; } }
         public bool DrawTemperature { get { return this.rbDrawTemperature.Checked; } }
         public bool DrawRainfall { get { return this.rbDrawRainfall.Checked; } }

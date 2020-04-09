@@ -64,7 +64,7 @@ namespace MapGenerator
         }
 
         #region Parameters
-
+        public bool DrawBiomes = true;
         public bool DrawElevation = true;
         public bool DrawTemperature = true;
         public bool DrawRainfall = true;
@@ -898,7 +898,11 @@ namespace MapGenerator
             {
                 foreach(Cell c in rows)
                 {
-                    if(DrawElevation)
+                    if(DrawBiomes)
+                    {
+                        c.PaintBiomes(g);
+                    }
+                    else if(DrawElevation)
                     {
                         c.PaintElevation(g);
                     }
