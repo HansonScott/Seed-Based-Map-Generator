@@ -22,26 +22,24 @@ namespace MapGenerator
         private static Dictionary<Biome, Color> BiomeColors;
         private static Dictionary<Color, SolidBrush> BiomeBrushes;
         public static void ClearBiomeBrushes() { BiomeColors?.Clear(); BiomeBrushes?.Clear(); }
+
+        private static Color RiverColor = Color.FromArgb(50, 50, 255);
+        private static Color LakeColor = Color.FromArgb(50, 50, 255);
         #endregion
 
         #region Fields
         Map ParentMap;
         public int X;
         public int Y;
+        public RectangleF ThisRect;
+
         public bool IsSample;
+
         private float _Elevation;
         public Color ElevationColor;
-        public Color RiverColor = Color.FromArgb(50, 50, 255);
-        public Color LakeColor = Color.FromArgb(50, 50, 255);
-        public RectangleF ThisRect;
 
         public Biome CellBiome;
         public Color BiomeColor;
-
-        private SolidBrush ElevationBrush;
-        private SolidBrush TemperatureBrush;
-        private SolidBrush RainfallBrush;
-        private SolidBrush BiomeBrush;
 
         private float _Temperature;
         public Color TemperatureColor;
@@ -177,7 +175,7 @@ namespace MapGenerator
                     //int v = (int)(Elevation * 140 / ParentMap.maxElevation);
                     int v = (int)(Elevation * 140);
                     ElevationColor = Color.FromArgb(v,
-                                                    (Math.Max(((255 - v) / 2) + v, 140)), 
+                                                    (Math.Max(Math.Min(((255 - v) / 2) + v, 255), 140)), 
                                                     v);
                 }
 
@@ -211,10 +209,10 @@ namespace MapGenerator
             }
 
             // now check for an actual difference before assigning
-            if(ElevationBrush == null || ElevationBrush.Color != ThisColor)
-            {
-                ElevationBrush = ElevationBrushes[ThisColor];
-            }
+            //if(ElevationBrush == null || ElevationBrush.Color != ThisColor)
+            //{
+            //    ElevationBrush = ElevationBrushes[ThisColor];
+            //}
 
 
             #endregion
@@ -273,10 +271,10 @@ namespace MapGenerator
             }
 
             // now, only assign if it is actually different
-            if(TemperatureBrush == null || TemperatureBrush.Color != TemperatureColor )
-            {
-                TemperatureBrush = TemperatureBrushes[TemperatureColor];
-            }
+            //if(TemperatureBrush == null || TemperatureBrush.Color != TemperatureColor )
+            //{
+            //    TemperatureBrush = TemperatureBrushes[TemperatureColor];
+            //}
             #endregion
 
             #region Rainfall
@@ -333,10 +331,10 @@ namespace MapGenerator
             }
 
             // and only reassign it if it is new
-            if(RainfallBrush == null || RainfallBrush.Color != RainfallColor)
-            {
-                RainfallBrush = new SolidBrush(RainfallColor);
-            }
+            //if(RainfallBrush == null || RainfallBrush.Color != RainfallColor)
+            //{
+            //    RainfallBrush = new SolidBrush(RainfallColor);
+            //}
             #endregion
 
             #region Biome
@@ -491,31 +489,31 @@ namespace MapGenerator
             }
 
             // check for a difference before assigning
-            if(BiomeBrush == null || BiomeBrush.Color != BiomeColor)
-            {
-                BiomeBrush = BiomeBrushes[BiomeColor];
-            }
+            //if(BiomeBrush == null || BiomeBrush.Color != BiomeColor)
+            //{
+            //    BiomeBrush = BiomeBrushes[BiomeColor];
+            //}
             #endregion
         }
 
         internal void PaintElevation(Graphics g)
         {
-            g.FillRectangle(ElevationBrush, ThisRect);
+            g.FillRectangle(ElevationBrushes[ElevationColor], ThisRect);
         }
 
         internal void PaintBiomes(Graphics g)
         {
-            g.FillRectangle(BiomeBrush, ThisRect);
+            g.FillRectangle(BiomeBrushes[BiomeColor], ThisRect);
         }
 
         internal void PaintTemp(Graphics g)
         {
-            g.FillRectangle(TemperatureBrush, ThisRect);
+            g.FillRectangle(TemperatureBrushes[TemperatureColor], ThisRect);
         }
 
         internal void PainRainfall(Graphics g)
         {
-            g.FillRectangle(RainfallBrush, ThisRect);
+            g.FillRectangle(RainfallBrushes[RainfallColor], ThisRect);
         }
 
         internal string[] GetInfo()

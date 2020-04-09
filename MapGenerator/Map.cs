@@ -472,7 +472,6 @@ namespace MapGenerator
             if (lowest == null)
             {
                 CreateLakeAroundCell(c);
-
                 return;
             } 
 
