@@ -8,13 +8,20 @@ namespace MapGenerator
     {
         #region Static Resources
         private static Dictionary<float, Color> ElevationColors;
-        public static void ClearElevationBrushes() { ElevationColors?.Clear(); }
+        private static Dictionary<Color, SolidBrush> ElevationBrushes;
+        public static void ClearElevationBrushes() { ElevationColors?.Clear(); ElevationBrushes?.Clear(); }
+
         private static Dictionary<float, Color> TemperatureColors;
-        public static void ClearTemperatureBrushes() { TemperatureColors?.Clear(); }
+        private static Dictionary<Color, SolidBrush> TemperatureBrushes;
+        public static void ClearTemperatureBrushes() { TemperatureColors?.Clear(); TemperatureBrushes?.Clear(); }
+
         private static Dictionary<float, Color> RainfallColors;
-        public static void ClearRainfallBrushes() { RainfallColors?.Clear(); }
+        private static Dictionary<Color, SolidBrush> RainfallBrushes;
+        public static void ClearRainfallBrushes() { RainfallColors?.Clear(); RainfallBrushes?.Clear(); }
+
         private static Dictionary<Biome, Color> BiomeColors;
-        public static void ClearBiomeBrushes() { BiomeColors?.Clear(); }
+        private static Dictionary<Color, SolidBrush> BiomeBrushes;
+        public static void ClearBiomeBrushes() { BiomeColors?.Clear(); BiomeBrushes?.Clear(); }
         #endregion
 
         #region Fields
@@ -178,18 +185,38 @@ namespace MapGenerator
             } // end else, not in static collection
 
             // now set the actual drawing brush
+            if(ElevationBrushes == null)
+            {
+                ElevationBrushes = new Dictionary<Color, SolidBrush>();
+            }
+
+
+            Color ThisColor;
             if (this.IsLake)
             {
-                ElevationBrush = new SolidBrush(LakeColor);
+                ThisColor = LakeColor;
             }
             else if (this.IsRiver)
             {
-                ElevationBrush = new SolidBrush(RiverColor);
+                ThisColor = RiverColor;
             }
             else
             {
-                ElevationBrush = new SolidBrush(ElevationColor);
+                ThisColor = ElevationColor;
             }
+
+            if(!ElevationBrushes.ContainsKey(ThisColor))
+            {
+                ElevationBrushes.Add(ThisColor, new SolidBrush(ThisColor));
+            }
+
+            // now check for an actual difference before assigning
+            if(ElevationBrush == null || ElevationBrush.Color != ThisColor)
+            {
+                ElevationBrush = ElevationBrushes[ThisColor];
+            }
+
+
             #endregion
 
             #region Temperature
@@ -233,7 +260,23 @@ namespace MapGenerator
                 TemperatureColors.Add((float)Math.Round((decimal)Temperature, 3), TemperatureColor);
             } // end else, not in static collection
 
-            TemperatureBrush = new SolidBrush(TemperatureColor);
+            // set the brush
+            if(TemperatureBrushes == null)
+            {
+                TemperatureBrushes = new Dictionary<Color, SolidBrush>();
+            }
+
+            // cache the brush
+            if(!TemperatureBrushes.ContainsKey(TemperatureColor))
+            {
+                TemperatureBrushes.Add(TemperatureColor, new SolidBrush(TemperatureColor));
+            }
+
+            // now, only assign if it is actually different
+            if(TemperatureBrush == null || TemperatureBrush.Color != TemperatureColor )
+            {
+                TemperatureBrush = TemperatureBrushes[TemperatureColor];
+            }
             #endregion
 
             #region Rainfall
@@ -277,7 +320,23 @@ namespace MapGenerator
                 RainfallColors.Add((float)Math.Round((decimal)Rainfall, 3), RainfallColor);
             } // end else, not in static collection
 
-            RainfallBrush = new SolidBrush(RainfallColor);
+            // set up the cache
+            if(RainfallBrushes == null)
+            {
+                RainfallBrushes = new Dictionary<Color, SolidBrush>();
+            }
+
+            // check for the existance, or add it to the cache
+            if(!RainfallBrushes.ContainsKey(RainfallColor))
+            {
+                RainfallBrushes.Add(RainfallColor, new SolidBrush(RainfallColor));
+            }
+
+            // and only reassign it if it is new
+            if(RainfallBrush == null || RainfallBrush.Color != RainfallColor)
+            {
+                RainfallBrush = new SolidBrush(RainfallColor);
+            }
             #endregion
 
             #region Biome
@@ -364,6 +423,7 @@ namespace MapGenerator
                 BiomeColors = new Dictionary<Biome, Color>();
             }
 
+            // set color by biome
             if (BiomeColors.ContainsKey(this.CellBiome))
             {
                 this.BiomeColor = BiomeColors[this.CellBiome];
@@ -418,7 +478,23 @@ namespace MapGenerator
                 BiomeColors.Add(this.CellBiome, BiomeColor);
             }
 
-            this.BiomeBrush = new SolidBrush(BiomeColor);
+            // set brush by color
+            if (BiomeBrushes == null)
+            {
+                BiomeBrushes = new Dictionary<Color, SolidBrush>();
+            }
+
+            // check for caching
+            if(!BiomeBrushes.ContainsKey(BiomeColor))
+            {
+                BiomeBrushes.Add(BiomeColor, new SolidBrush(BiomeColor));
+            }
+
+            // check for a difference before assigning
+            if(BiomeBrush == null || BiomeBrush.Color != BiomeColor)
+            {
+                BiomeBrush = BiomeBrushes[BiomeColor];
+            }
             #endregion
         }
 
