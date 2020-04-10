@@ -429,7 +429,7 @@
             this.gbRivers.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.gbRivers.Name = "gbRivers";
             this.gbRivers.Padding = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.gbRivers.Size = new System.Drawing.Size(471, 252);
+            this.gbRivers.Size = new System.Drawing.Size(432, 252);
             this.gbRivers.TabIndex = 13;
             this.gbRivers.TabStop = false;
             this.gbRivers.Text = "Rivers";
@@ -1222,7 +1222,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1314, 692);
+            this.ClientSize = new System.Drawing.Size(1238, 559);
             this.Controls.Add(this.rbDrawBiomes);
             this.Controls.Add(this.rbDrawRainfall);
             this.Controls.Add(this.gbRainfall);
@@ -1241,6 +1241,7 @@
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "MapSettings";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MapSettings_FormClosing);
             ((System.ComponentModel.ISupportInitialize)(this.nudSmoothness)).EndInit();
             this.gbElevation.ResumeLayout(false);
             this.gbElevation.PerformLayout();

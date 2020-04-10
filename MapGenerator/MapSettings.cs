@@ -72,5 +72,11 @@ namespace MapGenerator
         {
             InitializeComponent();
         }
+
+        private void MapSettings_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            this.Visible = false;
+            e.Cancel = true;
+        }
     }
 }

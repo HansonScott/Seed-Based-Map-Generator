@@ -31,13 +31,13 @@ namespace MapGenerator
         }
         public SessionStates CurrentState;
         public Map CurrentMap;
-        public MapSettings Settings;
+        public MapSettings CurrentSettings;
 
         public FormMain()
         {
             InitializeComponent();
 
-            Settings = new MapSettings();
+            CurrentSettings = new MapSettings();
             CurrentState = SessionStates.Waiting;
         }
 
@@ -57,7 +57,7 @@ namespace MapGenerator
             CurrentMap = new Map(seed, pMap.ClientRectangle);
 
             // apply any parameters before generating...
-            ApplySettings(CurrentMap, Settings);
+            ApplySettings(CurrentMap, CurrentSettings);
 
             CurrentMap.OnLog += CurrentMap_OnLog;
 
@@ -175,8 +175,15 @@ namespace MapGenerator
 
         private void btnSettings_Click(object sender, EventArgs e)
         {
-            Settings = new MapSettings();
-            Settings.Show(this);
+            //CurrentSettings = new MapSettings();
+            if(CurrentSettings.Visible == false)
+            {
+                CurrentSettings.Show(this);
+            }
+            else
+            {
+                CurrentSettings.BringToFront();
+            }
         }
 
         private void pMap_MouseEnter(object sender, EventArgs e)
@@ -240,7 +247,7 @@ namespace MapGenerator
 
         private void btnRedraw_Click(object sender, EventArgs e)
         {
-            ApplySettings(CurrentMap, Settings);
+            ApplySettings(CurrentMap, CurrentSettings);
             pMap.Refresh();
         }
     }
