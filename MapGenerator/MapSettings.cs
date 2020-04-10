@@ -59,6 +59,7 @@ namespace MapGenerator
         public float TAmp04 { get { return (float)nudTIntensity04.Value; } }
 
         public float PolarBias { get { return (float)nudTPolarBias.Value; } }
+        public float ElevationBias { get { return (float)nudTempElevationBias.Value; } }
 
         public bool AddRGrain01 { get { return true; } }
         public bool AddRGrain02 { get { return cbRAdd02.Checked; } }

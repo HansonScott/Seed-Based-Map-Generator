@@ -87,6 +87,7 @@ namespace MapGenerator
         public float TSmoothnessFactor, TSmoothnessFactor02, TSmoothnessFactor03, TSmoothnessFactor04;
         public float TAmp01, TAmp02, TAmp03, TAmp04;
         public float PolarBias;
+        public float ElevationBias;
 
         public bool AddRSmooth01, AddRSmooth02, AddRSmooth03, AddRSmooth04;
         public float RSmoothnessFactor, RSmoothnessFactor02, RSmoothnessFactor03, RSmoothnessFactor04;
@@ -564,7 +565,7 @@ namespace MapGenerator
             Cell[][] Cells1 = null;
             if (AddTSmooth01)
             {
-                RaiseLog("Setting initial temparate...");
+                RaiseLog("Setting initial temperature...");
                 Cells1 = ApplyPseudoPerlinSmoothing(tRand, Cells, TSmoothnessFactor, TAmp01);
             }
             Cell[][] Cells2 = null;
@@ -641,6 +642,29 @@ namespace MapGenerator
                         e = Math.Min(Math.Max(e, 0), actualMaxTemperature); // keep within existing limits
 
                         Cells[x][y].Temperature = e;
+                    }
+                }
+            }
+
+            if(ElevationBias > 0.0f)
+            {
+                RaiseLog("Adjusting for elevation bias.");
+                // theory: higher is colder, lower is not necessarily warmer...
+                // try 1: reduce temp by elevation % - resulted in too much temp reduction, not enough specificity
+                // try 2: adjust temp by elevation away from midpoint (max - water)
+
+                // elevation between water and max is the midpoint
+                float midpoint = (float)((MaxElevation - WaterElevation) / 2 + WaterElevation) / (float)MaxElevation; // we want the percentage decimal, not the actual, so devide by the max
+
+                // % adjustment +/- % from the midpoint to max or water(min)
+                float deviationFromMidPoint;
+
+                for (int x = 0; x < Cells.Length; x++)
+                {
+                    for (int y = 0; y < Cells[x].Length; y++)
+                    {
+                        deviationFromMidPoint = midpoint - Cells[x][y].Elevation; // we want a positive deviation in elevation to be a negative deviation in temperature
+                        Cells[x][y].Temperature = Cells[x][y].Temperature + (Cells[x][y].Temperature * deviationFromMidPoint * ElevationBias);
                     }
                 }
             }

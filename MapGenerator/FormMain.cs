@@ -127,6 +127,7 @@ namespace MapGenerator
             m.TAmp04 = s.TAmp04;
 
             m.PolarBias = s.PolarBias;
+            m.ElevationBias = s.ElevationBias;
             #endregion
 
             #region Rainfall

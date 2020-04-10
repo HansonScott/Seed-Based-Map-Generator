@@ -85,6 +85,8 @@
             this.nudRGrain02 = new System.Windows.Forms.NumericUpDown();
             this.rbDrawRainfall = new System.Windows.Forms.RadioButton();
             this.rbDrawBiomes = new System.Windows.Forms.RadioButton();
+            this.lblTempElevationBias = new System.Windows.Forms.Label();
+            this.nudTempElevationBias = new System.Windows.Forms.NumericUpDown();
             ((System.ComponentModel.ISupportInitialize)(this.nudWater)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudSmoothness)).BeginInit();
             this.gbElevation.SuspendLayout();
@@ -115,6 +117,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.nudRGrain03)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudRAmp02)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudRGrain02)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudTempElevationBias)).BeginInit();
             this.SuspendLayout();
             // 
             // nudWater
@@ -559,6 +562,8 @@
             // 
             // gbTemperature
             // 
+            this.gbTemperature.Controls.Add(this.lblTempElevationBias);
+            this.gbTemperature.Controls.Add(this.nudTempElevationBias);
             this.gbTemperature.Controls.Add(this.lblPoleBias);
             this.gbTemperature.Controls.Add(this.nudTPolarBias);
             this.gbTemperature.Controls.Add(this.cbAddTSmooth04);
@@ -1126,8 +1131,43 @@
             this.rbDrawBiomes.Name = "rbDrawBiomes";
             this.rbDrawBiomes.Size = new System.Drawing.Size(128, 24);
             this.rbDrawBiomes.TabIndex = 19;
+            this.rbDrawBiomes.TabStop = true;
             this.rbDrawBiomes.Text = "Draw Biomes";
             this.rbDrawBiomes.UseVisualStyleBackColor = true;
+            // 
+            // lblTempElevationBias
+            // 
+            this.lblTempElevationBias.AutoSize = true;
+            this.lblTempElevationBias.Location = new System.Drawing.Point(8, 233);
+            this.lblTempElevationBias.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.lblTempElevationBias.Name = "lblTempElevationBias";
+            this.lblTempElevationBias.Size = new System.Drawing.Size(113, 20);
+            this.lblTempElevationBias.TabIndex = 27;
+            this.lblTempElevationBias.Text = "Elevation  Bias";
+            // 
+            // nudTempElevationBias
+            // 
+            this.nudTempElevationBias.DecimalPlaces = 2;
+            this.nudTempElevationBias.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            131072});
+            this.nudTempElevationBias.Location = new System.Drawing.Point(145, 230);
+            this.nudTempElevationBias.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.nudTempElevationBias.Maximum = new decimal(new int[] {
+            10,
+            0,
+            0,
+            65536});
+            this.nudTempElevationBias.Name = "nudTempElevationBias";
+            this.nudTempElevationBias.Size = new System.Drawing.Size(111, 26);
+            this.nudTempElevationBias.TabIndex = 26;
+            this.nudTempElevationBias.Value = new decimal(new int[] {
+            25,
+            0,
+            0,
+            131072});
             // 
             // MapSettings
             // 
@@ -1188,6 +1228,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.nudRGrain03)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudRAmp02)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudRGrain02)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudTempElevationBias)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -1252,5 +1293,7 @@
         private System.Windows.Forms.NumericUpDown nudRGrain02;
         private System.Windows.Forms.RadioButton rbDrawRainfall;
         private System.Windows.Forms.RadioButton rbDrawBiomes;
+        private System.Windows.Forms.Label lblTempElevationBias;
+        private System.Windows.Forms.NumericUpDown nudTempElevationBias;
     }
 }

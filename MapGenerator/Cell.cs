@@ -55,19 +55,20 @@ namespace MapGenerator
             Lake = 3, // - greenish blue
 
             // low temp
-            Polar = 4, // low temp low rain - white
-            Frozen_Ocean = 5, // tundra, but on water - soft greyish blue
-            Tundra = 6, // cold temp, low to mid rain - white w/ dark brown? (dark teal, brown, light blue) 
+            Polar = 11, // low temp low rain - white
+            Frozen_Ocean = 12, // tundra, but on water - soft greyish blue
+            Tundra = 13, // cold temp, low to mid rain - white w/ dark brown? (dark teal, brown, light blue) 
+            SnowyMountain = 14, // low temp, high elevation - white
 
             // mid temp
-            Boreal_Forest = 7, // less rain - dark green or dark brown
-            Prairie = 8, // mid rain - soft green
-            Woods_And_Shrubs = 9, // more rain - mid green
+            Boreal_Forest = 21, // less rain - dark green or dark brown
+            Prairie = 22, // mid rain - soft green
+            Woods_And_Shrubs = 23, // more rain - mid green
 
             // high temp
-            Desert = 10, // any temp, low rain - reddish tan, light brown
-            Savanna = 11, // low to mid rain - tan / brown
-            Tropical_Rainforest = 12, // mid to high rain - bright green
+            Desert = 31, // any temp, low rain - reddish tan, light brown
+            Savanna = 32, // low to mid rain - tan / brown
+            Tropical_Rainforest = 33, // mid to high rain - bright green
         }
 
         #region Properties
@@ -356,7 +357,15 @@ namespace MapGenerator
                 {
                     if (Temperature < 0.2)
                     {
-                        this.CellBiome = Biome.Polar;
+                        if(Elevation > 0.6)
+                        {
+                            this.CellBiome = Biome.SnowyMountain;
+                        }
+                        else
+                        {
+                            this.CellBiome = Biome.Polar;
+                        }
+
                     }
                     else if (Temperature < 0.4)
                     {
@@ -448,6 +457,7 @@ namespace MapGenerator
                         br = 0; bg = 0; bb = 255;
                         break;
                     case Biome.Polar:
+                    case Biome.SnowyMountain:
                         br = 255; bg = 250; bb = 255;
                         break;
                     case Biome.Prairie:
