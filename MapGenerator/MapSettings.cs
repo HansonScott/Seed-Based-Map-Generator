@@ -12,21 +12,7 @@ namespace MapGenerator
 {
     public partial class MapSettings : Form
     {
-        public float Smoothness
-        {
-            get
-            {
-                return (float)this.nudSmoothness.Value;
-            }
-        }
-        public int WaterLevel
-        {
-            get
-            {
-                return (int)this.nudWater.Value;
-            }
-        }
-
+        public float Smoothness { get { return (float)this.nudSmoothness.Value; } }
         public bool AddSmooth01 { get { return true; } }
         public bool AddSmooth02 { get { return cbAdd02.Checked; } }
         public bool AddSmooth03 { get { return cbAdd03.Checked; } }
@@ -42,7 +28,7 @@ namespace MapGenerator
 
         public float ContinentBias { get { return (float)nudContinentBias.Value; } }
         public float RiverBias { get { return (float)nudRiverBias.Value; } }
-        public int RiverSourceElevationMin { get { return (int)nudRiverSourceElevationMin.Value; } }
+        public float RiverSourceElevationMin { get { return (float)nudRiverSourceElevationMin.Value; } }
         public int LakeSize { get { return (int)nudLakeSize.Value; } }
 
         public bool AddTSmooth01 { get { return true; } }
@@ -60,7 +46,8 @@ namespace MapGenerator
 
         public float PolarBias { get { return (float)nudTPolarBias.Value; } }
         public float ElevationBias { get { return (float)nudTempElevationBias.Value; } }
-
+        public int ElevationMax { get { return (int)nudEMax.Value; } }
+        public float ElevationWater { get { return (float)this.nudEWater.Value; } }
         public bool AddRGrain01 { get { return true; } }
         public bool AddRGrain02 { get { return cbRAdd02.Checked; } }
         public bool AddRGrain03 { get { return cbRAdd03.Checked; } }

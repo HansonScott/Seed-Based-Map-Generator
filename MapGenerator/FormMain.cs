@@ -85,7 +85,8 @@ namespace MapGenerator
             m.DrawRainfall = s.DrawRainfall;
 
             #region Elevation
-            m.WaterElevation = s.WaterLevel;
+            m.WaterElevation = s.ElevationWater;
+            m.MaxElevation = s.ElevationMax;
 
             m.SmoothnessFactor = s.Smoothness;
             m.AddSmooth01 = true; // hard coded, must have at least 1 smoothing

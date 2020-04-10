@@ -117,6 +117,7 @@ namespace MapGenerator
             }
         }
         public float ActualElevation { get { return (Elevation * ParentMap.MaxElevation); } }
+        public float ActualElevationAboveSeaLevel { get { return ((Elevation * ParentMap.MaxElevation) - (ParentMap.WaterElevation * ParentMap.MaxElevation)); } }
         public float ActualTemperature { get { return (Temperature * ParentMap.MaxTemperature); } }
         public float ActualRainfall { get { return (Rainfall * ParentMap.MaxRainfall); } }
         #endregion
@@ -146,25 +147,19 @@ namespace MapGenerator
             }
             else
             {
-                // grey
-                //int v = (int)(Elevation * 255 / ParentMap.maxElevation);
-                //int v = (int)(Elevation * 255); // assume value to be between 0 and 1
-                //Color c = Color.FromArgb(v, v, v);
-                //BrushColor = new SolidBrush(c);
-
                 // below water
-                if (ActualElevation < ParentMap.WaterElevation)
+                if (Elevation < ParentMap.WaterElevation)
                 {
                     // at 0 elevation: 0,0,255
                     // at waterElevation: 0,100,255
 
                     //int v = (int)(Elevation * 100 / ParentMap.WaterElevation);
                     int v = (int)(Elevation * 100);
-                    int b = (int)((ActualElevation / ParentMap.WaterElevation) * 125) + 130;
+                    int b = (int)((Elevation / ParentMap.WaterElevation) * 125) + 130;
                     ElevationColor = Color.FromArgb(0, Math.Max(Math.Min(v, 255), 0), b);
                 }
                 // within 10% of water elevation
-                else if (ActualElevation < (ParentMap.WaterElevation * 1.1))
+                else if (Elevation < (ParentMap.WaterElevation * 1.1))
                 {
                     ElevationColor = Color.Tan;
                 }
@@ -342,7 +337,7 @@ namespace MapGenerator
             // combine temperature, rainfall, and elevation to determine the biome
             if (!IsLake && !IsRiver)
             {
-                if (ActualElevation < ParentMap.WaterElevation)
+                if (Elevation < ParentMap.WaterElevation)
                 {
                     if (ActualTemperature <= 0)
                     {
@@ -355,69 +350,81 @@ namespace MapGenerator
                 }
                 else // not water
                 {
+                    // super low temp
                     if (Temperature < 0.2)
                     {
-                        if(Elevation > 0.6)
+                        // high
+                        if (Elevation > 0.8)
                         {
                             this.CellBiome = Biome.SnowyMountain;
                         }
+                        // dry
+                        else if (Rainfall < 0.2)
+                        {
+                            this.CellBiome = Biome.Desert;
+                        }
                         else
                         {
-                            this.CellBiome = Biome.Polar;
+                            this.CellBiome = Biome.Tundra;
                         }
 
                     }
+                    // cold
                     else if (Temperature < 0.4)
                     {
-                        if (Rainfall < 0.4)
+                        // dry
+                        if (Rainfall < 0.2)
                         {
-                            // low temp, low rain
                             this.CellBiome = Biome.Desert;
                         }
-                        else if (Rainfall > 0.7)
+                        else if (Rainfall > 0.5)
                         {
                             // low temp, high rain
                             this.CellBiome = Biome.Boreal_Forest;
                         }
                         else // mid rainfall
                         {
-                            // low temp, high rain
-                            this.CellBiome = Biome.Tundra;
+                            this.CellBiome = Biome.Prairie;
                         }
                     }
+                    // hot
                     else if (Temperature > 0.7)
                     {
-                        if (Rainfall < 0.4)
+                        // dry
+                        if (Rainfall < 0.2)
                         {
-                            // high temp, low rain
                             this.CellBiome = Biome.Desert;
                         }
-                        else if (Rainfall > 0.7)
+                        // wet
+                        else if (Rainfall > 0.5)
                         {
-                            // high temp, high rain
                             this.CellBiome = Biome.Tropical_Rainforest;
                         }
+                        // med
                         else
                         {
                             // high temp, mid rain
                             this.CellBiome = Biome.Savanna;
                         }
                     }
-                    else // mid temp
+                    // mid temp
+                    else
                     {
+                        // dry
                         if (Rainfall < 0.4)
                         {
                             // mid temp, low rain
                             this.CellBiome = Biome.Prairie;
                         }
-                        else if (Rainfall > 0.7)
-                        {
-                            // mid temp, high rain
-                            this.CellBiome = Biome.Woods_And_Shrubs;
-                        }
+                        // wet
+                        //else if (Rainfall > 0.7)
+                        //{
+                        //    // mid temp, high rain
+                        //    this.CellBiome = Biome.Woods_And_Shrubs;
+                        //}
+                        // mid temp, mid rain
                         else
                         {
-                            // mid temp, mid rain
                             this.CellBiome = Biome.Woods_And_Shrubs;
                         }
                     }
@@ -531,7 +538,7 @@ namespace MapGenerator
             List<string> info = new List<string>();
 
             // add all interesting info
-            info.Add($"Elevation: {(int)ActualElevation}");
+            info.Add($"Elevation: {(int)ActualElevationAboveSeaLevel}");
             //info.Add(((int)ActualElevation).ToString());
             info.Add($"Temperature: {(int)ActualTemperature} C");
             //info.Add(((int)ActualTemperature).ToString());
@@ -548,7 +555,7 @@ namespace MapGenerator
             {
                 info.Add("Lake");
             }
-            else if(ActualElevation <= ParentMap.WaterElevation)
+            else if(Elevation <= ParentMap.WaterElevation)
             {
                 info.Add("Water");
             }

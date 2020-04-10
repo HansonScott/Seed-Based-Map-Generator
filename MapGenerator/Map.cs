@@ -69,12 +69,12 @@ namespace MapGenerator
         public bool DrawTemperature = true;
         public bool DrawRainfall = true;
 
-        public int MaxElevation = 1000;
+        public int MaxElevation;
         public int MaxTemperature = 40; // Celsius is much easier to program :)
         public int FreezeTemperature = 0;
         public int MaxRainfall = 100; // not sure of the rainfall units or range, but 100 seems easy to program :)
-        public int WaterElevation = 500; // default to half the max?
-        public int RiverSourceElevationMinimum = 800; // close to the top, but not extreme?
+        public float WaterElevation;
+        public float RiverSourceElevationMinimum; // close to the top, but not extreme?
 
         public bool AddSmooth01, AddSmooth02, AddSmooth03, AddSmooth04;
         public float SmoothnessFactor, SmoothnessFactor02, SmoothnessFactor03, SmoothnessFactor04;
@@ -251,6 +251,18 @@ namespace MapGenerator
             }
 
             // now that we're all done calculating, set up for drawing.
+            RaiseLog("Adjusting elevations to within max limit.");
+            // use algebra: y/actual = ?/max => max(y/actual) = ?
+            // NOTE: max is always 1, and actual is a decimal (1.5ish)
+            for (int x = 0; x < Cells.Length; x++)
+            {
+                for (int y = 0; y < Cells[x].Length; y++)
+                {
+                    Cells[x][y].Elevation = (Cells[x][y].Elevation / actualMaxElevation);
+                }
+            }
+
+            // now that we're all done calculating, set up for drawing.
             RaiseLog("Setting paint brush by elevation.");
             for (int x = 0; x < Cells.Length; x++)
             {
@@ -259,6 +271,8 @@ namespace MapGenerator
                     Cells[x][y].SetBrushByEnvironment();
                 }
             }
+
+
 
             RaiseLog("Done with elevation.");
         }
@@ -390,11 +404,13 @@ namespace MapGenerator
 
             try
             {
-                // use the bias prarm to find the cells that are 'high' enough
+                // use the bias param establish minimum distance between river sources = spread
                 float dm = DistanceBetweenCells(new Cell(null, 0, 0), new Cell(null, this.size.Width, this.size.Height));
                 float spread = (1 - riverBias) * dm;
 
                 bool FitsCriteriaForRiverSource = true;
+
+                // checking every cell
                 for (int x = 0; x < Cells.Length; x++)
                 {
                     for (int y = 0; y < Cells[x].Length; y++)
@@ -404,13 +420,12 @@ namespace MapGenerator
 
                         // qualifications: 
                         // cell must be high enough
-                        if (c.ActualElevation < RiverSourceElevationMinimum) { continue; } // not high enough
+                        if (c.Elevation < RiverSourceElevationMinimum) { continue; } // not high enough
 
                         // cell must not be close to an existing source - use bias for distance
                         foreach (Cell s in result)
                         {
-                            float d = DistanceBetweenCells(c, s);
-                            if (d < spread) { FitsCriteriaForRiverSource = false; break; } // too close to existing
+                            if (DistanceBetweenCells(c, s) < spread) { FitsCriteriaForRiverSource = false; break; } // too close to existing, skip this one
                         }
 
                         if (!FitsCriteriaForRiverSource) { continue; } // then we've lost.
@@ -488,7 +503,7 @@ namespace MapGenerator
             }
             else // the lowest one does continue.
             {
-                if(lowest.ActualElevation < WaterElevation){ return; } // then we've hit water, discontinue.
+                if(lowest.Elevation < WaterElevation){ return; } // then we've hit water, discontinue.
                 else
                 {
                     // recursively call more river making.
@@ -654,7 +669,10 @@ namespace MapGenerator
                 // try 2: adjust temp by elevation away from midpoint (max - water)
 
                 // elevation between water and max is the midpoint
-                float midpoint = (float)((MaxElevation - WaterElevation) / 2 + WaterElevation) / (float)MaxElevation; // we want the percentage decimal, not the actual, so devide by the max
+                //float midpoint = (float)((MaxElevation - WaterElevation) / 2 + WaterElevation) / (float)MaxElevation; // we want the percentage decimal, not the actual, so devide by the max
+                //float midpoint = (float)((MaxElevation - 0) / 2 + WaterElevation) / (float)MaxElevation; // we want the percentage decimal, not the actual, so devide by the max
+                //float midpoint = (float)((MaxElevation - 0) / 2 + 0) / (float)MaxElevation; // we want the percentage decimal, not the actual, so devide by the max
+                float midpoint = WaterElevation;
 
                 // % adjustment +/- % from the midpoint to max or water(min)
                 float deviationFromMidPoint;
