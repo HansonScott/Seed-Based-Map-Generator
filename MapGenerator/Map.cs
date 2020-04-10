@@ -487,7 +487,12 @@ namespace MapGenerator
             // no lower cells to go to?
             if (lowest == null)
             {
-                CreateLakeAroundCell(c);
+
+                //CreateLakeAroundCell(c);
+
+                // try 2, set this cell as a lake, and end here.
+                c.IsLake = true;
+
                 return;
             } 
 

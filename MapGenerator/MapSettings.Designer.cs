@@ -520,7 +520,7 @@
             this.nudRiverBias.Size = new System.Drawing.Size(111, 26);
             this.nudRiverBias.TabIndex = 25;
             this.nudRiverBias.Value = new decimal(new int[] {
-            95,
+            92,
             0,
             0,
             131072});
@@ -1178,7 +1178,7 @@
             this.nudEMax.TabIndex = 26;
             this.nudEMax.ThousandsSeparator = true;
             this.nudEMax.Value = new decimal(new int[] {
-            5000,
+            10000,
             0,
             0,
             0});
