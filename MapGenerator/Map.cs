@@ -571,6 +571,10 @@ namespace MapGenerator
             //    }
             //}
         }
+        private void FillLakes()
+        {
+
+        }
         #endregion
 
         #region Temperature
