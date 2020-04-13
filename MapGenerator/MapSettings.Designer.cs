@@ -594,10 +594,10 @@
             this.nudRiverBias.Size = new System.Drawing.Size(111, 26);
             this.nudRiverBias.TabIndex = 25;
             this.nudRiverBias.Value = new decimal(new int[] {
-            92,
+            6,
             0,
             0,
-            131072});
+            65536});
             // 
             // lblRivers
             // 

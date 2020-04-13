@@ -48,6 +48,7 @@ namespace MapGenerator
         }
         #endregion
 
+        #region Fields and Properties
         private int seed;
         private Rectangle size;
 
@@ -55,6 +56,7 @@ namespace MapGenerator
         private List<Random> RandLvl2;
         private Cell[][] Cells;
         private List<Cell> LakeBases;
+        #endregion
 
         private enum DetailedRandomizer
         {
@@ -135,25 +137,11 @@ namespace MapGenerator
         }
         #endregion
 
-        public string[] GetInfoAt(int x, int y)
-        {
-            if(Cells.Length > x &&
-                Cells[x].Length > y)
-            {
-                return Cells[x][y].GetInfo();
-            }
-            else
-            {
-                return new string[] { };
-            }
-        }
-
         public void GenerateMap()
         {
             RaiseLog("Generating map...");
             SetElevation();
             AddRivers(); // which also fills lakes
-            //FillLakes();
             SetTemperature();
             SetRainfall();
         }
@@ -378,7 +366,7 @@ namespace MapGenerator
         }
         #endregion
 
-        #region Rivers
+        #region Rivers and Lakes
         private void AddRivers()
         {
             if (RiverBias == 0.0f) { return; }
@@ -442,6 +430,7 @@ namespace MapGenerator
         {
             for (int i = 0; i < sources.Count; i++)
             {
+                RaiseLog($"Running river {i + 1} of {sources.Count}...");
                 RunRiverDownHill(sources[i], true);
             }
         }
@@ -502,28 +491,6 @@ namespace MapGenerator
                 }
             }
         }
-
-        private List<Cell> GetLowerCellNeighbors(List<Cell> neighbors, Cell c, bool IncludeWater)
-        {
-            List<Cell> results = new List<Cell>();
-
-            // trim the list for only lower neighbors
-            foreach (Cell n in neighbors)
-            {
-                if(!IncludeWater && (n.IsRiver || n.IsLake || n.Elevation < WaterElevation))
-                {
-                    continue;
-                }
-
-                if (n.Elevation < c.Elevation) { results.Add(n); }
-            }
-
-            return results;
-        }
-        #endregion
-
-        #region lakes
-        // this theory simply sets a circle of cells around this lowest point to all be lake cells, regardless of elevation.
         private void CreateLakeAroundCell(Cell c)
         {
             //RaiseLog("Creating a lake around a stalled river cell...");
@@ -579,14 +546,6 @@ namespace MapGenerator
             //    }
             //}
         }
-        //private void FillLakes()
-        //{
-        //    // foreach lakebase cell
-        //    for (int c = 0; c < LakeBases.Count; c++)
-        //    {
-        //        FillLake(new List<Cell>{LakeBases[c]});
-        //    }
-        //}
         private void FillLake(List<Cell> list)
         {
             // get the next ring of cells around the current lake
@@ -602,16 +561,6 @@ namespace MapGenerator
                 {
                     LowestNeighbor = neighbors[lc];
                 }
-
-                // check if we're headed back downhill
-                //if (neighbors[lc].Elevation < list[c].Elevation)
-                //{
-                //    // if so, then start a new river from here.
-                //    RiverContinuation = neighbors[lc];
-                //    break; // leave this loop, so we don't run away with our loops.
-                //}
-
-                // if we get here, then this cell is not downhill, so go to the next cell.
             } // end neighbors
 
             Cell Lowest = GetLowestCell(list); // lowest point on current lake ring
@@ -625,11 +574,11 @@ namespace MapGenerator
 
             // if we're here, then the outer ring doesn't have a lower cell, keep filling the lake.
             FillLake(neighbors);
-       }
-            #endregion
+        }
+        #endregion
 
-            #region Temperature
-            private void SetTemperature()
+        #region Temperature
+        private void SetTemperature()
         {
             // before we reset the elevations, make sure we clear the resulting brushes
             Cell.ClearTemperatureBrushes();
@@ -872,6 +821,7 @@ namespace MapGenerator
         }
         #endregion
 
+        #region Utility functions
         private float DistanceBetweenCells(Cell c1, Cell c2)
         {
             return (float)Math.Sqrt(((c2.X - c1.X) * (c2.X - c1.X)) + ((c2.Y - c1.Y) * (c2.Y - c1.Y)));
@@ -879,20 +829,18 @@ namespace MapGenerator
         private List<Cell> GetCellNeighbors(List<Cell> cells, bool IncludeWater)
         {
             List<Cell> results = new List<Cell>();
-            // add all neighbors
+            List<Cell> neighbors = new List<Cell>();
+
             for (int c = 0; c < cells.Count; c++)
             {
-                results.AddRange(GetCellNeighbors(cells[c]));
-            }
+                neighbors = GetCellNeighbors(cells[c]);
 
-            if(!IncludeWater)
-            {
-                // remove all lake cells or river cells
-                for (int c = cells.Count - 1; c >= 0; c--)
+                for(int i = 0; i < neighbors.Count; i++)
                 {
-                    if (cells[c].IsLake || 
-                        cells[c].IsRiver ||
-                        cells[c].Elevation < WaterElevation) { results.RemoveAt(c); }
+                    if(IncludeWater || !neighbors[i].IsWater)
+                    {
+                        results.Add(neighbors[i]);
+                    }
                 }
             }
 
@@ -1014,6 +962,23 @@ namespace MapGenerator
 
             return results;
         }
+        private List<Cell> GetLowerCellNeighbors(List<Cell> neighbors, Cell c, bool IncludeWater)
+        {
+            List<Cell> results = new List<Cell>();
+
+            // trim the list for only lower neighbors
+            foreach (Cell n in neighbors)
+            {
+                if (!IncludeWater && (n.IsRiver || n.IsLake || n.Elevation < WaterElevation))
+                {
+                    continue;
+                }
+
+                if (n.Elevation < c.Elevation) { results.Add(n); }
+            }
+
+            return results;
+        }
         private Cell GetLowestCell(List<Cell> list)
         {
             Cell r = null;
@@ -1028,6 +993,18 @@ namespace MapGenerator
             }
 
             return r;
+        }
+        public string[] GetInfoAt(int x, int y)
+        {
+            if (Cells.Length > x &&
+                Cells[x].Length > y)
+            {
+                return Cells[x][y].GetInfo();
+            }
+            else
+            {
+                return new string[] { };
+            }
         }
 
         internal void PaintMap(Graphics g)
@@ -1055,5 +1032,6 @@ namespace MapGenerator
                 }
             }
         }
+        #endregion
     }
 }

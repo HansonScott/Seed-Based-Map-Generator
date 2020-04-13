@@ -117,6 +117,7 @@ namespace MapGenerator
             }
         }
         public bool IsLakeBase = false;
+        public bool IsWater{ get { return IsRiver || IsLake || Elevation < ParentMap.WaterElevation; } }
 
         public float ActualElevation { get { return (Elevation * ParentMap.MaxElevation); } }
         public float ActualElevationAboveSeaLevel { get { return ((Elevation * ParentMap.MaxElevation) - (ParentMap.WaterElevation * ParentMap.MaxElevation)); } }
