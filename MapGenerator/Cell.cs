@@ -348,7 +348,6 @@ namespace MapGenerator
                     else
                     {
                         CellBiome = Biome.Ocean;
-                        IsOcean = true;
                     }
                 }
                 else // not water
