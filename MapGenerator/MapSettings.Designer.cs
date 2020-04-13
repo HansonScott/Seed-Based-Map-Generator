@@ -560,7 +560,7 @@
             this.nudRiverSourceElevationMin.Size = new System.Drawing.Size(117, 26);
             this.nudRiverSourceElevationMin.TabIndex = 27;
             this.nudRiverSourceElevationMin.Value = new decimal(new int[] {
-            6,
+            7,
             0,
             0,
             65536});
@@ -594,7 +594,7 @@
             this.nudRiverBias.Size = new System.Drawing.Size(111, 26);
             this.nudRiverBias.TabIndex = 25;
             this.nudRiverBias.Value = new decimal(new int[] {
-            6,
+            9,
             0,
             0,
             65536});

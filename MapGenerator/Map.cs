@@ -410,7 +410,7 @@ namespace MapGenerator
                         // cell must be high enough
                         if (c.Elevation < RiverSourceElevationMinimum) { continue; } // not high enough
 
-                        if(c.CellBiome == Cell.Biome.Polar ||
+                        if (c.CellBiome == Cell.Biome.Polar ||
                             c.CellBiome == Cell.Biome.Tundra) { continue; } // no rivers from polar biome
 
                         // cell must not be close to an existing source - use bias for distance
@@ -444,12 +444,37 @@ namespace MapGenerator
         private void RunRiverDownHill(Cell c, bool CreateLakes)
         {
             List<Cell> neighbors = GetCellNeighbors(c);
-            List<Cell> lowerNeighbors = GetLowerCellNeighbors(neighbors, c, false);
+
+            // draw them all as rivers - expands the visuals of a river by 3 cells
+            //for(int n = 0; n < neighbors.Count; n++)
+            //{
+            //    if(!neighbors[n].IsWater)
+            //    {
+            //        neighbors[n].IsRiver = true;
+            //    }
+            //}
+
+            // start by getting neighbors with water, to check for coastline
+            List<Cell> lowerNeighbors = GetLowerCellNeighbors(neighbors, c, true);
+
+            // need to avoid coastline creep
+            foreach(Cell ln in lowerNeighbors)
+            {
+                if(ln.CellBiome == Cell.Biome.Ocean || 
+                    ln.CellBiome == Cell.Biome.Frozen_Ocean)
+                    // if one of our neighbors is ocean, we're done, just stop.
+                { return; }
+            }
+
+            // get the neighbors without water
+            lowerNeighbors = GetLowerCellNeighbors(neighbors, c, false);
+
             Cell lowest = null;
             if(lowerNeighbors.Count == 0)
             {
                 if (CreateLakes)
                 {
+                    c.IsLake = true;
                     MakeALake(c);
                 }
 
@@ -514,7 +539,8 @@ namespace MapGenerator
             }
 
             if(outlet != null &&
-                outlet.Elevation > WaterElevation)
+                outlet.Elevation > WaterElevation &&
+                !outlet.IsLake)
             {
                 outlet.IsRiver = true;
                 RunRiverDownHill(outlet, true);
@@ -523,14 +549,19 @@ namespace MapGenerator
 
         private List<Cell> ExpandLake(List<Cell> lake)
         {
+            List<Cell> results = new List<Cell>();
+
             // get the next ring of cells around the current lake
-            List<Cell> outerRing = GetCellNeighbors(lake, false);
+            List<Cell> outerRing = GetCellNeighbors(lake, true);
             for (int n = 0; n < outerRing.Count; n++)
             {
+                if (outerRing[n].IsLake) { continue; }
+
                 outerRing[n].IsLake = true;
+                results.Add(outerRing[n]);
             } // end neighbors
 
-            return outerRing;
+            return results;
         }
 
         private Cell LookForOutlet(List<Cell> lake)
@@ -542,6 +573,7 @@ namespace MapGenerator
 
             Cell LowestFromOuterRing = GetLowestCell(outerRing);
             Cell HighestFromLakeRing = GetHighestCell(lake);
+            //Cell LowestFromLakeRing = GetLowestCell(lake);
 
             // check if there's a lower cell in the outer ring
             if (LowestFromOuterRing.Elevation < HighestFromLakeRing.Elevation)
