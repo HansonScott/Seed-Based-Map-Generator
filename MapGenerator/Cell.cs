@@ -337,98 +337,97 @@ namespace MapGenerator
 
             #region Biome
             // combine temperature, rainfall, and elevation to determine the biome
-            if (!IsLake && !IsRiver)
+            if (IsLake) { CellBiome = Biome.Lake; }
+            else if (IsRiver) { CellBiome = Biome.River; }
+            else if(Elevation < ParentMap.WaterElevation)
             {
-                if (Elevation < ParentMap.WaterElevation)
+                if (ActualTemperature <= 0)
                 {
-                    if (ActualTemperature <= 0)
+                    CellBiome = Biome.Frozen_Ocean;
+                }
+                else
+                {
+                    CellBiome = Biome.Ocean;
+                }
+            }
+            else // not water
+            {
+                // super low temp
+                if (Temperature < 0.2)
+                {
+                    // high
+                    if (Elevation > 0.8)
                     {
-                        CellBiome = Biome.Frozen_Ocean;
+                        this.CellBiome = Biome.SnowyMountain;
+                    }
+                    // dry
+                    else if (Rainfall < 0.2)
+                    {
+                        this.CellBiome = Biome.Desert;
                     }
                     else
                     {
-                        CellBiome = Biome.Ocean;
+                        this.CellBiome = Biome.Tundra;
+                    }
+
+                }
+                // cold
+                else if (Temperature < 0.4)
+                {
+                    // dry
+                    if (Rainfall < 0.2)
+                    {
+                        this.CellBiome = Biome.Desert;
+                    }
+                    else if (Rainfall > 0.5)
+                    {
+                        // low temp, high rain
+                        this.CellBiome = Biome.Boreal_Forest;
+                    }
+                    else // mid rainfall
+                    {
+                        this.CellBiome = Biome.Prairie;
                     }
                 }
-                else // not water
+                // hot
+                else if (Temperature > 0.7)
                 {
-                    // super low temp
-                    if (Temperature < 0.2)
+                    // dry
+                    if (Rainfall < 0.2)
                     {
-                        // high
-                        if (Elevation > 0.8)
-                        {
-                            this.CellBiome = Biome.SnowyMountain;
-                        }
-                        // dry
-                        else if (Rainfall < 0.2)
-                        {
-                            this.CellBiome = Biome.Desert;
-                        }
-                        else
-                        {
-                            this.CellBiome = Biome.Tundra;
-                        }
-
+                        this.CellBiome = Biome.Desert;
                     }
-                    // cold
-                    else if (Temperature < 0.4)
+                    // wet
+                    else if (Rainfall > 0.5)
                     {
-                        // dry
-                        if (Rainfall < 0.2)
-                        {
-                            this.CellBiome = Biome.Desert;
-                        }
-                        else if (Rainfall > 0.5)
-                        {
-                            // low temp, high rain
-                            this.CellBiome = Biome.Boreal_Forest;
-                        }
-                        else // mid rainfall
-                        {
-                            this.CellBiome = Biome.Prairie;
-                        }
+                        this.CellBiome = Biome.Tropical_Rainforest;
                     }
-                    // hot
-                    else if (Temperature > 0.7)
-                    {
-                        // dry
-                        if (Rainfall < 0.2)
-                        {
-                            this.CellBiome = Biome.Desert;
-                        }
-                        // wet
-                        else if (Rainfall > 0.5)
-                        {
-                            this.CellBiome = Biome.Tropical_Rainforest;
-                        }
-                        // med
-                        else
-                        {
-                            // high temp, mid rain
-                            this.CellBiome = Biome.Savanna;
-                        }
-                    }
-                    // mid temp
+                    // med
                     else
                     {
-                        // dry
-                        if (Rainfall < 0.4)
-                        {
-                            // mid temp, low rain
-                            this.CellBiome = Biome.Prairie;
-                        }
-                        // wet
-                        //else if (Rainfall > 0.7)
-                        //{
-                        //    // mid temp, high rain
-                        //    this.CellBiome = Biome.Woods_And_Shrubs;
-                        //}
-                        // mid temp, mid rain
-                        else
-                        {
-                            this.CellBiome = Biome.Woods_And_Shrubs;
-                        }
+                        // high temp, mid rain
+                        this.CellBiome = Biome.Savanna;
+                    }
+                }
+                // mid temp
+                else
+                {
+                    // dry
+                    if (Rainfall < 0.4)
+                    {
+                        // mid temp, low rain
+                        this.CellBiome = Biome.Prairie;
+                    }
+                    // wet
+                    //else if (Rainfall > 0.7)
+                    //{
+                    //    // mid temp, high rain
+                    //    this.CellBiome = Biome.Woods_And_Shrubs;
+                    //}
+                    // mid temp, mid rain
+                    else
+                    {
+                        this.CellBiome = Biome.Woods_And_Shrubs;
                     }
                 }
             }
@@ -518,7 +517,18 @@ namespace MapGenerator
 
         internal void PaintElevation(Graphics g)
         {
-            g.FillRectangle(ElevationBrushes[ElevationColor], ThisRect);
+            if(IsRiver)
+            {
+                g.FillRectangle(BiomeBrushes[BiomeColor], ThisRect);
+            }
+            else if(IsLake)
+            {
+                g.FillRectangle(BiomeBrushes[BiomeColor], ThisRect);
+            }
+            else
+            {
+                g.FillRectangle(ElevationBrushes[ElevationColor], ThisRect);
+            }
         }
 
         internal void PaintBiomes(Graphics g)

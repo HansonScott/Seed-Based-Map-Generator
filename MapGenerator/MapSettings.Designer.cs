@@ -31,6 +31,10 @@
             this.nudSmoothness = new System.Windows.Forms.NumericUpDown();
             this.lblSmoothness = new System.Windows.Forms.Label();
             this.gbElevation = new System.Windows.Forms.GroupBox();
+            this.lblEWater = new System.Windows.Forms.Label();
+            this.nudEWater = new System.Windows.Forms.NumericUpDown();
+            this.lblEMax = new System.Windows.Forms.Label();
+            this.nudEMax = new System.Windows.Forms.NumericUpDown();
             this.lblContinent = new System.Windows.Forms.Label();
             this.nudContinentBias = new System.Windows.Forms.NumericUpDown();
             this.cbAdd04 = new System.Windows.Forms.CheckBox();
@@ -52,6 +56,8 @@
             this.nudRiverBias = new System.Windows.Forms.NumericUpDown();
             this.lblRivers = new System.Windows.Forms.Label();
             this.gbTemperature = new System.Windows.Forms.GroupBox();
+            this.lblTempElevationBias = new System.Windows.Forms.Label();
+            this.nudTempElevationBias = new System.Windows.Forms.NumericUpDown();
             this.lblPoleBias = new System.Windows.Forms.Label();
             this.nudTPolarBias = new System.Windows.Forms.NumericUpDown();
             this.cbAddTSmooth04 = new System.Windows.Forms.CheckBox();
@@ -83,14 +89,10 @@
             this.nudRGrain02 = new System.Windows.Forms.NumericUpDown();
             this.rbDrawRainfall = new System.Windows.Forms.RadioButton();
             this.rbDrawBiomes = new System.Windows.Forms.RadioButton();
-            this.lblTempElevationBias = new System.Windows.Forms.Label();
-            this.nudTempElevationBias = new System.Windows.Forms.NumericUpDown();
-            this.lblEMax = new System.Windows.Forms.Label();
-            this.nudEMax = new System.Windows.Forms.NumericUpDown();
-            this.lblEWater = new System.Windows.Forms.Label();
-            this.nudEWater = new System.Windows.Forms.NumericUpDown();
             ((System.ComponentModel.ISupportInitialize)(this.nudSmoothness)).BeginInit();
             this.gbElevation.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudEWater)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudEMax)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudContinentBias)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudAmp04)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudGrain04)).BeginInit();
@@ -103,6 +105,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.nudRiverSourceElevationMin)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudRiverBias)).BeginInit();
             this.gbTemperature.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudTempElevationBias)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudTPolarBias)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudTIntensity04)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudTGrain04)).BeginInit();
@@ -118,9 +121,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.nudRGrain03)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudRAmp02)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudRGrain02)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.nudTempElevationBias)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.nudEMax)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.nudEWater)).BeginInit();
             this.SuspendLayout();
             // 
             // nudSmoothness
@@ -179,6 +179,80 @@
             this.gbElevation.TabIndex = 12;
             this.gbElevation.TabStop = false;
             this.gbElevation.Text = "Elevation";
+            // 
+            // lblEWater
+            // 
+            this.lblEWater.AutoSize = true;
+            this.lblEWater.Location = new System.Drawing.Point(273, 176);
+            this.lblEWater.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.lblEWater.Name = "lblEWater";
+            this.lblEWater.Size = new System.Drawing.Size(121, 20);
+            this.lblEWater.TabIndex = 29;
+            this.lblEWater.Text = "Water Elevation";
+            // 
+            // nudEWater
+            // 
+            this.nudEWater.DecimalPlaces = 2;
+            this.nudEWater.Increment = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.nudEWater.Location = new System.Drawing.Point(402, 174);
+            this.nudEWater.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.nudEWater.Maximum = new decimal(new int[] {
+            10,
+            0,
+            0,
+            65536});
+            this.nudEWater.Name = "nudEWater";
+            this.nudEWater.Size = new System.Drawing.Size(111, 26);
+            this.nudEWater.TabIndex = 28;
+            this.nudEWater.ThousandsSeparator = true;
+            this.nudEWater.Value = new decimal(new int[] {
+            2,
+            0,
+            0,
+            65536});
+            // 
+            // lblEMax
+            // 
+            this.lblEMax.AutoSize = true;
+            this.lblEMax.Location = new System.Drawing.Point(9, 174);
+            this.lblEMax.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.lblEMax.Name = "lblEMax";
+            this.lblEMax.Size = new System.Drawing.Size(107, 20);
+            this.lblEMax.TabIndex = 27;
+            this.lblEMax.Text = "Max Elevation";
+            // 
+            // nudEMax
+            // 
+            this.nudEMax.Increment = new decimal(new int[] {
+            100,
+            0,
+            0,
+            0});
+            this.nudEMax.Location = new System.Drawing.Point(146, 171);
+            this.nudEMax.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.nudEMax.Maximum = new decimal(new int[] {
+            50000,
+            0,
+            0,
+            0});
+            this.nudEMax.Minimum = new decimal(new int[] {
+            100,
+            0,
+            0,
+            0});
+            this.nudEMax.Name = "nudEMax";
+            this.nudEMax.Size = new System.Drawing.Size(111, 26);
+            this.nudEMax.TabIndex = 26;
+            this.nudEMax.ThousandsSeparator = true;
+            this.nudEMax.Value = new decimal(new int[] {
+            10000,
+            0,
+            0,
+            0});
             // 
             // lblContinent
             // 
@@ -561,6 +635,40 @@
             this.gbTemperature.TabStop = false;
             this.gbTemperature.Text = "Temperature";
             // 
+            // lblTempElevationBias
+            // 
+            this.lblTempElevationBias.AutoSize = true;
+            this.lblTempElevationBias.Location = new System.Drawing.Point(8, 233);
+            this.lblTempElevationBias.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.lblTempElevationBias.Name = "lblTempElevationBias";
+            this.lblTempElevationBias.Size = new System.Drawing.Size(113, 20);
+            this.lblTempElevationBias.TabIndex = 27;
+            this.lblTempElevationBias.Text = "Elevation  Bias";
+            // 
+            // nudTempElevationBias
+            // 
+            this.nudTempElevationBias.DecimalPlaces = 2;
+            this.nudTempElevationBias.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            131072});
+            this.nudTempElevationBias.Location = new System.Drawing.Point(145, 230);
+            this.nudTempElevationBias.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.nudTempElevationBias.Maximum = new decimal(new int[] {
+            10,
+            0,
+            0,
+            65536});
+            this.nudTempElevationBias.Name = "nudTempElevationBias";
+            this.nudTempElevationBias.Size = new System.Drawing.Size(111, 26);
+            this.nudTempElevationBias.TabIndex = 26;
+            this.nudTempElevationBias.Value = new decimal(new int[] {
+            90,
+            0,
+            0,
+            131072});
+            // 
             // lblPoleBias
             // 
             this.lblPoleBias.AutoSize = true;
@@ -801,11 +909,13 @@
             // rbDrawElevation
             // 
             this.rbDrawElevation.AutoSize = true;
+            this.rbDrawElevation.Checked = true;
             this.rbDrawElevation.Location = new System.Drawing.Point(18, 186);
             this.rbDrawElevation.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.rbDrawElevation.Name = "rbDrawElevation";
             this.rbDrawElevation.Size = new System.Drawing.Size(140, 24);
             this.rbDrawElevation.TabIndex = 15;
+            this.rbDrawElevation.TabStop = true;
             this.rbDrawElevation.Text = "Draw Elevation";
             this.rbDrawElevation.UseVisualStyleBackColor = true;
             // 
@@ -1100,123 +1210,13 @@
             // rbDrawBiomes
             // 
             this.rbDrawBiomes.AutoSize = true;
-            this.rbDrawBiomes.Checked = true;
             this.rbDrawBiomes.Location = new System.Drawing.Point(18, 152);
             this.rbDrawBiomes.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.rbDrawBiomes.Name = "rbDrawBiomes";
             this.rbDrawBiomes.Size = new System.Drawing.Size(128, 24);
             this.rbDrawBiomes.TabIndex = 19;
-            this.rbDrawBiomes.TabStop = true;
             this.rbDrawBiomes.Text = "Draw Biomes";
             this.rbDrawBiomes.UseVisualStyleBackColor = true;
-            // 
-            // lblTempElevationBias
-            // 
-            this.lblTempElevationBias.AutoSize = true;
-            this.lblTempElevationBias.Location = new System.Drawing.Point(8, 233);
-            this.lblTempElevationBias.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.lblTempElevationBias.Name = "lblTempElevationBias";
-            this.lblTempElevationBias.Size = new System.Drawing.Size(113, 20);
-            this.lblTempElevationBias.TabIndex = 27;
-            this.lblTempElevationBias.Text = "Elevation  Bias";
-            // 
-            // nudTempElevationBias
-            // 
-            this.nudTempElevationBias.DecimalPlaces = 2;
-            this.nudTempElevationBias.Increment = new decimal(new int[] {
-            1,
-            0,
-            0,
-            131072});
-            this.nudTempElevationBias.Location = new System.Drawing.Point(145, 230);
-            this.nudTempElevationBias.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.nudTempElevationBias.Maximum = new decimal(new int[] {
-            10,
-            0,
-            0,
-            65536});
-            this.nudTempElevationBias.Name = "nudTempElevationBias";
-            this.nudTempElevationBias.Size = new System.Drawing.Size(111, 26);
-            this.nudTempElevationBias.TabIndex = 26;
-            this.nudTempElevationBias.Value = new decimal(new int[] {
-            90,
-            0,
-            0,
-            131072});
-            // 
-            // lblEMax
-            // 
-            this.lblEMax.AutoSize = true;
-            this.lblEMax.Location = new System.Drawing.Point(9, 174);
-            this.lblEMax.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.lblEMax.Name = "lblEMax";
-            this.lblEMax.Size = new System.Drawing.Size(107, 20);
-            this.lblEMax.TabIndex = 27;
-            this.lblEMax.Text = "Max Elevation";
-            // 
-            // nudEMax
-            // 
-            this.nudEMax.Increment = new decimal(new int[] {
-            100,
-            0,
-            0,
-            0});
-            this.nudEMax.Location = new System.Drawing.Point(146, 171);
-            this.nudEMax.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.nudEMax.Maximum = new decimal(new int[] {
-            50000,
-            0,
-            0,
-            0});
-            this.nudEMax.Minimum = new decimal(new int[] {
-            100,
-            0,
-            0,
-            0});
-            this.nudEMax.Name = "nudEMax";
-            this.nudEMax.Size = new System.Drawing.Size(111, 26);
-            this.nudEMax.TabIndex = 26;
-            this.nudEMax.ThousandsSeparator = true;
-            this.nudEMax.Value = new decimal(new int[] {
-            10000,
-            0,
-            0,
-            0});
-            // 
-            // lblEWater
-            // 
-            this.lblEWater.AutoSize = true;
-            this.lblEWater.Location = new System.Drawing.Point(273, 176);
-            this.lblEWater.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.lblEWater.Name = "lblEWater";
-            this.lblEWater.Size = new System.Drawing.Size(121, 20);
-            this.lblEWater.TabIndex = 29;
-            this.lblEWater.Text = "Water Elevation";
-            // 
-            // nudEWater
-            // 
-            this.nudEWater.DecimalPlaces = 2;
-            this.nudEWater.Increment = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            this.nudEWater.Location = new System.Drawing.Point(402, 174);
-            this.nudEWater.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.nudEWater.Maximum = new decimal(new int[] {
-            10,
-            0,
-            0,
-            65536});
-            this.nudEWater.Name = "nudEWater";
-            this.nudEWater.Size = new System.Drawing.Size(111, 26);
-            this.nudEWater.TabIndex = 28;
-            this.nudEWater.ThousandsSeparator = true;
-            this.nudEWater.Value = new decimal(new int[] {
-            2,
-            0,
-            0,
-            65536});
             // 
             // MapSettings
             // 
@@ -1245,6 +1245,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.nudSmoothness)).EndInit();
             this.gbElevation.ResumeLayout(false);
             this.gbElevation.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudEWater)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudEMax)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudContinentBias)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudAmp04)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudGrain04)).EndInit();
@@ -1259,6 +1261,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.nudRiverBias)).EndInit();
             this.gbTemperature.ResumeLayout(false);
             this.gbTemperature.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudTempElevationBias)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudTPolarBias)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudTIntensity04)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudTGrain04)).EndInit();
@@ -1275,9 +1278,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.nudRGrain03)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudRAmp02)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudRGrain02)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.nudTempElevationBias)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.nudEMax)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.nudEWater)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 

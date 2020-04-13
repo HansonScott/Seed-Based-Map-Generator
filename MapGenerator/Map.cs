@@ -152,8 +152,8 @@ namespace MapGenerator
         {
             RaiseLog("Generating map...");
             SetElevation();
-            AddRivers();
-            FillLakes();
+            AddRivers(); // which also fills lakes
+            //FillLakes();
             SetTemperature();
             SetRainfall();
         }
@@ -415,6 +415,9 @@ namespace MapGenerator
                         // cell must be high enough
                         if (c.Elevation < RiverSourceElevationMinimum) { continue; } // not high enough
 
+                        if(c.CellBiome == Cell.Biome.Polar ||
+                            c.CellBiome == Cell.Biome.Tundra) { continue; } // no rivers from polar biome
+
                         // cell must not be close to an existing source - use bias for distance
                         foreach (Cell s in result)
                         {
@@ -442,17 +445,18 @@ namespace MapGenerator
                 RunRiverDownHill(sources[i], true);
             }
         }
-        private void RunRiverDownHill(Cell c, bool CreateLakeBases)
+        private void RunRiverDownHill(Cell c, bool CreateLakes)
         {
             List<Cell> neighbors = GetCellNeighbors(c);
             List<Cell> lowerNeighbors = GetLowerCellNeighbors(neighbors, c, false);
             Cell lowest = null;
             if(lowerNeighbors.Count == 0)
             {
-                if(CreateLakeBases)
+                if (CreateLakes)
                 {
-                    c.IsLakeBase = true;
-                    LakeBases.Add(c);
+                    FillLake(new List<Cell>{c});
+                    //c.IsLakeBase = true;
+                    //LakeBases.Add(c);
                 }
 
                 return;
@@ -575,54 +579,57 @@ namespace MapGenerator
             //    }
             //}
         }
-        private void FillLakes()
-        {
-            // foreach lakebase cell
-            for (int c = 0; c < LakeBases.Count; c++)
-            {
-                FillLake(new List<Cell>{LakeBases[c]});
-            }
-        }
+        //private void FillLakes()
+        //{
+        //    // foreach lakebase cell
+        //    for (int c = 0; c < LakeBases.Count; c++)
+        //    {
+        //        FillLake(new List<Cell>{LakeBases[c]});
+        //    }
+        //}
         private void FillLake(List<Cell> list)
         {
-            for(int c = 0; c < list.Count; c++)
+            // get the next ring of cells around the current lake
+            List<Cell> neighbors = GetCellNeighbors(list, false);
+            Cell LowestNeighbor = null;
+            for (int lc = 0; lc < neighbors.Count; lc++)
             {
-                // get the next ring of cells around the current lake
-                List<Cell> neighbors = GetCellNeighbors(list, false);
-                Cell RiverContinuation = null;
+                // expand the lake to include this cell
+                neighbors[lc].IsLake = true;
 
-                for (int lc = 0; lc < neighbors.Count; lc++)
+                // capture the lowest cell among the neighbors
+                if(LowestNeighbor == null || LowestNeighbor.Elevation > neighbors[lc].Elevation)
                 {
-                    // expand the lake to include this cell
-                    neighbors[lc].IsLake = true;
-
-                    // check if we're headed back downhill
-                    if (neighbors[lc].Elevation < list[c].Elevation)
-                    {
-                        // if so, then start a new river from here.
-                        RiverContinuation = neighbors[lc];
-                        break; // leave this loop, so we don't run away with our loops.
-                    }
-
-                    // if we get here, then this cell is not downhill, so go to the next cell.
-                } // end neighbors
-
-                // if this loop of cells did go downhill, then run a river from it.
-                if (RiverContinuation != null)
-                {
-                    RunRiverDownHill(RiverContinuation, false);
-                    return; // we only want a single river existing the lake, then exit this recursive routine entirely
+                    LowestNeighbor = neighbors[lc];
                 }
-                else // there are no immediate neighbors lower, so expand the lake's boarders
-                {
-                    FillLake(neighbors);
-                }
+
+                // check if we're headed back downhill
+                //if (neighbors[lc].Elevation < list[c].Elevation)
+                //{
+                //    // if so, then start a new river from here.
+                //    RiverContinuation = neighbors[lc];
+                //    break; // leave this loop, so we don't run away with our loops.
+                //}
+
+                // if we get here, then this cell is not downhill, so go to the next cell.
+            } // end neighbors
+
+            Cell Lowest = GetLowestCell(list); // lowest point on current lake ring
+
+            // check if there's a lower cell in the outer ring
+            if(LowestNeighbor.Elevation < Lowest.Elevation)
+            {
+                RunRiverDownHill(LowestNeighbor, false);
+                return;
             }
-        }
-        #endregion
 
-        #region Temperature
-        private void SetTemperature()
+            // if we're here, then the outer ring doesn't have a lower cell, keep filling the lake.
+            FillLake(neighbors);
+       }
+            #endregion
+
+            #region Temperature
+            private void SetTemperature()
         {
             // before we reset the elevations, make sure we clear the resulting brushes
             Cell.ClearTemperatureBrushes();
@@ -1006,6 +1013,21 @@ namespace MapGenerator
             }
 
             return results;
+        }
+        private Cell GetLowestCell(List<Cell> list)
+        {
+            Cell r = null;
+            foreach (Cell c in list)
+            {
+                // capture the lowest cell among the neighbors
+                if (r == null ||
+                    r.Elevation > c.Elevation)
+                {
+                    r = c;
+                }
+            }
+
+            return r;
         }
 
         internal void PaintMap(Graphics g)
