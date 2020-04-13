@@ -438,21 +438,12 @@ namespace MapGenerator
             for (int i = 0; i < sources.Count; i++)
             {
                 RaiseLog($"Running river {i + 1} of {sources.Count}...");
-                RunRiverDownHill(sources[i], true);
+                RunRiverDownHill(sources[i]);
             }
         }
-        private void RunRiverDownHill(Cell c, bool CreateLakes)
+        private void RunRiverDownHill(Cell c)
         {
             List<Cell> neighbors = GetCellNeighbors(c);
-
-            // draw them all as rivers - expands the visuals of a river by 3 cells
-            //for(int n = 0; n < neighbors.Count; n++)
-            //{
-            //    if(!neighbors[n].IsWater)
-            //    {
-            //        neighbors[n].IsRiver = true;
-            //    }
-            //}
 
             // start by getting neighbors with water, to check for coastline
             List<Cell> lowerNeighbors = GetLowerCellNeighbors(neighbors, c, true);
@@ -472,11 +463,8 @@ namespace MapGenerator
             Cell lowest = null;
             if(lowerNeighbors.Count == 0)
             {
-                if (CreateLakes)
-                {
-                    c.IsLake = true;
-                    MakeALake(c);
-                }
+                c.IsLake = true;
+                MakeALake(c);
 
                 return;
             }
@@ -517,7 +505,7 @@ namespace MapGenerator
                 {
                     // recursively call more river making.
                     lowest.IsRiver = true;
-                    RunRiverDownHill(lowest, true);
+                    RunRiverDownHill(lowest);
                 }
             }
         }
@@ -527,7 +515,7 @@ namespace MapGenerator
             List<Cell> lake = new List<Cell>() { c };
 
             Cell outlet = null;
-            while(outlet == null || outlet.IsWater)
+            while (outlet == null || outlet.IsWater)
             {
                 lake = ExpandLake(lake);
                 if (lake != null && lake.Count > 0)
@@ -535,15 +523,15 @@ namespace MapGenerator
                     outlet = LookForOutlet(lake);
                 }
 
-                if(lake.Count == 0) { outlet = null;  break; } // there's no where for this lake to expand to, just end.
+                if (lake.Count == 0) { outlet = null; break; } // there's no where for this lake to expand to, just end.
             }
 
-            if(outlet != null &&
+            if (outlet != null &&
                 outlet.Elevation > WaterElevation &&
                 !outlet.IsLake)
             {
                 outlet.IsRiver = true;
-                RunRiverDownHill(outlet, true);
+                RunRiverDownHill(outlet);
             }
         }
 
