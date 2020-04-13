@@ -385,8 +385,11 @@ namespace MapGenerator
 
             try
             {
+                int marginW = (int)(this.size.Width * 0.05); // don't draw right on the edge of the map, it looks weird.
+                int marginH = (int)(this.size.Height * 0.05); // don't draw right on the edge of the map, it looks weird.
+
                 // use the bias param establish minimum distance between river sources = spread
-                float dm = DistanceBetweenCells(new Cell(null, 0, 0), new Cell(null, this.size.Width, this.size.Height));
+                float dm = DistanceBetweenCells(new Cell(null, marginW, marginH), new Cell(null, (this.size.Width - marginW), (this.size.Height - marginH)));
                 float spread = (1 - riverBias) * dm;
 
                 bool FitsCriteriaForRiverSource = true;
@@ -394,8 +397,12 @@ namespace MapGenerator
                 // checking every cell
                 for (int x = 0; x < Cells.Length; x++)
                 {
+                    if(x < marginW || x > this.size.Width - marginW) { continue; }
+
                     for (int y = 0; y < Cells[x].Length; y++)
                     {
+                        if (y < marginH || y > this.size.Height - marginH) { continue; }
+
                         Cell c = Cells[x][y];
                         FitsCriteriaForRiverSource = true;
 
@@ -443,9 +450,7 @@ namespace MapGenerator
             {
                 if (CreateLakes)
                 {
-                    FillLake(new List<Cell>{c});
-                    //c.IsLakeBase = true;
-                    //LakeBases.Add(c);
+                    MakeALake(c);
                 }
 
                 return;
@@ -491,89 +496,62 @@ namespace MapGenerator
                 }
             }
         }
-        private void CreateLakeAroundCell(Cell c)
+
+        private void MakeALake(Cell c)
         {
-            //RaiseLog("Creating a lake around a stalled river cell...");
-            List<Cell> neighbors = GetCellNeighbors(c, LakeSize, new List<Cell>() { c }); // randomize the distance outward?
+            List<Cell> lake = new List<Cell>() { c };
 
-            Cell lowest = null;
-            for (int n = 0; n < neighbors.Count; n++)
+            Cell outlet = null;
+            while(outlet == null || outlet.IsWater)
             {
-                // filter for a circle of sorts, not a square
-                if (DistanceBetweenCells(c, neighbors[n]) > (LakeSize - 1)) { continue; }
-
-
-                neighbors[n].IsLake = true;
-
-                // now check for an outgoing river from the lake
-                if (lowest == null ||
-                    (lowest.Elevation * 1.1) < c.Elevation) // at least 10% lower
+                lake = ExpandLake(lake);
+                if (lake != null && lake.Count > 0)
                 {
-                    if (lowest == null ||
-                        neighbors[n].Elevation < lowest.Elevation)
-                    {
-                        lowest = neighbors[n];
-                    }
+                    outlet = LookForOutlet(lake);
                 }
+
+                if(lake.Count == 0) { outlet = null;  break; } // there's no where for this lake to expand to, just end.
             }
 
-            // future: check to create an outgoing river
-            // NOTE: this code doesn't work, as it keeps making new lakes over and over to the NW.
-            // theory: raise the level of all the lake cells, then try again for a river.
-            // OR: keep track and don't let the lakes touch?
-            //if (lowest != null)
-            //{
-            //    List<Cell> cells = GetCellNeighbors(lowest, LakeSize + 1, new List<Cell>());
-
-            //    if(cells.Count > 0)
-            //    {
-            //        Cell nextLowestNonLake = null;
-            //        foreach (Cell nc in cells)
-            //        {
-            //            if (nextLowestNonLake == null ||
-            //                nc.Elevation < nextLowestNonLake.Elevation)
-            //            {
-            //                nextLowestNonLake = nc;
-            //            }
-            //        }
-
-            //        if (!nextLowestNonLake.IsLake)
-            //        {
-            //            RaiseLog("Creating the continuation river from lake low point...");
-            //            lowest.IsRiver = true;
-            //            RunRiversDownHill(lowest);
-            //        }
-            //    }
-            //}
+            if(outlet != null &&
+                outlet.Elevation > WaterElevation)
+            {
+                outlet.IsRiver = true;
+                RunRiverDownHill(outlet, true);
+            }
         }
-        private void FillLake(List<Cell> list)
+
+        private List<Cell> ExpandLake(List<Cell> lake)
         {
             // get the next ring of cells around the current lake
-            List<Cell> neighbors = GetCellNeighbors(list, false);
-            Cell LowestNeighbor = null;
-            for (int lc = 0; lc < neighbors.Count; lc++)
+            List<Cell> outerRing = GetCellNeighbors(lake, false);
+            for (int n = 0; n < outerRing.Count; n++)
             {
-                // expand the lake to include this cell
-                neighbors[lc].IsLake = true;
-
-                // capture the lowest cell among the neighbors
-                if(LowestNeighbor == null || LowestNeighbor.Elevation > neighbors[lc].Elevation)
-                {
-                    LowestNeighbor = neighbors[lc];
-                }
+                outerRing[n].IsLake = true;
             } // end neighbors
 
-            Cell Lowest = GetLowestCell(list); // lowest point on current lake ring
+            return outerRing;
+        }
+
+        private Cell LookForOutlet(List<Cell> lake)
+        {
+            if (lake == null || lake.Count == 0) { return null; }
+
+            List<Cell> outerRing = GetCellNeighbors(lake, false);
+            if(outerRing == null || outerRing.Count == 0) { return null; }
+
+            Cell LowestFromOuterRing = GetLowestCell(outerRing);
+            Cell HighestFromLakeRing = GetHighestCell(lake);
 
             // check if there's a lower cell in the outer ring
-            if(LowestNeighbor.Elevation < Lowest.Elevation)
+            if (LowestFromOuterRing.Elevation < HighestFromLakeRing.Elevation)
             {
-                RunRiverDownHill(LowestNeighbor, false);
-                return;
+                return LowestFromOuterRing;
             }
-
-            // if we're here, then the outer ring doesn't have a lower cell, keep filling the lake.
-            FillLake(neighbors);
+            else
+            {
+                return null;
+            }
         }
         #endregion
 
@@ -834,12 +812,16 @@ namespace MapGenerator
             for (int c = 0; c < cells.Count; c++)
             {
                 neighbors = GetCellNeighbors(cells[c]);
-
                 for(int i = 0; i < neighbors.Count; i++)
                 {
-                    if(IncludeWater || !neighbors[i].IsWater)
+                    // avoid duplicates
+                    if (!cells.Contains(neighbors[i]))
                     {
-                        results.Add(neighbors[i]);
+                        // catch the water flag
+                        if (IncludeWater || !neighbors[i].IsWater)
+                        {
+                            results.Add(neighbors[i]);
+                        }
                     }
                 }
             }
@@ -987,6 +969,21 @@ namespace MapGenerator
                 // capture the lowest cell among the neighbors
                 if (r == null ||
                     r.Elevation > c.Elevation)
+                {
+                    r = c;
+                }
+            }
+
+            return r;
+        }
+        private Cell GetHighestCell(List<Cell> list)
+        {
+            Cell r = null;
+            foreach (Cell c in list)
+            {
+                // capture the lowest cell among the neighbors
+                if (r == null ||
+                    r.Elevation < c.Elevation)
                 {
                     r = c;
                 }
