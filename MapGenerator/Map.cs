@@ -389,7 +389,6 @@ namespace MapGenerator
             List<Cell> sourceLocations = GetHighLocationForRiverSource(RiverBias);
 
             RaiseLog($"Created {sourceLocations.Count} river sources, running rivers downhill...");
-
             RunRiversDownHill(sourceLocations, true);
         }
         private List<Cell> GetHighLocationForRiverSource(float riverBias)
@@ -440,17 +439,8 @@ namespace MapGenerator
         {
             for (int i = 0; i < sources.Count; i++)
             {
-                try
-                {
-                    RunRiverDownHill(sources[i], true);
-                }
-                catch (Exception ex)
-                {
-                    RaiseLog($"Exception: {ex.Message}");
-                    continue;
-                }
+                RunRiverDownHill(sources[i], true);
             }
-
         }
         private void RunRiverDownHill(Cell c, bool CreateLakeBases)
         {
@@ -601,10 +591,9 @@ namespace MapGenerator
                 List<Cell> neighbors = GetCellNeighbors(list, false);
                 Cell RiverContinuation = null;
 
-                // so we know these would all 'fill up' and become lake cells.
                 for (int lc = 0; lc < neighbors.Count; lc++)
                 {
-                    // otherwise, expand the lake to include it
+                    // expand the lake to include this cell
                     neighbors[lc].IsLake = true;
 
                     // check if we're headed back downhill
