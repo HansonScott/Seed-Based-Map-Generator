@@ -116,6 +116,8 @@ namespace MapGenerator
                 SetBrushByEnvironment();
             }
         }
+        public bool IsLakeBase = false;
+
         public float ActualElevation { get { return (Elevation * ParentMap.MaxElevation); } }
         public float ActualElevationAboveSeaLevel { get { return ((Elevation * ParentMap.MaxElevation) - (ParentMap.WaterElevation * ParentMap.MaxElevation)); } }
         public float ActualTemperature { get { return (Temperature * ParentMap.MaxTemperature); } }
@@ -458,7 +460,8 @@ namespace MapGenerator
                         br = 180; bg = 250; bb = 245;
                         break;
                     case Biome.Lake:
-                        br = 40; bg = 160; bb = 250;
+                        br = 255; bg = 0; bb = 0;
+                        //br = 40; bg = 160; bb = 250;
                         break;
                     case Biome.Ocean:
                         br = 0; bg = 0; bb = 255;
@@ -562,9 +565,6 @@ namespace MapGenerator
 
             return info.ToArray();
         }
-        #endregion
-
-        #region Private Functions
         #endregion
     }
 }

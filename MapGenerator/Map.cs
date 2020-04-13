@@ -54,6 +54,7 @@ namespace MapGenerator
         private Random RandLvl1;
         private List<Random> RandLvl2;
         private Cell[][] Cells;
+        private List<Cell> LakeBases;
 
         private enum DetailedRandomizer
         {
@@ -119,6 +120,9 @@ namespace MapGenerator
                     Cells[x][y] = new Cell(this, x, y);
                 }
             }
+
+            LakeBases = new List<Cell>();
+
         }
         private void PopulateRandLvl2()
         {
@@ -149,6 +153,7 @@ namespace MapGenerator
             RaiseLog("Generating map...");
             SetElevation();
             AddRivers();
+            FillLakes();
             SetTemperature();
             SetRainfall();
         }
@@ -389,7 +394,7 @@ namespace MapGenerator
             {
                 try
                 {
-                    RunRiversDownHill(sourceLocations[i]);
+                    RunRiversDownHill(sourceLocations[i], true);
                 }
                 catch(Exception ex)
                 {
@@ -442,69 +447,73 @@ namespace MapGenerator
             }
             return result;
         }
-        private void RunRiversDownHill(Cell c)
+        private void RunRiversDownHill(Cell c, bool CreateLakeBases)
         {
             //RaiseLog("Running a river downhill...");
 
             // theory: recursive, 
             // look through all neighbor cells, make them all into river (makes all rivers 3 cells wide)
             List<Cell> neighbors = GetCellNeighbors(c);
-            List<Cell> lowerNeighbors = new List<Cell>();
 
-            // trim the list for only lower neighbors
-            foreach (Cell n in neighbors)
-            {
-                if (!n.IsLake &&
-                    !n.IsRiver &&
-                    n.Elevation < c.Elevation) { lowerNeighbors.Add(n); }
-            }
+            // for the sake of the river width, make all neighbors into river automatically.
+            //for(int i = 0; i< neighbors.Count; i++)
+            //{
+            //    neighbors[i].IsRiver = true;
+            //}
+
+            // only look downstream to continue the river
+            List<Cell> lowerNeighbors = GetLowerCellNeighbors(neighbors, c, false);
 
             // find the lowest elevation, call this function again with that one.
             Cell lowest = null;
-            if (lowerNeighbors.Count == 1)
+            if(lowerNeighbors.Count == 0)
+            {
+                // try 1 - make a static circle of lake cells
+                //CreateLakeAroundCell(c);
+
+                // try 2, set this cell as a lake base, and end here.  Fill the cells around it as a lake later.
+                if(CreateLakeBases)
+                {
+                    c.IsLakeBase = true;
+                    LakeBases.Add(c);
+                }
+
+                return;
+            }
+            else if (lowerNeighbors.Count == 1)
             {
                 lowest = lowerNeighbors[0];
             }
-            else
+            else // multiple lower neighbors
             {
+                // check all lower neighbors to determine where to run the river
                 for (int i = 0; i < lowerNeighbors.Count; i++)
                 {
-                    Cell n = lowerNeighbors[i];
-                    if (n.IsRiver) { continue; } // don't bother go backwards, we would have already checked that cell.
-
-                    n.IsRiver = true;
+                    //if (lowerNeighbors[i].IsRiver || 
+                    if (lowerNeighbors[i].IsLake) { continue; } // don't bother go backwards, we would have already checked that cell.
 
                     if (lowest == null ||
-                        lowest.Elevation > n.Elevation)
+                        lowest.Elevation > lowerNeighbors[i].Elevation)
                     {
                         // future: if multiples with same elevation, then choose one randomly (with seeded random)
-
-                        lowest = n;
+                        lowest = lowerNeighbors[i];
                     }
                 }
             }
 
-            // no lower cells to go to?
-            if (lowest == null)
-            {
-
-                //CreateLakeAroundCell(c);
-
-                // try 2, set this cell as a lake, and end here.
-                c.IsLake = true;
-
-                return;
-            } 
-
+            // if the lowest neighbor is still above this one, then there's nowhere to go.
             if (lowest.Elevation > c.Elevation)
             {
-                // make into a lake?
+                // try 1: make neighbors into a lake
                 for (int i = 0; i < neighbors.Count; i++)
                 {
                     Cell n = neighbors[i];
                     n.IsRiver = false;
                     n.IsLake = true;
                 }
+
+                // try 2: 
+                // do nothing here, we already set the lake base cell
             }
             else // the lowest one does continue.
             {
@@ -512,10 +521,33 @@ namespace MapGenerator
                 else
                 {
                     // recursively call more river making.
-                    RunRiversDownHill(lowest);
+                    lowest.IsRiver = true;
+                    RunRiversDownHill(lowest, true);
                 }
             }
         }
+
+        private List<Cell> GetLowerCellNeighbors(List<Cell> neighbors, Cell c, bool IncludeWater)
+        {
+            List<Cell> results = new List<Cell>();
+
+            // trim the list for only lower neighbors
+            foreach (Cell n in neighbors)
+            {
+                if(!IncludeWater && (n.IsRiver || n.IsLake || n.Elevation < WaterElevation))
+                {
+                    continue;
+                }
+
+                if (n.Elevation < c.Elevation) { results.Add(n); }
+            }
+
+            return results;
+        }
+        #endregion
+
+        #region lakes
+        // this theory simply sets a circle of cells around this lowest point to all be lake cells, regardless of elevation.
         private void CreateLakeAroundCell(Cell c)
         {
             //RaiseLog("Creating a lake around a stalled river cell...");
@@ -525,7 +557,7 @@ namespace MapGenerator
             for (int n = 0; n < neighbors.Count; n++)
             {
                 // filter for a circle of sorts, not a square
-                if(DistanceBetweenCells(c, neighbors[n]) > (LakeSize - 1)){ continue; }
+                if (DistanceBetweenCells(c, neighbors[n]) > (LakeSize - 1)) { continue; }
 
 
                 neighbors[n].IsLake = true;
@@ -573,7 +605,48 @@ namespace MapGenerator
         }
         private void FillLakes()
         {
+            // foreach lakebase cell
+            for (int c = 0; c < LakeBases.Count; c++)
+            {
+                FillLake(new List<Cell>{LakeBases[c]});
+            }
+        }
+        private void FillLake(List<Cell> list)
+        {
+            for(int c = 0; c < list.Count; c++)
+            {
+                // get the next ring of cells around the current lake
+                List<Cell> neighbors = GetCellNeighbors(list, false);
+                Cell RiverContinuation = null;
 
+                // so we know these would all 'fill up' and become lake cells.
+                for (int lc = 0; lc < neighbors.Count; lc++)
+                {
+                    // otherwise, expand the lake to include it
+                    neighbors[lc].IsLake = true;
+
+                    // check if we're headed back downhill
+                    if (neighbors[lc].Elevation < list[c].Elevation)
+                    {
+                        // if so, then start a new river from here.
+                        RiverContinuation = neighbors[lc];
+                        break; // leave this loop, so we don't run away with our loops.
+                    }
+
+                    // if we get here, then this cell is not downhill, so go to the next cell.
+                } // end neighbors
+
+                // if this loop of cells did go downhill, then run a river from it.
+                if (RiverContinuation != null)
+                {
+                    RunRiversDownHill(RiverContinuation, false);
+                    return; // we only want a single river existing the lake, then exit this recursive routine entirely
+                }
+                else // there are no immediate neighbors lower, so expand the lake's boarders
+                {
+                    FillLake(neighbors);
+                }
+            }
         }
         #endregion
 
@@ -824,6 +897,28 @@ namespace MapGenerator
         private float DistanceBetweenCells(Cell c1, Cell c2)
         {
             return (float)Math.Sqrt(((c2.X - c1.X) * (c2.X - c1.X)) + ((c2.Y - c1.Y) * (c2.Y - c1.Y)));
+        }
+        private List<Cell> GetCellNeighbors(List<Cell> cells, bool IncludeWater)
+        {
+            List<Cell> results = new List<Cell>();
+            // add all neighbors
+            for (int c = 0; c < cells.Count; c++)
+            {
+                results.AddRange(GetCellNeighbors(cells[c]));
+            }
+
+            if(!IncludeWater)
+            {
+                // remove all lake cells or river cells
+                for (int c = cells.Count - 1; c >= 0; c--)
+                {
+                    if (cells[c].IsLake || 
+                        cells[c].IsRiver ||
+                        cells[c].Elevation < WaterElevation) { results.RemoveAt(c); }
+                }
+            }
+
+            return results;
         }
         private List<Cell> GetCellNeighbors(Cell c)
         {
