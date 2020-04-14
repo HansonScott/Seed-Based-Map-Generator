@@ -11,6 +11,10 @@ namespace MapGenerator
         private static Dictionary<Color, SolidBrush> ElevationBrushes;
         public static void ClearElevationBrushes() { ElevationColors?.Clear(); ElevationBrushes?.Clear(); }
 
+        private static Dictionary<float, Color> WaterElevationColors;
+        private static Dictionary<Color, SolidBrush> WaterElevationBrushes;
+        public static void ClearWaterElevationBrushes() { WaterElevationColors?.Clear(); WaterElevationBrushes?.Clear(); }
+
         private static Dictionary<float, Color> TemperatureColors;
         private static Dictionary<Color, SolidBrush> TemperatureBrushes;
         public static void ClearTemperatureBrushes() { TemperatureColors?.Clear(); TemperatureBrushes?.Clear(); }
@@ -37,6 +41,7 @@ namespace MapGenerator
 
         private float _Elevation;
         public Color ElevationColor;
+        public Color WaterElevationColor;
 
         public Biome CellBiome;
         public Color BiomeColor;
@@ -143,10 +148,18 @@ namespace MapGenerator
             {
                 ElevationColors = new Dictionary<float, Color>();
             }
+            if (WaterElevationColors == null)
+            {
+                WaterElevationColors = new Dictionary<float, Color>();
+            }
 
-            if(ElevationColors.ContainsKey((float)Math.Round((decimal)Elevation, 3)))
+            if ((!IsRiver && !IsLake) && ElevationColors.ContainsKey((float)Math.Round((decimal)Elevation, 3)))
             {
                 this.ElevationColor = ElevationColors[(float)Math.Round((decimal)Elevation, 3)];
+            }
+            else if((IsRiver || IsLake) && WaterElevationColors.ContainsKey((float)Math.Round((decimal)Elevation, 3)))
+            {
+                this.WaterElevationColor = WaterElevationColors[(float)Math.Round((decimal)Elevation, 3)];
             }
             else
             {
@@ -160,6 +173,14 @@ namespace MapGenerator
                     int v = (int)(Elevation * 100);
                     int b = (int)((Elevation / ParentMap.WaterElevation) * 125) + 130;
                     ElevationColor = Color.FromArgb(0, Math.Max(Math.Min(v, 255), 0), b);
+                }
+                else if(IsLake || IsRiver)
+                {
+                    // at water elevation: 0,100,255
+                    // at max elevation: 255, 255, 240
+
+                    int rg = (int)(Elevation * 255);
+                    WaterElevationColor = Color.FromArgb(rg, rg, 255);
                 }
                 // within 10% of water elevation
                 else if (Elevation < (ParentMap.WaterElevation * 1.1))
@@ -178,7 +199,14 @@ namespace MapGenerator
                                                     v);
                 }
 
-                ElevationColors.Add((float)Math.Round((decimal)Elevation, 3), ElevationColor);
+                if(!IsRiver && !IsLake)
+                {
+                    ElevationColors.Add((float)Math.Round((decimal)Elevation, 3), ElevationColor);
+                }
+                else
+                {
+                    WaterElevationColors.Add((float)Math.Round((decimal)Elevation, 3), WaterElevationColor);
+                }
             } // end else, not in static collection
 
             // now set the actual drawing brush
@@ -186,33 +214,28 @@ namespace MapGenerator
             {
                 ElevationBrushes = new Dictionary<Color, SolidBrush>();
             }
-
+            if(WaterElevationBrushes == null)
+            {
+                WaterElevationBrushes = new Dictionary<Color, SolidBrush>();
+            }
 
             Color ThisColor;
-            if (this.IsLake)
+            if(!IsRiver && !IsLake)
             {
-                ThisColor = LakeColor;
-            }
-            else if (this.IsRiver)
-            {
-                ThisColor = RiverColor;
+                ThisColor = ElevationColor;
+                if (!ElevationBrushes.ContainsKey(ThisColor))
+                {
+                    ElevationBrushes.Add(ThisColor, new SolidBrush(ThisColor));
+                }
             }
             else
             {
-                ThisColor = ElevationColor;
+                ThisColor = WaterElevationColor;
+                if (!WaterElevationBrushes.ContainsKey(ThisColor))
+                {
+                    WaterElevationBrushes.Add(ThisColor, new SolidBrush(ThisColor));
+                }
             }
-
-            if(!ElevationBrushes.ContainsKey(ThisColor))
-            {
-                ElevationBrushes.Add(ThisColor, new SolidBrush(ThisColor));
-            }
-
-            // now check for an actual difference before assigning
-            //if(ElevationBrush == null || ElevationBrush.Color != ThisColor)
-            //{
-            //    ElevationBrush = ElevationBrushes[ThisColor];
-            //}
-
 
             #endregion
 
@@ -518,13 +541,9 @@ namespace MapGenerator
 
         internal void PaintElevation(Graphics g)
         {
-            if(IsRiver)
+            if(IsRiver || IsLake)
             {
-                g.FillRectangle(BiomeBrushes[BiomeColor], ThisRect);
-            }
-            else if(IsLake)
-            {
-                g.FillRectangle(BiomeBrushes[BiomeColor], ThisRect);
+                g.FillRectangle(WaterElevationBrushes[WaterElevationColor], ThisRect);
             }
             else
             {
